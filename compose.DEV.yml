@@ -27,8 +27,8 @@ services:
       - ./back/principal:/app
     depends_on:
       - pfg1-postgres
-    entrypoint: ["/bin/sh", "-c"]
-    command: sh -c "cp .env.DEV .env && composer install && php artisan migrate && php artisan serve --host=0.0.0.0 --port=8000"
+    # entrypoint: ["/bin/sh", "-c"]
+    command: sh -c "cp /app/.env.DEV /app/.env && composer install && php artisan migrate && php artisan serve --host=0.0.0.0 --port=8000"
     networks:
       - general
 
@@ -72,7 +72,7 @@ services:
       - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_PASSWORD: root
     volumes:
       - mongo-bd:/data/db
     networks:
@@ -86,8 +86,8 @@ services:
       - 8081:8081
     environment:
       MONGO_USER: root
-      MONGO_PASSWORD: example
-      MONGO_URI: mongodb://root:example@pfg1-mongodb:27017/
+      MONGO_PASSWORD: root
+      MONGO_URI: mongodb://root:root@pfg1-mongodb:27017/
       ME_CONFIG_BASICAUTH: false
     depends_on:
       - pfg1-mongodb
