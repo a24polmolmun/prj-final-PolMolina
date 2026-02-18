@@ -28,7 +28,7 @@ services:
     depends_on:
       - pfg1-postgres
     # entrypoint: ["/bin/sh", "-c"]
-    command: sh -c "cp /app/.env.DEV /app/.env && composer install && php artisan key:generate && php artisan migrate && php artisan serve --host=0.0.0.0 --port=8000"
+    command: sh -c "cp /app/.env.DEV /app/.env && php artisan key:generate && php artisan migrate && php artisan serve --host=0.0.0.0 --port=8000"
     networks:
       - general
 
@@ -111,7 +111,7 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
-      POSTGRES_DB: prf-g6
+      POSTGRES_DB: prf-renfe
     volumes:
       - postgres-bd:/var/lib/postgresql/data:rw
     ports:

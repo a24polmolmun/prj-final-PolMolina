@@ -11,12 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('usuaris', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('nom');
+            $table->string('cognom')->nullable();
             $table->string('email')->unique();
+            $table->string('email_pares')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->enum('rol', ['Admin', 'Profe', 'Alumne'])->default('Alumne');
+            $table->string('token')->nullable();
+            $table->string('nfc_id')->nullable();
+            // Removed constrained() to avoid circular dependency. Added in later migration.
+            $table->foreignId('id_curs')->nullable()->nullOnDelete();
             $table->rememberToken();
             $table->timestamps();
         });
@@ -42,7 +49,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('usuaris');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
     }
