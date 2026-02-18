@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('cursos', function (Blueprint $table) {
             $table->id();
-            $table->string('tipus')->nullable(); // GS, GM...
+            $table->enum('tipus', allowed:['GM', 'GS']);
             $table->string('nom');
             $table->foreignId('id_tutor')->nullable()->constrained('usuaris')->nullOnDelete();
             $table->foreignId('id_periode')->nullable()->constrained('periodes')->nullOnDelete();

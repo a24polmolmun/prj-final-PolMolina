@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('id_inscripcio')->constrained('inscrits')->cascadeOnDelete();
             $table->date('data');
-            $table->enum('estat', ['Assistit', 'Falta', 'Retart'])->nullable(); // Enum from diagram
-            $table->boolean('justificat')->default(false);
+            $table->enum('estat', ['Assistit', 'Falta', 'Retart'])->nullable();
             $table->foreignId('id_profe')->nullable()->constrained('usuaris');
             $table->timestamps();
         });
