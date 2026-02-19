@@ -11,30 +11,37 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('usuaris', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('nom');
+            $table->string('cognom')->nullable();
+            $table->enum('rol', allowed:['Admin', 'Profe', 'Alumne'])->default('Alumne');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->string('email_pares')->nullable();
+            $table->string('password')->nullable();
+            $table->string('token')->nullable();
+            $table->string('nfc_id')->nullable();
+            // Removed constrained() to avoid circular dependency. Added in later migration.
+            $table->foreignId('id_curs')->nullable()->nullOnDelete();
+            $table->string('horari_guardies')->nullable();
+            // $table->rememberToken();
             $table->timestamps();
         });
 
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
-        });
+        // Schema::create('password_reset_tokens', function (Blueprint $table) {
+        //     $table->string('email')->primary();
+        //     $table->string('token');
+        //     $table->timestamp('created_at')->nullable();
+        // });
 
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity')->index();
-        });
+        // Schema::create('sessions', function (Blueprint $table) {
+        //     $table->string('id')->primary();
+        //     $table->foreignId('user_id')->nullable()->index();
+        //     $table->string('ip_address', 45)->nullable();
+        //     $table->text('user_agent')->nullable();
+        //     $table->longText('payload');
+        //     $table->integer('last_activity')->index();
+        // });
     }
 
     /**
@@ -42,8 +49,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
+        Schema::dropIfExists('usuaris');
+        // Schema::dropIfExists('password_reset_tokens');
+        // Schema::dropIfExists('sessions');
     }
 };
