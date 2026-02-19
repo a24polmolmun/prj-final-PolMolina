@@ -9,8 +9,12 @@
         "php": "^8.2",
         "laravel/framework": "^11.31",
         "laravel/socialite": "^5.24",
+<<<<<<< HEAD
         "laravel/tinker": "^2.9",
         "socialiteproviders/google": "^4.1"
+=======
+        "laravel/tinker": "^2.9"
+>>>>>>> Features.GoogleAuthLaravel
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
