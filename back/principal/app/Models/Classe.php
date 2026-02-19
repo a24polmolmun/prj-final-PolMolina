@@ -22,7 +22,7 @@ class Classe extends Model
 
     public function tutor()
     {
-        return $this->belongsTo(User::class, 'id_tutor');
+        return $this->belongsTo(Usuari::class, 'id_tutor');
     }
 
     public function horaris()
