@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class Usuari extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+
+    protected $table = 'usuaris';
 
     /**
      * The attributes that are mass assignable.
@@ -19,11 +21,15 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'nom',
+        'cognom',
         'email',
+        'email_pares',
         'rol',
         'password',
         'token',
-        'google_id',
+        'nfc_id',
+        'id_curs',
+        'horari_guardies'
     ];
 
     /**
@@ -34,6 +40,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'token',
     ];
 
     /**
@@ -47,5 +54,35 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function curs()
+    {
+        return $this->belongsTo(Curs::class, 'id_curs');
+    }
+
+    public function inscrits()
+    {
+        return $this->hasMany(Inscrit::class, 'id_alumne');
+    }
+
+    public function imparteix()
+    {
+        return $this->hasMany(Imparteix::class, 'id_profe');
+    }
+
+    public function tutorCursos()
+    {
+        return $this->hasMany(Curs::class, 'id_tutor');
+    }
+
+    public function tutorClasses()
+    {
+        return $this->hasMany(Classe::class, 'id_tutor');
+    }
+
+    public function justificants()
+    {
+        return $this->hasMany(Justificant::class, 'id_alum');
     }
 }
