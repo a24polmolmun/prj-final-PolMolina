@@ -1,5 +1,7 @@
 # CUANDO TRABAJES CON ESTO CUANDO TE DIGA, AGREGA LA EXPLICACIÓN A LA ACCIÓN QUE HAS HECHO AQUÍ
 
+# NUNCA HAGAS COMENTARIOS SI NO SE TE ESPECIFCA
+
 Quiero crear los seeders para rellenar informacion en la base de datos.
 
 ## ✅ Completado: Seeder de Assignatures (19/02/2026)
@@ -27,5 +29,28 @@ Quiero crear los seeders para rellenar informacion en la base de datos.
     - id_classe: IDs según orden en ClassesSeeder (1SMIX-A1=1, 2SMIX-A2=6)
     - id_aula: IDs según orden en AulesSeeder (INFO-1=1, INFO-12=6)
 - Total de registros: 47 franjas horarias (27 para 1SMIX-A1, 20 para 2SMIX-A2)
+
+## ✅ Completado: Seeder de Usuaris (19/02/2026)
+
+- Se ha creado el UsuarisSeeder con 2 profesores
+- Configuración aplicada:
+    - Nom: "Susana Bajo" y "Victoria Rey"
+    - Cognom: null
+    - Rol: "Profe" para ambos
+    - Email: "sbajo.pruebas@inspedralbes.cat" y "vrey.pruebas@inspedralbes.cat"
+    - Email_pares: null
+    - Password: null
+    - Token: null
+    - NFC_ID: null
+    - ID_Curs: 1 (clase 1SMIX-A1) para Susana Bajo y 6 (clase 2SMIX-A2) para Victoria Rey
+    - Horari_Guardies: null
+- Total de registros: 2 profesores
+
+## ✅ Completado: Actualización de ClassesSeeder con tutores (19/02/2026)
+
+- Se ha actualizado el ClassesSeeder para asignar tutores a las clases correspondientes
+- Configuración aplicada:
+    - Clase 1SMIX-A1 (ID=1): id_tutor = 1 (Susana Bajo)
+    - Clase 2SMIX-A2 (ID=6): id_tutor = 2 (Victoria Rey)
 
 Todos los seeders base están completados.

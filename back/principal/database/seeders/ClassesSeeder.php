@@ -13,7 +13,7 @@ class ClassesSeeder extends Seeder
             [
                 'id_curs' => 1,
                 'nom' => '1SMIX-A1',
-                'id_tutor' => null,
+                'id_tutor' => 1,
                 'id_aula' => 1
             ],
             [
@@ -43,7 +43,7 @@ class ClassesSeeder extends Seeder
             [
                 'id_curs' => 1,
                 'nom' => '2SMIX-A2',
-                'id_tutor' => null,
+                'id_tutor' => 2,
                 'id_aula' => 6
             ],
             [
