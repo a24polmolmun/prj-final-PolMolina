@@ -78,7 +78,7 @@ services:
     # Comprovació que el servei de MongoDB està disponible abans de permetre que el servei de mongo-express s'iniciï.
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
+      interval: 5m
       timeout: 5s
       retries: 10
       start_period: 60s
