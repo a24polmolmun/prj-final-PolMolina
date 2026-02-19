@@ -9,4 +9,13 @@ import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.com
   templateUrl: './llista-classe.component.html',
   styleUrl: './llista-classe.component.css',
 })
-export class LlistaClasseComponent {}
+export class LlistaClasseComponent {
+
+  alumnes = [
+    { nom: 'Alumne 1' },
+    { nom: 'Alumne 2' },
+    { nom: 'Alumne 3' },
+    { nom: 'Alumne 4' },
+    { nom: 'Alumne 5' },
+  ];
+}
