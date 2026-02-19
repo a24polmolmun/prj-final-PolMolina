@@ -1,0 +1,99 @@
+<?php
+
+namespace Database\Seeders;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Seeder;
+
+class ClassesSeeder extends Seeder
+{
+    public function run(): void
+    {
+        DB::table('classes')->insert([
+            [
+                'id_curs' => 1,
+                'nom' => '1SMIX-A1',
+                'id_tutor' => null,
+                'id_aula' => 1
+            ],
+            [
+                'id_curs' => 1,
+                'nom' => '1SMIX-A2',
+                'id_tutor' => null,
+                'id_aula' => 2
+            ],
+            [
+                'id_curs' => 1,
+                'nom' => '1SMIX-A3',
+                'id_tutor' => null,
+                'id_aula' => 3
+            ],
+            [
+                'id_curs' => 1,
+                'nom' => '1SMIX-A4',
+                'id_tutor' => null,
+                'id_aula' => 4
+            ],
+            [
+                'id_curs' => 1,
+                'nom' => '2SMIX-A1',
+                'id_tutor' => null,
+                'id_aula' => 5
+            ],
+            [
+                'id_curs' => 1,
+                'nom' => '2SMIX-A2',
+                'id_tutor' => null,
+                'id_aula' => 6
+            ],
+            [
+                'id_curs' => 1,
+                'nom' => '2SMIX-A3',
+                'id_tutor' => null,
+                'id_aula' => 7
+            ],
+            [
+                'id_curs' => 1,
+                'nom' => '1SMIX-B',
+                'id_tutor' => null,
+                'id_aula' => 5
+            ],
+            [
+                'id_curs' => 1,
+                'nom' => '1SMIX-B2',
+                'id_tutor' => null,
+                'id_aula' => 6
+            ],
+            [
+                'id_curs' => 1,
+                'nom' => '2SMIX-B',
+                'id_tutor' => null,
+                'id_aula' => 7
+            ],
+            [
+                'id_curs' => 2,
+                'nom' => '1DAM',
+                'id_tutor' => null,
+                'id_aula' => 8
+            ],
+            [
+                'id_curs' => 3,
+                'nom' => '1DAW',
+                'id_tutor' => null,
+                'id_aula' => 9
+            ],
+            [
+                'id_curs' => 2,
+                'nom' => '2DAM',
+                'id_tutor' => null,
+                'id_aula' => 10
+            ],
+            [
+                'id_curs' => 3,
+                'nom' => '2DAW',
+                'id_tutor' => null,
+                'id_aula' => 11
+            ]
+        ]);
+    }
+}
