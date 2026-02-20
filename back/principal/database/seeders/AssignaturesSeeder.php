@@ -14,7 +14,7 @@ class AssignaturesSeeder extends Seeder
     {
         DB::table('assignatures')->insert([
             [
-                'nom' => 'Programació',
+                'nom' => 'Programacio',
                 'projecte' => false,
                 'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
                 'excepcio' => false,
