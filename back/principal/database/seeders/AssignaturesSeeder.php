@@ -103,12 +103,6 @@ class AssignaturesSeeder extends Seeder
                 'interval' => json_encode([['data_ini' => '2026-03-14', 'data_fi' => '2026-06-14']]),
                 'excepcio' => false,
             ],
-            [
-                'nom' => 'Projecte Final',
-                'projecte' => true,
-                'interval' => json_encode([['data_ini' => '2026-03-14', 'data_fi' => '2026-06-14']]),
-                'excepcio' => false,
-            ],
         ]);
     }
 }
