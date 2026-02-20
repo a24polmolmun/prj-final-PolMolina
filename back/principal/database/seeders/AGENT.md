@@ -2,6 +2,8 @@
 
 # NUNCA HAGAS COMENTARIOS SI NO SE TE ESPECIFCA
 
+> Para consultar la estructura de la base de datos (tablas, columnas, tipos y relaciones), referirse a [`doc/CONTEXT_DATABASE.md`](../../../../doc/CONTEXT_DATABASE.md)
+
 Quiero crear los seeders para rellenar informacion en la base de datos.
 
 ## ✅ Completado: Seeder de Assignatures (19/02/2026)
