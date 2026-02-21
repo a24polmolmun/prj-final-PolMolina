@@ -9,6 +9,10 @@ class CursSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('cursos')->exists()) {
+            return;
+        }
+
         DB::table('cursos')->insert([
             [
                 'tipus' => 'GM',

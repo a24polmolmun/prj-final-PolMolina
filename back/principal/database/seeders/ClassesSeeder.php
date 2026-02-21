@@ -9,6 +9,10 @@ class ClassesSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('classes')->exists()) {
+            return;
+        }
+
         DB::table('classes')->insert([
             [
                 'id_curs' => 1,

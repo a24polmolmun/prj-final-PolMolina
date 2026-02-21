@@ -9,8 +9,12 @@ use Illuminate\Database\Seeder;
 class PeriodesSeeder extends Seeder
 {
     public function run(): void
-{
-    DB::table('periodes')->insert([
+    {
+        if (DB::table('periodes')->exists()) {
+            return;
+        }
+
+        DB::table('periodes')->insert([
         //SMIX
         [
             'trimestre_1_ini' => '2025-09-12', 

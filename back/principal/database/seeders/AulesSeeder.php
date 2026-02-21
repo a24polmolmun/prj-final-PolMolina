@@ -9,6 +9,10 @@ class AulesSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('aules')->exists()) {
+            return;
+        }
+
         DB::table('aules')->insert([
             [
                 'nom' => 'INFO-1'

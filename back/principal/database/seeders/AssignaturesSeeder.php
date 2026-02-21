@@ -12,96 +12,100 @@ class AssignaturesSeeder extends Seeder
      */
     public function run(): void
     {
+        if (DB::table('assignatures')->exists()) {
+            return;
+        }
+
         DB::table('assignatures')->insert([
             [
                 'nom' => 'Programacio',
                 'projecte' => false,
                 'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
-                'excepcio' => false,
+                'exempcio' => false,
             ],
             [
                 'nom' => 'Aplicacions Web',
                 'projecte' => false,
                 'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
-                'excepcio' => false,
+                'exempcio' => false,
             ],
             [
                 'nom' => 'Muntatge i manteniment',
                 'projecte' => false,
                 'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
-                'excepcio' => false,
+                'exempcio' => false,
             ],
             [
                 'nom' => 'Xarxes Locals',
                 'projecte' => false,
                 'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
-                'excepcio' => false,
+                'exempcio' => false,
             ],
             [
                 'nom' => 'Tutoria',
                 'projecte' => false,
                 'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
-                'excepcio' => false,
+                'exempcio' => false,
             ],
             [
                 'nom' => 'DIG + SOS',
                 'projecte' => false,
                 'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
-                'excepcio' => false,
+                'exempcio' => false,
             ],
             [
                 'nom' => 'SOM',
                 'projecte' => false,
                 'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
-                'excepcio' => false,
+                'exempcio' => false,
             ],
             [
                 'nom' => 'IPO1',
                 'projecte' => false,
                 'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
-                'excepcio' => false,
+                'exempcio' => false,
             ],
             [
                 'nom' => 'Ofimàtica',
                 'projecte' => false,
                 'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
-                'excepcio' => false,
+                'exempcio' => false,
             ],
             [
                 'nom' => 'Anglès',
                 'projecte' => false,
                 'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
-                'excepcio' => false,
+                'exempcio' => false,
             ],
             [
                 'nom' => 'SOX',
                 'projecte' => false,
                 'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-06-14']]),
-                'excepcio' => false,
+                'exempcio' => false,
             ],
             [
                 'nom' => 'IPO2',
                 'projecte' => false,
                 'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
-                'excepcio' => true,
+                'exempcio' => true,
             ],
             [
                 'nom' => 'Serveis de Xarxes',
                 'projecte' => false,
                 'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-06-14']]),
-                'excepcio' => false,
+                'exempcio' => false,
             ],
             [
                 'nom' => 'Seguretat',
                 'projecte' => false,
                 'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-06-14']]),
-                'excepcio' => false,
+                'exempcio' => false,
             ],
             [
                 'nom' => 'Projecte',
                 'projecte' => true,
                 'interval' => json_encode([['data_ini' => '2026-03-14', 'data_fi' => '2026-06-14']]),
-                'excepcio' => false,
+                'exempcio' => false,
             ],
         ]);
     }

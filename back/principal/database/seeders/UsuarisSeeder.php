@@ -9,6 +9,10 @@ class UsuarisSeeder extends Seeder
 {
     public function run(): void
     {
+        if (DB::table('usuaris')->exists()) {
+            return;
+        }
+
         DB::table('usuaris')->insert([
             [
                 'nom' => 'Susana Bajo',
@@ -19,7 +23,7 @@ class UsuarisSeeder extends Seeder
                 'password' => null,
                 'token' => null,
                 'nfc_id' => null,
-                'id_curs' => 1,
+                'id_curs' => null,
                 'horari_guardies' => null
             ],
             [
@@ -31,7 +35,7 @@ class UsuarisSeeder extends Seeder
                 'password' => null,
                 'token' => null,
                 'nfc_id' => null,
-                'id_curs' => 6,
+                'id_curs' => null,
                 'horari_guardies' => null
             ]
         ]);
