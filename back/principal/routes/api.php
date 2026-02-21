@@ -11,7 +11,7 @@ use App\Http\Controllers\ImparteixController;
 use App\Http\Controllers\AssistenciaController;
 use App\Http\Controllers\JustificantController;
 
-Route::prefix('api/v1')->group(function () {
+Route::prefix('v1')->group(function () {
 
     // Usuaris routes
     Route::apiResource('usuaris', UsuariController::class);

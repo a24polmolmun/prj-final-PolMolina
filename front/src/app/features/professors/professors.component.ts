@@ -11,7 +11,7 @@ import { SidebarComponent } from '../../shared/components/sidebar/sidebar.compon
 export class ProfessorsComponent {
     franjaHoraria = signal<'AM' | 'PM'>('AM');
 
-    // Dades simulades per a la classe actual
+    // Dades de la classe actual
     classeActual = {
         nom: 'Matemáticas Avanzadas II',
         estat: 'EN CURS ARA',
@@ -22,7 +22,7 @@ export class ProfessorsComponent {
 
     diesSetmana = ['Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres'];
 
-    // Dades AM
+    // Horari Matí
     horariFrontAM = [
         { hora: '08:00', assignatures: ['Matemàtiques', 'Física', 'Química', 'Història', 'Filosofia'] },
         { hora: '09:00', assignatures: ['Anglès', 'Matemàtiques', 'Física', 'Química', 'Història'] },
@@ -33,7 +33,7 @@ export class ProfessorsComponent {
         { hora: '13:00', assignatures: ['Tutoria', 'Projecte', 'Projecte', 'Esport', 'Lliure'] },
     ];
 
-    // Dades PM (a partir de les 14:30)
+    // Horari Tarda
     horariFrontPM = [
         { hora: '15:00', assignatures: ['Programació', 'Bases de Dades', 'Xarxes', 'Sistemes', 'Anglès Tècnic'] },
         { hora: '16:00', assignatures: ['Bases de Dades', 'Programació', 'Xarxes', 'Sistemes', 'Anglès Tècnic'] },
@@ -43,7 +43,7 @@ export class ProfessorsComponent {
         { hora: '19:30', assignatures: ['Projecte', 'Empresa', 'FOL', 'Programació', 'Sistemes'] },
     ];
 
-    // Senyal computat que retorna l'horari segons la franja
+    // Retorna l'horari segons la franja seleccionada
     horariActual = computed(() => {
         return this.franjaHoraria() === 'AM' ? this.horariFrontAM : this.horariFrontPM;
     });
