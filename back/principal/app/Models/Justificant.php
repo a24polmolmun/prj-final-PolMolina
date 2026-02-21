@@ -24,7 +24,7 @@ class Justificant extends Model
 
     public function alumne()
     {
-        return $this->belongsTo(User::class, 'id_alum');
+        return $this->belongsTo(Usuari::class, 'id_alum');
     }
 
     public function assignaturaInici()
