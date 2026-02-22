@@ -89,3 +89,17 @@
         transform: translate(-20px, 20px) scale(0.9);
     }
 }
+
+.contingut {
+    flex-grow: 1;
+    margin-top: 80px;
+    /* Alçada navbar */
+    padding: 20px 40px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    z-index: 1;
+    /* Sobre el fons */
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-light) transparent;
+}

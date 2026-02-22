@@ -1,9 +1,18 @@
+import { Assignatura } from './assignatura.model';
+import { Classe } from './classe.model';
+import { Aula } from './aula.model';
+
 export interface Horari {
-  id: number;
+  id?: number;
   codi_hora: string;
   id_assig: number;
   id_classe: number;
   id_aula: number;
-  created_at: string;
-  updated_at: string;
+
+  assignatura?: Assignatura;
+  classe?: Classe;
+  aula?: Aula;
+
+  created_at?: string;
+  updated_at?: string;
 }

@@ -6,14 +6,42 @@ import { AssignaturesManagerService } from '../../../shared/services/assignature
 
 @Component({
   selector: 'app-llista-assignatures',
-  imports: [CommonModule, SidebarComponent],
+  imports: [CommonModule, FormsModule, SidebarComponent],
   templateUrl: './llista-assignatures.component.html',
   styleUrl: './llista-assignatures.component.css',
 })
 export class LlistaAssignaturesComponent implements OnInit {
+  // Inyectamos nuestro manager
+  assignaturesManager = inject(AssignaturesManagerService);
+
+  novaAssignaturaNom = signal<string>('');
 
   ngOnInit(): void {
+    this.assignaturesManager.carregarAssignatures();
 
+  }
+
+  crearAssignatura(): void {
+    const nom = this.novaAssignaturaNom();
+    if (!nom) {
+      return;
+    }
+    this.assignaturesManager.afegirAssignatura({ nom })
+      .then(() => {
+        this.novaAssignaturaNom.set('');
+      })
+      .catch(err => {
+        console.error('Error al crear l\'assignatura', err);
+      });
+  }
+
+  eliminarAssignatura(id: number): void {
+    if (confirm('Estàs segur d\'esborrar aquesta assignatura?')) {
+      this.assignaturesManager.esborrarAssignatura(id)
+        .catch(err => {
+          console.error('Error al eliminar l\'assignatura', err);
+        });
+    }
   }
 
 }

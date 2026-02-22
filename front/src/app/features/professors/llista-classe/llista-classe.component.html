@@ -10,7 +10,7 @@
   <div class="contingut">
     <div class="targeta-llista">
       <h1>Llista de Classe</h1>
-      @for (alumne of alumnes; track $index) {
+      @for (alumne of alumnes(); track $index) {
       <li>{{alumne.nom}}</li>
       }
     </div>
