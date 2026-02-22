@@ -1,100 +1,98 @@
 <?php
 
-namespace App\Http\Controllers\Imparteix;
+namespace App\Http\Controllers;
 
-use App\Models\Imparteix;
+use App\Models\Inscrit;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class ImparteixController extends Controller
+class InscritController extends Controller
 {
     public function index()
     {
         return response()->json([
             'success' => true,
-            'data' => Imparteix::with(['professor', 'assignatura'])->get(),
-            'message' => 'Imparticions obtingudes correctament'
+            'data' => Inscrit::with(['alumne', 'assignatura'])->get(),
+            'message' => 'Inscrits obtinguts correctament'
         ], Response::HTTP_OK);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'id_profe' => 'required|exists:usuaris,id',
+            'id_alumne' => 'required|exists:usuaris,id',
             'id_assignatura' => 'required|exists:assignatures,id',
-            'titular' => 'required|boolean',
         ]);
 
-        $imparteix = Imparteix::create($validated);
+        $inscrit = Inscrit::create($validated);
 
         return response()->json([
             'success' => true,
-            'data' => $imparteix->load(['professor', 'assignatura']),
-            'message' => 'Impartició creada correctament'
+            'data' => $inscrit->load(['alumne', 'assignatura']),
+            'message' => 'Inscrit creat correctament'
         ], Response::HTTP_CREATED);
     }
 
     public function show($id)
     {
-        $imparteix = Imparteix::with(['professor', 'assignatura'])->find($id);
+        $inscrit = Inscrit::with(['alumne', 'assignatura'])->find($id);
 
-        if (!$imparteix) {
+        if (!$inscrit) {
             return response()->json([
                 'success' => false,
-                'message' => 'Impartició no trobada'
+                'message' => 'Inscrit no trobat'
             ], Response::HTTP_NOT_FOUND);
         }
 
         return response()->json([
             'success' => true,
-            'data' => $imparteix,
-            'message' => 'Impartició obtinguda correctament'
+            'data' => $inscrit,
+            'message' => 'Inscrit obtingut correctament'
         ], Response::HTTP_OK);
     }
 
     public function update(Request $request, $id)
     {
-        $imparteix = Imparteix::find($id);
+        $inscrit = Inscrit::find($id);
 
-        if (!$imparteix) {
+        if (!$inscrit) {
             return response()->json([
                 'success' => false,
-                'message' => 'Impartició no trobada'
+                'message' => 'Inscrit no trobat'
             ], Response::HTTP_NOT_FOUND);
         }
 
         $validated = $request->validate([
-            'id_profe' => 'sometimes|required|exists:usuaris,id',
+            'id_alumne' => 'sometimes|required|exists:usuaris,id',
             'id_assignatura' => 'sometimes|required|exists:assignatures,id',
-            'titular' => 'sometimes|required|boolean',
         ]);
 
-        $imparteix->update($validated);
+        $inscrit->update($validated);
 
         return response()->json([
             'success' => true,
-            'data' => $imparteix->load(['professor', 'assignatura']),
-            'message' => 'Impartició actualitzada correctament'
+            'data' => $inscrit->load(['alumne', 'assignatura']),
+            'message' => 'Inscrit actualitzat correctament'
         ], Response::HTTP_OK);
     }
 
     public function destroy($id)
     {
-        $imparteix = Imparteix::find($id);
+        $inscrit = Inscrit::find($id);
 
-        if (!$imparteix) {
+        if (!$inscrit) {
             return response()->json([
                 'success' => false,
-                'message' => 'Impartició no trobada'
+                'message' => 'Inscrit no trobat'
             ], Response::HTTP_NOT_FOUND);
         }
 
-        $imparteix->delete();
+        $inscrit->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Impartició eliminada correctament'
+            'message' => 'Inscrit eliminat correctament'
         ], Response::HTTP_OK);
     }
 }

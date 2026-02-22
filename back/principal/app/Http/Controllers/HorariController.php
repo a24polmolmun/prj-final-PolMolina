@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Horari;
+namespace App\Http\Controllers;
 
 use App\Models\Horari;
 use App\Http\Controllers\Controller;

@@ -9,6 +9,8 @@ class Inscrit extends Model
 {
     use HasFactory;
 
+    protected $table = 'inscrits';
+
     protected $fillable = [
         'id_alumne',
         'id_assignatura',

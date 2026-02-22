@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Justificant;
+namespace App\Http\Controllers;
 
 use App\Models\Justificant;
 use App\Http\Controllers\Controller;

@@ -1,16 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Usuari\UsuariController;
-use App\Http\Controllers\Classe\ClasseController;
-use App\Http\Controllers\Assignatura\AssignaturaController;
-use App\Http\Controllers\Aula\AulaController;
-use App\Http\Controllers\Inscrit\InscritController;
-use App\Http\Controllers\Horari\HorariController;
-use App\Http\Controllers\Imparteix\ImparteixController;
-use App\Http\Controllers\Assistencia\AssistenciaController;
-use App\Http\Controllers\Assistencia\GenerarAssistenciaController;
-use App\Http\Controllers\Justificant\JustificantController;
+use App\Http\Controllers\UsuariController;
+use App\Http\Controllers\ClasseController;
+use App\Http\Controllers\AssignaturaController;
+use App\Http\Controllers\AulaController;
+use App\Http\Controllers\InscritController;
+use App\Http\Controllers\HorariController;
+use App\Http\Controllers\ImparteixController;
+use App\Http\Controllers\AssistenciaController;
+use App\Http\Controllers\JustificantController;
 
 Route::prefix('v1')->group(function (): void {
 
@@ -19,6 +18,7 @@ Route::prefix('v1')->group(function (): void {
 
     // Classes routes
     Route::apiResource('classes', ClasseController::class);
+    Route::post('classes/assignarAlumnes', [ClasseController::class, 'assignarAlumnes']);
 
     // Assignatures routes
     Route::apiResource('assignatures', AssignaturaController::class);
@@ -37,7 +37,7 @@ Route::prefix('v1')->group(function (): void {
 
     // Assistencia routes
     Route::apiResource('assistencies', AssistenciaController::class);
-    Route::post('generar-assistencies', [GenerarAssistenciaController::class, 'generar']);
+    Route::post('assistencies/generar', [AssistenciaController::class, 'generar']);
 
     // Justificants routes
     Route::apiResource('justificants', JustificantController::class);

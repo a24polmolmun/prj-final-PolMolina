@@ -15,6 +15,7 @@ class UsuarisSeeder extends Seeder
 
         DB::table('usuaris')->insert([
             [
+                'id' => 1,
                 'nom' => 'Susana Bajo',
                 'cognom' => null,
                 'rol' => 'Profe',
@@ -23,10 +24,11 @@ class UsuarisSeeder extends Seeder
                 'password' => null,
                 'token' => null,
                 'nfc_id' => null,
-                'id_curs' => null,
+                'id_classe' => null,
                 'horari_guardies' => null
             ],
             [
+                'id' => 2,
                 'nom' => 'Victoria Rey',
                 'cognom' => null,
                 'rol' => 'Profe',
@@ -35,7 +37,33 @@ class UsuarisSeeder extends Seeder
                 'password' => null,
                 'token' => null,
                 'nfc_id' => null,
-                'id_curs' => null,
+                'id_classe' => null,
+                'horari_guardies' => null
+            ],
+            [
+                'id' => 3,
+                'nom' => 'Marcos López',
+                'cognom' => null,
+                'rol' => 'Alumne',
+                'email' => 'mlopez.pruebas@inspedralbes.cat',
+                'email_pares' => null,
+                'password' => null,
+                'token' => null,
+                'nfc_id' => null,
+                'id_classe' => null,
+                'horari_guardies' => null
+            ],
+            [
+                'id' => 4,
+                'nom' => 'Noelia García',
+                'cognom' => null,
+                'rol' => 'Alumne',
+                'email' => 'ngarcia.pruebas@inspedralbes.cat',
+                'email_pares' => null,
+                'password' => null,
+                'token' => null,
+                'nfc_id' => null,
+                'id_classe' => null,
                 'horari_guardies' => null
             ]
         ]);
