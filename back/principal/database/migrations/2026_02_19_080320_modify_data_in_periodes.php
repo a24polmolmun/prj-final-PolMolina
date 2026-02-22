@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('trimestre_1_fi')->nullable(); // 1r_Trimestre
             $table->date('trimestre_2_ini')->nullable(); // 2n_Trimestre
             $table->date('trimestre_2_fi')->nullable(); // 2n_Trimestre
-            $table->date(column: 'trimestre_3_ini')->nullable(); // 3r_Trimestre
+            $table->date('trimestre_3_ini')->nullable(); // 3r_Trimestre
             $table->date('trimestre_3_fi')->nullable(); // 3r_Trimestre
         });
     }
