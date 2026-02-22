@@ -107,9 +107,13 @@ class AssistenciaController extends Controller
         ], Response::HTTP_OK);
     }
     /**
-     * Endpoin
+     * Endpoint
      * POST /api/admin/generar-assistencies
-     * Body: { "data_ini": "2026-02-23", "data_fi": "2026-02-27" }
+     * BODY:
+     *      {
+     *      "data_ini": "2026-02-23",
+     *      "data_fi": "2026-02-27"
+     *      }
      */
 
     public function generar(Request $peticio)

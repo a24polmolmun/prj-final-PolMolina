@@ -118,8 +118,8 @@ class ClasseController extends Controller
     /**
      * Assigna alumnes a una classe i els inscriu a totes les assignatures d'aquesta classe.
      *
-     * @param Request $peticio Entrada esperada:
-     *   -{
+     * BODY:
+     *   {
      *      "classe_id": 1,
      *      "emails": [
      *          "mlopez.pruebas@inspedralbes.cat",
