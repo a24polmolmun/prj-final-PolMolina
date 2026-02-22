@@ -1,6 +1,8 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
+import { AssignaturesManagerService } from '../../shared/services/assignatures/assignatures-manager.service';
+
 
 @Component({
     selector: 'app-professors',
@@ -8,17 +10,41 @@ import { SidebarComponent } from '../../shared/components/sidebar/sidebar.compon
     templateUrl: './professors.component.html',
     styleUrl: './professors.component.css'
 })
-export class ProfessorsComponent {
+export class ProfessorsComponent implements OnInit {
+    assignaturesManager = inject(AssignaturesManagerService);
+
+
+
+    // Dades de la classe actual conectada a la Base de Datos (ARA REACTIU!)
+    classeActual = computed(() => {
+        // Això llegeix constantment l'array d'assignatures del Manager
+        const llistaDeLaravel = this.assignaturesManager.assignatures();
+
+        // Com que la teva base de dades està buida de moment, li diem què mostrar si no hi ha res:
+        if (llistaDeLaravel.length === 0) {
+            return {
+                nom: 'Cap assignatura trobada',
+                estat: 'ESPERANT DADES...',
+                horaInici: '--:--',
+                horaFi: '--:--',
+                aula: 'TBD'
+            };
+        }
+        // Si tenim dades a Laravel, agafem la primera assignatura (només per començar)
+        // (Més endavant ho creuarem amb Horaris i Aules de debò)
+        const primera = llistaDeLaravel[0];
+
+        return {
+            nom: primera.nom,
+            estat: 'EN CURS ARA',
+            horaInici: '08:00',
+            horaFi: '09:00',
+            aula: 'A201'
+        };
+    });
+
     franjaHoraria = signal<'AM' | 'PM'>('AM');
 
-    // Dades de la classe actual
-    classeActual = {
-        nom: 'Matemáticas Avanzadas II',
-        estat: 'EN CURS ARA',
-        horaInici: '08:00',
-        horaFi: '09:00',
-        aula: 'A201'
-    };
 
     diesSetmana = ['Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres'];
 
@@ -51,4 +77,10 @@ export class ProfessorsComponent {
     commutarFranja() {
         this.franjaHoraria.update(valor => valor === 'AM' ? 'PM' : 'AM');
     }
+
+    // Implementación del método ngOnInit, esto pide a Laravel todas las asignaturas cuando el profe entra a su pantalla
+    ngOnInit() {
+        this.assignaturesManager.carregarAssignatures();
+    }
+
 }
