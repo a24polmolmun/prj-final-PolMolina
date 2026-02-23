@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 
 @Component({
   selector: 'app-alumnes',
@@ -6,4 +6,11 @@ import { Component } from '@angular/core';
   templateUrl: './alumneName.component.html',
   styleUrl: './alumneName.component.css',
 })
-export class AlumneNameComponent {}
+export class AlumneNameComponent {
+  alumneName = signal('alumneName');
+
+  faltes = signal('1');
+  arribatATemps = signal('4');
+
+  // cookie:id -> inscripcio:id -> assistencies / assignatures(llista)
+}
