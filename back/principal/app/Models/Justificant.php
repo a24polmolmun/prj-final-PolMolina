@@ -9,6 +9,8 @@ class Justificant extends Model
 {
     use HasFactory;
 
+    protected $table = 'justificants';
+
     protected $fillable = [
         'id_alum',
         'id_ass_ini',

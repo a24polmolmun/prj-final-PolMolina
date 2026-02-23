@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('trimestre_1_fi')->nullable(); // 1r_Trimestre
             $table->date('trimestre_2_ini')->nullable(); // 2n_Trimestre
             $table->date('trimestre_2_fi')->nullable(); // 2n_Trimestre
-            $table->date(column: 'trimestre_3_ini')->nullable(); // 3r_Trimestre
+            $table->date('trimestre_3_ini')->nullable(); // 3r_Trimestre
             $table->date('trimestre_3_fi')->nullable(); // 3r_Trimestre
         });
     }
@@ -29,6 +29,20 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('periodes');
+        Schema::table('periodes', function (Blueprint $table) {
+            // Remove the new columns
+            $table->dropColumn([
+                'trimestre_1_ini',
+                'trimestre_1_fi',
+                'trimestre_2_ini',
+                'trimestre_2_fi',
+                'trimestre_3_ini',
+                'trimestre_3_fi'
+            ]);
+            // Restore the old columns
+            $table->boolean('trimestre_1')->nullable();
+            $table->boolean('trimestre_2')->nullable();
+            $table->boolean('trimestre_3')->nullable();
+        });
     }
 };
