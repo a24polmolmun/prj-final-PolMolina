@@ -1,6 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { ApiManagerService } from '../api/api-manager.service';
 import { Inscrit } from '../../models/inscrits.model';
+import { assistenciaPerUsuari } from '../../../features/alumnes/[alumneName]/alumneName.component';
 
 @Injectable({
   providedIn: 'root',
@@ -9,6 +10,7 @@ export class InscritsManagerService {
   private apiManager = inject(ApiManagerService);
 
   inscrits = signal<Inscrit[]>([]);
+  inscritsPerUsuari = signal<assistenciaPerUsuari[]>([]);
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
 
@@ -39,8 +41,8 @@ export class InscritsManagerService {
     this.error.set(null);
 
     try {
-      const data = await this.apiManager.get<Inscrit[]>(`/inscrits/${idAlumne}`);
-      this.inscrits.set(data);
+      const data = await this.apiManager.get<assistenciaPerUsuari[]>(`/inscrits/${idAlumne}`);
+      this.inscritsPerUsuari.set(data);
     } catch (err) {
       this.error.set("Error de comunicació al carregar els inscrits de l'alumne");
       console.error(err);
@@ -48,11 +50,9 @@ export class InscritsManagerService {
       this.isLoading.set(false);
     }
   }
-
   /*
    * Inscriu un nou alumne (POST)
    */
-  
   async afegirInscrit(nouInscrit: Partial<Inscrit>) {
     try {
       const creada = await this.apiManager.post<Inscrit>('/inscrits', nouInscrit);
