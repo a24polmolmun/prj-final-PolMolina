@@ -7,13 +7,13 @@ export class SidebarService {
   // Estat (Signals)
   private _isOpen = signal<boolean>(true);
 
-
   // Getters
   isOpen = computed(() => this._isOpen());
 
   // Accions
   toggleSidebar() {
-    this._isOpen.update((value: boolean) => !value);
+    const estatActual = this._isOpen();
+    this._isOpen.set(!estatActual);
   }
 
   openSidebar() {

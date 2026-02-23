@@ -1,4 +1,6 @@
 ## docker compose -f compose.DEV.yml up --build
+
+## docker exec pfg1-back php artisan db:seed
 services:
   # Frontend Angular
   pfg1-front:
@@ -78,7 +80,7 @@ services:
     # Comprovació que el servei de MongoDB està disponible abans de permetre que el servei de mongo-express s'iniciï.
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 5m
+      interval: 10s
       timeout: 5s
       retries: 10
       start_period: 60s

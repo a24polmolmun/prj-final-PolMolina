@@ -49,14 +49,24 @@ export class InscritsManagerService {
     }
   }
 
-  /**
+  /*
    * Inscriu un nou alumne (POST)
    */
+  
   async afegirInscrit(nouInscrit: Partial<Inscrit>) {
     try {
-      const creat = await this.apiManager.post<Inscrit>('/inscrits', nouInscrit);
-      this.inscrits.update((actuals) => [...actuals, creat]);
-      return creat;
+      const creada = await this.apiManager.post<Inscrit>('/inscrits', nouInscrit);
+
+      // Lògica primitiva
+      const llistaActual = this.inscrits();
+      const llistaNova = [];
+      for (let i = 0; i < llistaActual.length; i++) {
+        llistaNova.push(llistaActual[i]);
+      }
+      llistaNova.push(creada);
+
+      this.inscrits.set(llistaNova);
+      return creada;
     } catch (err) {
       console.error('Error afegint inscrit:', err);
       throw err;
@@ -68,9 +78,25 @@ export class InscritsManagerService {
    */
   async actualitzarInscrit(id: number, dadesActualitzades: Partial<Inscrit>) {
     try {
-      const update = await this.apiManager.put<Inscrit>(`/inscrits/${id}`, dadesActualitzades);
-      this.inscrits.update((actuals) => actuals.map((i) => (i.id === id ? update : i)));
-      return update;
+      const actualitzacio = await this.apiManager.put<Inscrit>(
+        `/inscrits/${id}`,
+        dadesActualitzades,
+      );
+
+      // Lògica primitiva
+      const llistaActual = this.inscrits();
+      const llistaNova = [];
+      for (let i = 0; i < llistaActual.length; i++) {
+        const element = llistaActual[i];
+        if (element.id === id) {
+          llistaNova.push(actualitzacio);
+        } else {
+          llistaNova.push(element);
+        }
+      }
+
+      this.inscrits.set(llistaNova);
+      return actualitzacio;
     } catch (err) {
       console.error(`Error actualitzant inscrit ${id}:`, err);
       throw err;
@@ -83,7 +109,18 @@ export class InscritsManagerService {
   async esborrarInscrit(id: number) {
     try {
       await this.apiManager.delete(`/inscrits/${id}`);
-      this.inscrits.update((actuals) => actuals.filter((i) => i.id !== id));
+
+      // Lògica primitiva
+      const llistaActual = this.inscrits();
+      const llistaNova = [];
+      for (let i = 0; i < llistaActual.length; i++) {
+        const element = llistaActual[i];
+        if (element.id !== id) {
+          llistaNova.push(element);
+        }
+      }
+
+      this.inscrits.set(llistaNova);
       return true;
     } catch (err) {
       console.error(`Error esborrant inscrit ${id}:`, err);

@@ -11,13 +11,14 @@ use App\Http\Controllers\ImparteixController;
 use App\Http\Controllers\AssistenciaController;
 use App\Http\Controllers\JustificantController;
 
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')->group(function (): void {
 
     // Usuaris routes
     Route::apiResource('usuaris', UsuariController::class);
 
     // Classes routes
     Route::apiResource('classes', ClasseController::class);
+    Route::post('classes/assignarAlumnes', [ClasseController::class, 'assignarAlumnes']);
 
     // Assignatures routes
     Route::apiResource('assignatures', AssignaturaController::class);
@@ -36,6 +37,7 @@ Route::prefix('v1')->group(function () {
 
     // Assistencia routes
     Route::apiResource('assistencies', AssistenciaController::class);
+    Route::post('assistencies/generar', [AssistenciaController::class, 'generar']);
 
     // Justificants routes
     Route::apiResource('justificants', JustificantController::class);

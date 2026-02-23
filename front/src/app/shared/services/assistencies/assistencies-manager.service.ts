@@ -53,13 +53,24 @@ export class AssistenciesManagerService {
     }
   }
 
+  
   /**
    * Afegeix un nou registre d'assistència (POST)
    */
   async afegirAssistencia(novaAssistencia: Partial<Assistencia>) {
     try {
       const creat = await this.apiManager.post<Assistencia>('/assistencies', novaAssistencia);
-      this.assistencies.update((actuals) => [...actuals, creat]);
+
+      // Lògica primitiva: obtenir, copiar, afegir, guardar
+      const llistaActual = this.assistencies();
+      const llistaNova = [];
+
+      for (let i = 0; i < llistaActual.length; i++) {
+        llistaNova.push(llistaActual[i]);
+      }
+      llistaNova.push(creat);
+
+      this.assistencies.set(llistaNova);
       return creat;
     } catch (err) {
       console.error('Error creant assistència:', err);
@@ -72,12 +83,26 @@ export class AssistenciesManagerService {
    */
   async actualitzarAssistencia(id: number, dadesActualitzades: Partial<Assistencia>) {
     try {
-      const update = await this.apiManager.put<Assistencia>(
+      const actualitzacio = await this.apiManager.put<Assistencia>(
         `/assistencies/${id}`,
         dadesActualitzades,
       );
-      this.assistencies.update((actuals) => actuals.map((a) => (a.id === id ? update : a)));
-      return update;
+
+      // Lògica primitiva: bucle manual per actualitzar la llista
+      const llistaActual = this.assistencies();
+      const llistaNova = [];
+
+      for (let i = 0; i < llistaActual.length; i++) {
+        const element = llistaActual[i];
+        if (element.id === id) {
+          llistaNova.push(actualitzacio);
+        } else {
+          llistaNova.push(element);
+        }
+      }
+
+      this.assistencies.set(llistaNova);
+      return actualitzacio;
     } catch (err) {
       console.error(`Error actualitzant assistència ${id}:`, err);
       throw err;
@@ -90,14 +115,23 @@ export class AssistenciesManagerService {
   async esborrarAssistencia(id: number) {
     try {
       await this.apiManager.delete(`/assistencies/${id}`);
-      this.assistencies.update((actuals) => actuals.filter((a) => a.id !== id));
+
+      // Lògica primitiva: bucle manual per filtrar la llista
+      const llistaActual = this.assistencies();
+      const llistaNova = [];
+
+      for (let i = 0; i < llistaActual.length; i++) {
+        const element = llistaActual[i];
+        if (element.id !== id) {
+          llistaNova.push(element);
+        }
+      }
+
+      this.assistencies.set(llistaNova);
       return true;
     } catch (err) {
       console.error(`Error esborrant assistència ${id}:`, err);
       throw err;
     }
   }
-}
-function carregarInscritAlumne(idAlumne: number) {
-  throw new Error('Function not implemented.');
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -26,10 +27,9 @@ class Usuari extends Authenticatable
         'rol',
         'password',
         'token',
-        'google_id',
         'nfc_id',
-        'id_curs',
-        'horari_guardies',
+        'id_classe',
+        'horari_guardies'
     ];
 
     /**
@@ -58,7 +58,7 @@ class Usuari extends Authenticatable
 
     public function curs()
     {
-        return $this->belongsTo(Curs::class, 'id_curs');
+        return $this->belongsTo(Classe::class, 'id_classe');
     }
 
     public function inscrits()
