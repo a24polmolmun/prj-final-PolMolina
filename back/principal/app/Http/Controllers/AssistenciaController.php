@@ -207,4 +207,63 @@ class AssistenciaController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function assistenciaPerAlumne($alumneId){
+        $resultat = [];
+
+        //Get inscripcions * alumne
+        $inscripcions = DB::table('inscrits')
+            ->where('id_alumne', $alumneId)
+            ->select('id', 'id_assignatura')
+            ->get();
+        
+        //Get dades
+        foreach ($inscripcions as $inscripcio) {
+            $retard = 0;
+            $faltes = 0;
+            $justificades = 0;
+
+            //Get nom assignatura
+            $nomAssignatura = DB::table('assignatures')
+                ->where('id', $inscripcio->id_assignatura)
+                ->select('nom')
+                ->get();
+            
+            //Get id i estat
+            $assistenciesValue = DB::table('assistencies')
+                ->where('id_inscrit', $inscripcio->id)
+                ->select('id','estat')
+                ->get();
+            
+            foreach($assistenciesValue as $valor) {
+                switch ($valor->estat) {
+                    case 'Retart':
+                        $retard++;
+                        break;
+                    case 'Falta':
+                        $findJustificacio = DB::table('justificants')
+                        ->where('id_assistencia_ini', $valor->id )
+                        ->select(acceptada)
+                        ->get();
+
+                        if ($findJustificacio->acceptada === true){
+                            $justificades++;
+                        } else {
+                            $faltes++;
+                        } 
+
+                        break;
+                }
+            }
+            
+            $entry = (object) array(
+                'nom_assignatura' => $nomAssignatura, 
+                'retards' => $retard, 
+                'faltes' => $faltes,
+                'justificades' => $justificades, 
+            );
+            $resultat[] = $entry;
+        };
+        return $resultat;
+    }
 }
