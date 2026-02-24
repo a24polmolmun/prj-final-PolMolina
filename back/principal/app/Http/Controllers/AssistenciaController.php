@@ -236,8 +236,7 @@ class AssistenciaController extends Controller
                 ->get();
             
             
-            foreach($assistenciesValue as $valor) {
-                var_dump($valor->estat);    
+            foreach($assistenciesValue as $valor) {    
                 switch ($valor->estat) {
                     case 'Retart':
                         $retard++;
@@ -245,10 +244,10 @@ class AssistenciaController extends Controller
                     case 'Falta':
                         $findJustificacio = DB::table('justificants')
                         ->where('id_assistencia_ini', $valor->id )
-                        ->select(acceptada)
+                        ->select('acceptada')
                         ->get();
 
-                        if ($findJustificacio->acceptada === true){
+                        if ($findJustificacio == true){
                             $justificades++;
                         } else {
                             $faltes++;

@@ -42,5 +42,4 @@ Route::prefix('v1')->group(function (): void {
 
     // Justificants routes
     Route::apiResource('justificants', JustificantController::class);
-
 });
