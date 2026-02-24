@@ -38,6 +38,7 @@ Route::prefix('v1')->group(function (): void {
     // Assistencia routes
     Route::apiResource('assistencies', AssistenciaController::class);
     Route::post('assistencies/generar', [AssistenciaController::class, 'generar']);
+    Route::get('assistencia/assignatura/{id}', [AssistenciaController::class, 'perAssignatura']);
 
     // Justificants routes
     Route::apiResource('justificants', JustificantController::class);
