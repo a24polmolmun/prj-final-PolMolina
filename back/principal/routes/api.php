@@ -10,8 +10,13 @@ use App\Http\Controllers\HorariController;
 use App\Http\Controllers\ImparteixController;
 use App\Http\Controllers\AssistenciaController;
 use App\Http\Controllers\JustificantController;
+use App\Http\Controllers\AuthController;
 
 Route::prefix('v1')->group(function (): void {
+
+    // Auth routes (sin autenticación requerida)
+    Route::post('auth/google/redirect', [AuthController::class, 'googleRedirectUrl']);
+    Route::post('auth/google/callback', [AuthController::class, 'googleCallback']);
 
     // Usuaris routes
     Route::apiResource('usuaris', UsuariController::class);
