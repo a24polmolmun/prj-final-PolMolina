@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, OnInit, inject, signal } from '@angular/core';
 import { ApiManagerService } from '../api/api-manager.service';
 import { Inscrit } from '../../models/inscrits.model';
 import { assistenciaPerUsuari } from '../../../features/alumnes/[alumneName]/alumneName.component';
@@ -6,7 +6,7 @@ import { assistenciaPerUsuari } from '../../../features/alumnes/[alumneName]/alu
 @Injectable({
   providedIn: 'root',
 })
-export class InscritsManagerService {
+export class InscritsManagerService{
   private apiManager = inject(ApiManagerService);
 
   inscrits = signal<Inscrit[]>([]);
