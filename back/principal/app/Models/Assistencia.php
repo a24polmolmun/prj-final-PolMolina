@@ -26,4 +26,9 @@ class Assistencia extends Model
     {
         return $this->belongsTo(Inscrit::class, 'id_inscripcio');
     }
+
+    public function professor()
+    {
+        return $this->belongsTo(Usuari::class, 'id_profe');
+    }
 }
