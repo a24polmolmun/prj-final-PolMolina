@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('assistencies', function (Blueprint $table) {
-            $table->enum('estat', ['Assistit', 'Falta', 'Retard'])->nullable()->change();
+            $table->enum('estat', ['Assistit', 'Falta', 'Retart'])->nullable()->change();
         });
     }
 };
