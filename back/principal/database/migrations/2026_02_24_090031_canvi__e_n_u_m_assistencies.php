@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('assistencies', function (Blueprint $table) {
-            $table->enum('estat', ['Assistit', 'Falta', 'Retard'])->nullable()->change();
+            $table->dropColumn('estat');
+        });
+
+        Schema::table('assistencies', function (Blueprint $table) {
+            $table->enum('estat', ['Assistit', 'Falta', 'Retard'])->nullable();
         });
     }
 
@@ -22,7 +26,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('assistencies', function (Blueprint $table) {
-            $table->enum('estat', ['Assistit', 'Falta', 'Retart'])->nullable()->change();
+            $table->dropColumn('estat');
+        });
+
+        Schema::table('assistencies', function (Blueprint $table) {
+            $table->enum('estat', ['Assistit', 'Falta', 'Retart'])->nullable();
         });
     }
 };
