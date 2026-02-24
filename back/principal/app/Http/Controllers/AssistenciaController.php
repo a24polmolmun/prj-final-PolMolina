@@ -231,11 +231,13 @@ class AssistenciaController extends Controller
             
             //Get id i estat
             $assistenciesValue = DB::table('assistencies')
-                ->where('id_inscrit', $inscripcio->id)
+                ->where('id_inscripcio', $inscripcio->id)
                 ->select('id','estat')
                 ->get();
             
+            
             foreach($assistenciesValue as $valor) {
+                var_dump($valor->estat);    
                 switch ($valor->estat) {
                     case 'Retart':
                         $retard++;
