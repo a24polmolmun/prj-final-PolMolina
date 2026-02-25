@@ -1,0 +1,171 @@
+# Generar certificats
+# docker compose -f compose.PROD.yml run --rm --entrypoint tr2-reptes-tr2-grup2-certbot-1 certbot certonly --webroot --webroot-path /var/www/certbot -d renfe.daw.inspedralbes.cat --email a23cliferadn@inspedralbes.cat --agree-tos --no-eff-email
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    depends_on:
+      pfg1-back:
+        condition: service_started
+    restart: unless-stopped
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    # Loop para comprobar renovación de certificados cada 12h
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+  # Backend Laravel
+  pfg1-back:
+    container_name: pfg1-back
+    build:
+      context: .
+      dockerfile: ./back/principal/prod.Dockerfile
+    ports:
+      - 8000:8000
+    volumes:
+      - ./back/principal:/app
+    depends_on:
+      - pfg1-postgres
+    # entrypoint: ["/bin/sh", "-c"]
+    command: sh -c "cp /app/.env.PROD /app/.env && php artisan key:generate && exec php-fpm"
+    networks:
+      - general
+
+  # Backend Sensor nodejs
+  pfg1-sensor:
+    container_name: pfg1-sensor
+    image: node:22-bookworm-slim
+    command: sh -c "cp .env.PROD .env && npm install && node index.js"
+    volumes:
+      - ./back/sensor:/usr/src/app
+    ports:
+      - "3000:3000"
+    working_dir: /usr/src/app
+    depends_on:
+      - pfg1-rabbitmq
+    networks:
+      - general
+
+  # Backend DB insert nodejs
+  pfg1-dbinsert:
+    container_name: pfg1-dbinsert
+    image: node:22-bookworm-slim
+    command: sh -c "cp .env.PROD .env && npm install && node index.js"
+    volumes:
+      - ./back/dbinsert:/usr/src/app
+    working_dir: /usr/src/app
+    depends_on:
+      - pfg1-mongodb
+      - pfg1-sensor
+    networks:
+      - general
+
+  pfg1-mongodb:
+    image: mongo:6.0
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - mongo-bd:/data/db
+    # Comprovació que el servei de MongoDB està disponible abans de permetre que el servei de mongo-express s'iniciï.
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 60s
+    networks:
+      - general
+
+  pfg1-mongo-express:
+    image: mongo-express:latest
+    container_name: pfg1-mongo-express
+    restart: on-failure
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_PASSWORD}
+      ME_CONFIG_MONGODB_URL: mongodb://root:${MONGO_PASSWORD}@pfg1-mongodb:27017/?authSource=admin
+      ME_CONFIG_BASICAUTH: false
+      ME_CONFIG_MONGODB_AUTH_DATABASE: admin
+      ME_CONFIG_MONGODB_ENABLE_ADMIN: true
+    depends_on:
+      pfg1-mongodb:
+        condition: service_healthy
+    networks:
+      - general
+
+  pfg1-postgres:
+    image: postgres:16
+    container_name: pfg1-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: prf-renfe
+    volumes:
+      - postgres-bd:/var/lib/postgresql/data:rw
+    ports:
+      - 5432:5432
+    networks:
+      - general
+
+  portainer:
+    container_name: portainer
+    image: portainer/portainer-ce:lts
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    ports:
+      - 9443:9443
+  pfg1-pgadmin:
+    image: dpage/pgadmin4
+    container_name: pfg1-pgadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    depends_on:
+      - pfg1-postgres
+    networks:
+      - general
+
+  pfg1-rabbitmq:
+    image: rabbitmq:4.0-management-alpine
+    container_name: pfg1-rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - general
+
+volumes:
+  mongo-bd:
+  postgres-bd:
+  portainer_data:
+  rabbitmq_data:
+
+networks:
+  general:
+    driver: bridge
+    name: general
