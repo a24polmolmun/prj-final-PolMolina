@@ -5,12 +5,10 @@ import { AdministracioComponent } from './features/administracio/administracio.c
 import { LoginComponent } from './features/login/login.component';
 import { LlistaClasseComponent } from './features/professors/llista-classe/llista-classe.component';
 import { LlistaAssignaturesComponent } from './features/professors/llista-assignatures/llista-assignatures.component';
-import { AlumneNameComponent } from './features/alumnes/[alumneName]/alumneName.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'alumnes', component: AlumnesComponent },
-  { path: 'alumnes, alumnes.alumneName', component: AlumneNameComponent },
   { path: 'professors', component: ProfessorsComponent },
   { path: 'administracio', component: AdministracioComponent },
   { path: 'llista-classe', component: LlistaClasseComponent },

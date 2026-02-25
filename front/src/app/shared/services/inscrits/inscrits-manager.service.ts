@@ -1,14 +1,15 @@
-import { Injectable, OnInit, inject, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { ApiManagerService } from '../api/api-manager.service';
 import { Inscrit } from '../../models/inscrits.model';
-import { assistenciaPerUsuari } from '../../../features/alumnes/[alumneName]/alumneName.component';
+import { assistenciaPerUsuari } from '../../../features/alumnes/alumnes.component';
 
 @Injectable({
   providedIn: 'root',
 })
-export class InscritsManagerService{
+export class InscritsManagerService {
   private apiManager = inject(ApiManagerService);
 
+  idAlumne = signal<string>('idAlumne');
   inscrits = signal<Inscrit[]>([]);
   inscritsPerUsuari = signal<assistenciaPerUsuari[]>([]);
   isLoading = signal<boolean>(false);
@@ -36,12 +37,14 @@ export class InscritsManagerService{
    * Carrega els inscrits des de Laravel per alumneID
    */
 
-  async carregarInscritAlumne(idAlumne: number) {
+  async carregarInscritAlumne(idAlumne: string) {
     this.isLoading.set(true);
     this.error.set(null);
 
     try {
-      const data = await this.apiManager.get<assistenciaPerUsuari[]>(`/inscrits/${idAlumne}`);
+      const data = await this.apiManager.get<assistenciaPerUsuari[]>(
+        `/assistencies/alumne/${idAlumne}`,
+      );
       this.inscritsPerUsuari.set(data);
     } catch (err) {
       this.error.set("Error de comunicació al carregar els inscrits de l'alumne");

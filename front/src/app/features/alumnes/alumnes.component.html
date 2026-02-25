@@ -1,4 +1,44 @@
-<div class="contenidor">
-    <h2>Portal d'Alumnes</h2>
-    <p>Benvingut a l'àrea d'alumnes.</p>
-</div>
+<main>
+  <h2>Portal d'Alumnes</h2>
+  <div id="container_ desplegable">
+    <button (click)="showAssignaturas()">Veure faltes</button>
+    @if (showDespegable()) {
+      <div>
+        @for (assignatura of inscritsPerUsuari(); track $index) {
+          <button (click)="setIndex($index)">{{ assignatura.nom_assignatura[0].nom }}</button>
+        }
+      </div>
+    }
+
+    @if (inscritsPerUsuari().length > 0) {
+      <div id="container_comptador">
+        <div id="comptador">
+          @if (indexActual() !== -1) {
+            <span>{{ inscritsPerUsuari()[indexActual()].retards }}</span>
+          } @else {
+            <span>0 </span>
+          }
+          <div id="titol_comptador">Retards</div>
+        </div>
+        <div id="comptador">
+          @if (indexActual() !== -1) {
+            <span>{{ inscritsPerUsuari()[indexActual()].faltes }}</span>
+          } @else {
+            <span>0 </span>
+          }
+          <div id="titol_comptador">Faltes</div>
+        </div>
+        <div id="comptador">
+          @if (indexActual() !== -1) {
+            <span>{{ inscritsPerUsuari()[indexActual()].justificades }}</span>
+          } @else {
+            <span>0 </span>
+          }
+          <div id="titol_comptador">Justificades</div>
+        </div>
+      </div>
+    } @else {
+      <p>Carregant dades...</p>
+    }
+  </div>
+</main>
