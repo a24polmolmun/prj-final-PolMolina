@@ -6,9 +6,6 @@
     </span>
     @if (showDespegable()) {
       <div class="grid-assignatures">
-        @if (inscritsPerUsuari() === []){
-          <p>Hola</p>
-        }
         @for (assignatura of inscritsPerUsuari(); track $index) {
           <span
             class="assignatura-item"
