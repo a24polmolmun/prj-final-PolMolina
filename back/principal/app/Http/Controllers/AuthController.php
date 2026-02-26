@@ -17,7 +17,7 @@ class AuthController extends Controller
     {
         try {
             $redirectUrl = Socialite::driver('google')->stateless()->redirect()->getTargetUrl();
-
+            echo "a follar";
             return response()->json([
                 'success' => true,
                 'redirect_url' => $redirectUrl,

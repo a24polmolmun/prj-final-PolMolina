@@ -6,7 +6,7 @@ services:
   pfg1-front:
     container_name: pfg1-front
     image: node:24-bullseye
-    command: sh -c "cp .env.DEV .env && npm install && npm start -- --host 0.0.0.0"
+    command: sh -c "cp .env.DEV .env && npm run generate-env && npm install && npm start -- --host 0.0.0.0 --poll 2000"
     working_dir: /usr/src/app
     volumes:
       - ./front:/usr/src/app
