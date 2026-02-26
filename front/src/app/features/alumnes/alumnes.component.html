@@ -6,6 +6,9 @@
     </span>
     @if (showDespegable()) {
       <div class="grid-assignatures">
+        @if (inscritsPerUsuari() === []){
+          <p>Hola</p>
+        }
         @for (assignatura of inscritsPerUsuari(); track $index) {
           <span
             class="assignatura-item"
@@ -21,31 +24,19 @@
     <div class="container_comptador">
       <div class="comptador">
         <span class="numero">
-          @if (indexActual() !== -1) {
-            {{ inscritsPerUsuari()[indexActual()].retards }}
-          } @else {
-            0
-          }
+          {{ inscritsPerUsuari()[indexActual()].retards }}
         </span>
         <div class="titol_comptador">Retards</div>
       </div>
       <div class="comptador">
         <span class="numero">
-          @if (indexActual() !== -1) {
-            {{ inscritsPerUsuari()[indexActual()].faltes }}
-          } @else {
-            0
-          }
+          {{ inscritsPerUsuari()[indexActual()].faltes }}
         </span>
         <div class="titol_comptador">Faltes</div>
       </div>
       <div class="comptador">
         <span class="numero">
-          @if (indexActual() !== -1) {
-            {{ inscritsPerUsuari()[indexActual()].justificades }}
-          } @else {
-            0
-          }
+          {{ inscritsPerUsuari()[indexActual()].justificades }}
         </span>
         <div class="titol_comptador">Justificades</div>
       </div>
