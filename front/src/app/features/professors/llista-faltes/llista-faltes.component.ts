@@ -10,7 +10,35 @@ import { AssistenciesManagerService } from '../../../shared/services/assistencie
   styleUrl: './llista-faltes.component.css',
 })
 export class LlistaFaltesComponent implements OnInit {
+  assistenciesManager = inject(AssistenciesManagerService);
 
-    assistenciesManager = inject(AssistenciesManagerService);
-  ngOnInit() {}
+  ngOnInit() {
+    this.assistenciesManager.carregarAssistencies();
+  }
+
+  faltas = '';
+
+  assitenciesRanking = computed(() => {
+    const llistaAssis = this.assistenciesManager.assistencies();
+
+    const acumulador: any = {};
+
+    for (const assis of llistaAssis) {
+      if (assis.estat === 'Falta') {
+        const nomAssig = assis.inscripcio?.assignatura?.nom || 'Sense Asignatura';
+        const nomAlumne = assis.inscripcio?.alumne?.nom || 'Anònim';
+
+        if (!acumulador[nomAssig]) {
+          acumulador[nomAssig] = {};
+        }
+        if (!acumulador[nomAssig][nomAlumne]) {
+          acumulador[nomAssig][nomAlumne] = 0;
+        }
+      
+        acumulador[nomAssig][nomAlumne]++;
+      }
+    }
+
+    return acumulador;
+  });
 }

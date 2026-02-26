@@ -20,7 +20,7 @@ class AssistenciaController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => Assistencia::with(['inscripcio', 'professor'])->get(),
+            'data' => Assistencia::with(['inscripcio.alumne', 'inscripcio.assignatura', 'professor'])->get(),
             'message' => 'Assistències obtingudes correctament'
         ], Response::HTTP_OK);
     }
