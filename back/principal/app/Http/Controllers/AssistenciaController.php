@@ -208,8 +208,12 @@ class AssistenciaController extends Controller
         }
     }
 
-    public function assistenciaPerAlumne($alumneId){
+    public function assistenciaPerAlumne($tokenAlumne){
         $resultat = [];
+        //Get id * token
+        $alumneId = DB::table('usuaris')
+            ->where('token', $tokenAlumne)
+            ->value('id');
 
         //Get inscripcions * alumne
         $inscripcions = DB::table('inscrits')
