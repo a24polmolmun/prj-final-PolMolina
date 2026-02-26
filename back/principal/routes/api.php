@@ -47,21 +47,4 @@ Route::prefix('v1')->group(function (): void {
     // Justificants routes
     Route::apiResource('justificants', JustificantController::class);
 
-    // Google OAuth callback - Redirige al frontend con el código
-    Route::get('/auth/google/callback', function (\Illuminate\Http\Request $request) {
-        $code = $request->get('code');
-        $error = $request->get('error');
-
-        if ($error) {
-            return redirect()->away('http://localhost:4200/?error=' . $error);
-        }
-
-        if ($code) {
-            // Redirige al frontend con el código
-            return redirect()->away('http://localhost:4200/auth-callback?code=' . $code);
-        }
-
-        return redirect()->away('http://localhost:4200/?error=missing_code');
-    });
-
 });

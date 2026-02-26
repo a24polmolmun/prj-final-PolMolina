@@ -21,7 +21,7 @@ export class AuthService {
   public isAuthenticated = computed(() => this.isAuthenticatedSignal());
   public userData = computed(() => this.userDataSignal());
 
-  private apiUrl = 'http://localhost:8000/api/v1'; // Cambiar según tu backend
+  private apiUrl = 'http://localhost:8000/api/v1';
 
   constructor(
     private http: HttpClient,
@@ -39,7 +39,7 @@ export class AuthService {
   }
 
   /**
-   * Paso 1: Obtener URL de redirección de Google desde el backend
+   * Obtenir URL de redirecció de Google des del backend
    */
   loginWithGoogle() {
     this.http.post<{ success: boolean; redirect_url: string }>(
@@ -59,8 +59,7 @@ export class AuthService {
   }
 
   /**
-   * Paso 2: Manejar el callback (se llama desde auth-callback.component)
-   * Extrae el código de la URL y lo envía al backend
+   * Treballar amb el callback (se llama desde auth-callback.component)
    */
   handleGoogleCallback(code: string) {
     this.http.post<{ success: boolean; data: GoogleUser }>(
@@ -71,7 +70,10 @@ export class AuthService {
         if (response.success) {
           // Guardar datos del usuario
           const userData = response.data;
-          localStorage.setItem('user', JSON.stringify(userData));
+          localStorage.setItem('user', JSON.stringify(userData.user));
+          if (userData.token) {
+              localStorage.setItem('token', userData.token);
+          }
 
           this.userDataSignal.set(userData);
           this.isAuthenticatedSignal.set(true);

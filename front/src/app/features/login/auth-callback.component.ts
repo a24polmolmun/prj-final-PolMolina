@@ -7,7 +7,7 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   template: `
     <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
-      <p>Completando autenticación con Google...</p>
+      <img src="/loading.gif" alt="loading">
     </div>
   `
 })

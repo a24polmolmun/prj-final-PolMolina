@@ -32,6 +32,8 @@ export const environment = {
   googleClientId: '${envVars.GOOGLE_CLIENT_ID || ''}',
   googleClientSecret: '${envVars.GOOGLE_CLIENT_SECRET || ''}',
   googleRedirectUri: '${envVars.GOOGLE_REDIRECT_URI || ''}',
+  backendUrl: '${envVars.BACKEND_URL || ''}',
+  generalBackendUrl: '${envVars.GENERAL_BACKEND_URL || ''}',
 };
 `;
 

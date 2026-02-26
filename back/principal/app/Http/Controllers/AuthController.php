@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
 {
@@ -17,7 +19,6 @@ class AuthController extends Controller
     {
         try {
             $redirectUrl = Socialite::driver('google')->stateless()->redirect()->getTargetUrl();
-            echo "a follar";
             return response()->json([
                 'success' => true,
                 'redirect_url' => $redirectUrl,
@@ -61,31 +62,52 @@ class AuthController extends Controller
             }
 
             // Assignació de rol basada en el prefix del email
-            $user_rol = 'Alumne';
+            $user_rol = 'Profe';
             if (preg_match('/^a[0-9]{2}/', $user_email)) {
-                $user_rol = 'Profe';
+                $user_rol = 'Alumne';
+            }
+
+            // Per a fer proves, fem que el primer usuari sigui admin
+            if ($user_email === 'a23cliferand@inspedralbes.cat') {
+                $user_rol = 'Admin';
+            }
+
+            // Descargar foto si es la primera vez que se loguea (o no tiene)
+            $existingUser = Usuari::where('email', $user_email)->first();
+            $photoPath = $existingUser ? $existingUser->photo : null;
+
+            if (!$photoPath && $googleUser->getAvatar()) {
+                try {
+                    $contents = Http::get($googleUser->getAvatar())->body();
+                    // Guardar la foto con el nombre del email
+                    $filename = 'photos/' . $user_email . '.jpg';
+                    Storage::disk('public')->put($filename, $contents);
+                    $photoPath = '/storage/' . $filename; // Esta será la ruta para acceder desde frontend
+                } catch (\Exception $e) {
+                    Log::error('Error guardando la foto de perfil: ' . $e->getMessage());
+                }
             }
 
             // Crear o actualitzar l'usuari
             $user = Usuari::updateOrCreate(
-                ['google_id' => $googleUser->getId()],
+                ['email' => $user_email],
                 [
+                    'google_id' => $googleUser->getId(),
                     'nom' => $googleUser->getName(),
-                    'email' => $user_email,
                     'rol' => $user_rol,
-                    'token' => $googleUser->token
+                    'token' => $googleUser->token,
+                    'photo' => $photoPath
                 ]
             );
 
-            // Aquí pots generar un JWT token si uses Laravel Sanctum o similar
-            // Per ara, retornem el usuari autenticado
-            // Si uses Sanctum: $token = $user->createToken('google-auth')->plainTextToken;
+            // Generem el token de Sanctum per l'usuari
+            $token = $user->createToken('google-auth')->plainTextToken;
 
             return response()->json([
                 'success' => true,
                 'data' => [
                     'user' => $user,
-                    // 'token' => $token, // Descomentar si uses Sanctum
+                    'token' => $token,
                     'rol' => $user_rol
                 ],
                 'message' => 'Autenticació correcta'

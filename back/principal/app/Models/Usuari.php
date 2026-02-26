@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Usuari extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'usuaris';
 
@@ -29,7 +30,8 @@ class Usuari extends Authenticatable
         'google_id',
         'nfc_id',
         'id_classe',
-        'horari_guardies'
+        'horari_guardies',
+        'photo'
     ];
 
     /**
