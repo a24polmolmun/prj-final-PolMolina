@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { ApiManagerService } from '../api/api-manager.service';
-import { Horari } from '../../models/horaris.model';
+import { AssignaturaHorari, Horari } from '../../models/horaris.model';
 
 @Injectable({
   providedIn: 'root',
@@ -9,6 +9,8 @@ export class HorarisManagerService {
   private apiManager = inject(ApiManagerService);
 
   horaris = signal<Horari[]>([]);
+  horarisAssignatura = signal<AssignaturaHorari[]>([]);
+  token = signal<string>('tokenAlumne');
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
 
@@ -102,6 +104,19 @@ export class HorarisManagerService {
     } catch (err) {
       console.error(`Error esborrant horari ${id}:`, err);
       throw err;
+    }
+  }
+
+  async getHorari(token: string) {
+    try {
+      this.isLoading.set(true);
+      this.error.set(null);
+      this.horarisAssignatura.set(await this.apiManager.get(`horaris/usuari/${token}`));
+    } catch (err) {
+      console.error(`Error al obtenir l'horari de l'usuari: `, err);
+      throw err;
+    } finally {
+      this.isLoading.set(false);
     }
   }
 }

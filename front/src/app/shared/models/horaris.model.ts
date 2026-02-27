@@ -16,3 +16,8 @@ export interface Horari {
   created_at?: string;
   updated_at?: string;
 }
+
+export interface AssignaturaHorari {
+  assignatura: string;
+  horari: string[];
+}

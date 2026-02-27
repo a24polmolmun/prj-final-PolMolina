@@ -131,7 +131,7 @@ class HorariController extends Controller
         }
 
         $resultat = array();
-        // [ { dia: string, horari: [] } ]
+        // [ { assignatura: string, horari: [] } ]
         foreach ($assignatures as $assignatura) {
             $nom_assignatura = DB::table('assignatures')
                 ->where('id', $assignatura)
