@@ -79,6 +79,9 @@ jobs:
 
             # 7. Aixecar contenidors reconstruint la imatge
             echo " Construint i aixecant contenidors..."
-            docker compose -f compose.prod.yml up --build -d
+            docker compose -f compose.PROD.yml up --build -d
+
+            # 8. Habilitar el storage
+            docker compose -f compose.PROD.yml exec principal php artisan storage:link
 
             echo "Desplegem finalitzat amb èxit!"
