@@ -6,6 +6,7 @@ use App\Models\Horari;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class HorariController extends Controller
 {
@@ -98,5 +99,56 @@ class HorariController extends Controller
             'success' => true,
             'message' => 'Horari eliminat correctament'
         ], Response::HTTP_OK);
+    }
+
+    public function getHorari($tokenUser) {
+
+        $user = DB::table('usuaris')
+            ->where('token', $tokenUser)
+            ->select('id', 'rol')
+            ->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Usuari no trobat'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $userId = $user->id;
+        $userRol = $user->rol;
+
+        $assignatures = [];
+
+        if ($userRol === 'Alumne') {
+            $assignatures = DB::table('inscrits')
+                ->where('id_alumne', $userId)
+                ->pluck('id_assignatura');
+        } else if ($userRol === 'Profe') {
+            $assignatures = DB::table('imparteix')
+                ->where('id_profe', $userId)
+                ->pluck('id_assignatura');
+        }
+
+        $resultat = array();
+        // [ { dia: string, horari: [] } ]
+        foreach ($assignatures as $assignatura) {
+            $nom_assignatura = DB::table('assignatures')
+                ->where('id', $assignatura)
+                ->value('nom');
+
+            $horaris_assignatura = DB::table('horaris')
+                ->where('id_assig', $assignatura)
+                ->pluck('codi_hora');
+
+            $entry = (object) array(
+                'assignatura' => $nom_assignatura,
+                'horaris' => $horaris_assignatura
+            );
+
+            $resultat[] = $entry;
+        }
+
+        return $resultat;
     }
 }

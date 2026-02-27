@@ -31,6 +31,7 @@ Route::prefix('v1')->group(function (): void {
 
     // Horaris routes
     Route::apiResource('horaris', HorariController::class);
+    Route::get('/horaris/usuari/{token}', [HorariController::class, 'getHorari']);
 
     // Imparteix routes
     Route::apiResource('imparteix', ImparteixController::class);
