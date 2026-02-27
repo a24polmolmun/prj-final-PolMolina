@@ -38,9 +38,9 @@ Route::prefix('v1')->group(function (): void {
 
     // Assistencia routes
     Route::apiResource('assistencies', AssistenciaController::class);
+    Route::get('assistencies/alumne/{alumneId}', action: [AssistenciaController::class, 'assistenciaPerAlumne']);
     Route::post('assistencies/generar', [AssistenciaController::class, 'generar']);
 
     // Justificants routes
     Route::apiResource('justificants', JustificantController::class);
-
 });

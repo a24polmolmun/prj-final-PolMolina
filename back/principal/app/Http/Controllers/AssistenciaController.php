@@ -207,4 +207,82 @@ class AssistenciaController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+
+    public function assistenciaPerAlumne($tokenAlumne){
+        $resultat = [];
+        //Get id * token
+        $alumneId = DB::table('usuaris')
+            ->where('token', $tokenAlumne)
+            ->value('id');
+
+        //Get inscripcions * alumne
+        $inscripcions = DB::table('inscrits')
+            ->where('id_alumne', $alumneId)
+            ->select('id', 'id_assignatura')
+            ->get();
+        
+        $retard_total = 0;
+        $faltes_total = 0;
+        $justificades_total = 0;
+        
+        //Get dades
+        foreach ($inscripcions as $inscripcio) {
+            $retard = 0;
+            $faltes = 0;
+            $justificades = 0;
+
+            //Get nom assignatura
+            $nomAssignatura = DB::table('assignatures')
+                ->where('id', $inscripcio->id_assignatura)
+                ->select('nom')
+                ->get();
+            
+            //Get id i estat
+            $assistenciesValue = DB::table('assistencies')
+                ->where('id_inscripcio', $inscripcio->id)
+                ->select('id','estat')
+                ->get();
+            
+
+            foreach($assistenciesValue as $valor) {    
+                switch ($valor->estat) {
+                    case 'Retart':
+                        $retard++;
+                        $retard_total++;
+                        break;
+                    case 'Falta':
+                        $findJustificacio = DB::table('justificants')
+                        ->where('id_assistencia_ini', $valor->id )
+                        ->select('acceptada')
+                        ->get();
+
+                        if ($findJustificacio == true){
+                            $justificades++;
+                            $justificades_total++;
+                        } else {
+                            $faltes++;
+                            $faltes_total++;
+                        } 
+                        break;
+                }
+            }
+            
+            $entry = (object) array(
+                'nom_assignatura' => $nomAssignatura, 
+                'retards' => $retard, 
+                'faltes' => $faltes,
+                'justificades' => $justificades, 
+            );
+            $resultat[] = $entry;
+        };
+
+        $entry_total = (object) array(
+            'nom_assignatura' => [ (object) ['nom' => 'Total'] ],
+            'retards' => $retard_total,
+            'faltes' => $faltes_total,
+            'justificades' => $justificades_total,
+        );
+        array_unshift($resultat, $entry_total);
+        return $resultat;
+    }
 }

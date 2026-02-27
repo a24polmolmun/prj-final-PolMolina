@@ -1,0 +1,42 @@
+<main>
+  <h2 class="titol_pagina">Portal d'Alumnes</h2>
+  <div id="container_desplegable">
+    <span class="toggler" [class.obert]="showDespegable()" (click)="showAssignaturas()">
+      {{ showDespegable() ? '▲ Amagar assignatures' : '▼ Veure faltes per assignatura' }}
+    </span>
+    @if (showDespegable()) {
+      <div class="grid-assignatures">
+        @for (assignatura of inscritsPerUsuari(); track $index) {
+          <span
+            class="assignatura-item"
+            (click)="setIndex($index)"
+            [class.actiu]="indexActual() === $index"
+          >
+            {{ assignatura.nom_assignatura[0].nom }}
+          </span>
+        }
+      </div>
+    }
+
+    <div class="container_comptador">
+      <div class="comptador">
+        <span class="numero">
+          {{ inscritsPerUsuari()[indexActual()].retards }}
+        </span>
+        <div class="titol_comptador">Retards</div>
+      </div>
+      <div class="comptador">
+        <span class="numero">
+          {{ inscritsPerUsuari()[indexActual()].faltes }}
+        </span>
+        <div class="titol_comptador">Faltes</div>
+      </div>
+      <div class="comptador">
+        <span class="numero">
+          {{ inscritsPerUsuari()[indexActual()].justificades }}
+        </span>
+        <div class="titol_comptador">Justificades</div>
+      </div>
+    </div>
+  </div>
+</main>
