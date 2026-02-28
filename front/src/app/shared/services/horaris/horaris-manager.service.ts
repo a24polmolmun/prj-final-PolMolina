@@ -1,6 +1,11 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { ApiManagerService } from '../api/api-manager.service';
 import { AssignaturaHorari, Horari } from '../../models/horaris.model';
+
+export interface DiaCalendari {
+  dia: string;
+  assignatures: string[];
+}
 
 @Injectable({
   providedIn: 'root',
@@ -9,10 +14,19 @@ export class HorarisManagerService {
   private apiManager = inject(ApiManagerService);
 
   horaris = signal<Horari[]>([]);
-  horarisAssignatura = signal<AssignaturaHorari[]>([]);
-  token = signal<string>('tokenAlumne');
+  horarisAssignaturaBrut = signal<AssignaturaHorari[]>([]);
+  horarisAssignaturaNet = signal<DiaCalendari[]>([]);
+  token = signal<string>('tokenAlumno');
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
+
+  private readonly diesOrdre = [
+    { lletra: 'L', nom: 'dilluns' },
+    { lletra: 'M', nom: 'dimarts' },
+    { lletra: 'X', nom: 'dimecres' },
+    { lletra: 'J', nom: 'dijous' },
+    { lletra: 'V', nom: 'divendres' },
+  ];
 
   /**
    * Carrega els horaris des de Laravel i actualitza els Signals
@@ -111,7 +125,41 @@ export class HorarisManagerService {
     try {
       this.isLoading.set(true);
       this.error.set(null);
-      this.horarisAssignatura.set(await this.apiManager.get(`horaris/usuari/${token}`));
+      this.horarisAssignaturaBrut.set(await this.apiManager.get(`/horaris/usuari/${token}`));
+
+      this.horarisAssignaturaNet.update(() => {
+        const mapa: Record<string, { hora: number; assignatura: string }[]> = {
+          L: [],
+          M: [],
+          X: [],
+          J: [],
+          V: [],
+        };
+
+        for (const item of this.horarisAssignaturaBrut()) {
+          for (const codi of item.horari) {
+            const lletra = codi.charAt(0);
+            const hora = parseInt(codi.substring(1));
+            if (mapa[lletra] !== undefined) {
+              mapa[lletra].push({ hora, assignatura: item.assignatura });
+            }
+          }
+        }
+
+        const resultat: DiaCalendari[] = [];
+        for (const { lletra, nom } of this.diesOrdre) {
+          const entrades = mapa[lletra];
+          if (entrades.length > 0) {
+            entrades.sort((a, b) => a.hora - b.hora);
+            resultat.push({
+              dia: nom,
+              assignatures: entrades.map((e) => e.assignatura),
+            });
+          }
+        }
+
+        return resultat;
+      });
     } catch (err) {
       console.error(`Error al obtenir l'horari de l'usuari: `, err);
       throw err;

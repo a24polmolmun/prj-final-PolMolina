@@ -1,0 +1,10 @@
+<div class="calendari-frame">
+  <div class="dia-col" *ngFor="let dia of calendari()">
+    <h3 class="dia-titol">{{ dia.dia }}</h3>
+    <ul class="assignatures-llista">
+      <li class="assignatura-item" *ngFor="let assignatura of dia.assignatures">
+        {{ assignatura }}
+      </li>
+    </ul>
+  </div>
+</div>
