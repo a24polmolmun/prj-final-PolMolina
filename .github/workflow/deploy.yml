@@ -44,8 +44,10 @@ jobs:
             # Nota: Fem servir les variables d'entorn ($VAR) en lloc de la interpolació de GitHub
             echo "Creant .env.PROD FRONT..."
             cd front
-            echo "VITE_URL_BACK=$API_URL" > .env
-            # Falta todo lo de Google
+            cp .env.PROD .env
+            echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> .env
+            echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> .env
+            echo "GOOGLE_REDIRECT_URI=http://localhost:8000/auth/google/callback" >> .env
             cd ..
 
             # 4. Crear .env.PROD BACK Principal
@@ -76,6 +78,12 @@ jobs:
             echo "Copiant .env.PROD de Back Sensor..."
             #Per Ara res més
             cd ..
+
+            # 7. Instalar tot el back principal
+            echo "Instal·lant dependències del back principal..."
+            cd back/principal
+            composer install
+            cd ../..
 
             # 7. Aixecar contenidors reconstruint la imatge
             echo " Construint i aixecant contenidors..."

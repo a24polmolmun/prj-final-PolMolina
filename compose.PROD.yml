@@ -1,5 +1,5 @@
 # Generar certificats
-# docker compose -f compose.PROD.yml run --rm --entrypoint tr2-reptes-tr2-grup2-certbot-1 certbot certonly --webroot --webroot-path /var/www/certbot -d renfe.daw.inspedralbes.cat --email a23cliferadn@inspedralbes.cat --agree-tos --no-eff-email
+# docker compose -f compose.PROD.yml run --rm --entrypoint prj-final-r-e-n-f-e-certbot-1 certbot certonly --webroot --webroot-path /var/www/certbot -d renfe.daw.inspedralbes.cat --email a23cliferadn@inspedralbes.cat --agree-tos --no-eff-email
 services:
   nginx:
     build:
@@ -38,7 +38,7 @@ services:
     depends_on:
       - pfg1-postgres
     # entrypoint: ["/bin/sh", "-c"]
-    command: sh -c "cp /app/.env.PROD /app/.env && php artisan key:generate && exec php-fpm"
+    command: sh -c "cp /app/.env.PROD /app/.env && php artisan key:generate && php artisan storage:link || true && exec php-fpm"
     networks:
       - general
 
