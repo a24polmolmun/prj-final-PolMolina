@@ -130,8 +130,16 @@ class HorariController extends Controller
                 ->pluck('id_assignatura');
         }
 
-        $resultat = array();
-        // [ { assignatura: string, horari: [] } ]
+        $diesOrdre = [
+            ['lletra' => 'L', 'nom' => 'dilluns'],
+            ['lletra' => 'M', 'nom' => 'dimarts'],
+            ['lletra' => 'X', 'nom' => 'dimecres'],
+            ['lletra' => 'J', 'nom' => 'dijous'],
+            ['lletra' => 'V', 'nom' => 'divendres'],
+        ];
+
+        $mapa = ['L' => [], 'M' => [], 'X' => [], 'J' => [], 'V' => []];
+
         foreach ($assignatures as $assignatura) {
             $nom_assignatura = DB::table('assignatures')
                 ->where('id', $assignatura)
@@ -143,12 +151,30 @@ class HorariController extends Controller
 
             $entry = (object) array(
                 'assignatura' => $nom_assignatura,
-                'horaris' => $horaris_assignatura
+                'horari' => $horaris_assignatura
             );
 
-            $resultat[] = $entry;
+            foreach ($entry->horari as $codi) {
+                $lletra = $codi[0];
+                $hora   = (int) substr($codi, 1);
+                if (array_key_exists($lletra, $mapa)) {
+                    $mapa[$lletra][] = ['hora' => $hora, 'assignatura' => $entry->assignatura];
+                }
+            }
         }
 
-        return $resultat;
+        $resultat = [];
+        foreach ($diesOrdre as $dia) {
+            $entrades = $mapa[$dia['lletra']];
+            if (count($entrades) > 0) {
+                usort($entrades, fn($a, $b) => $a['hora'] - $b['hora']);
+                $resultat[] = [
+                    'dia'          => $dia['nom'],
+                    'assignatures' => array_column($entrades, 'assignatura'),
+                ];
+            }
+        }
+
+        return response()->json($resultat, Response::HTTP_OK);
     }
 }

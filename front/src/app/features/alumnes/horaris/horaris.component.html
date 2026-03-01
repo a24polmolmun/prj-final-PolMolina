@@ -1,10 +1,24 @@
-<div class="calendari-frame">
-  <div class="dia-col" *ngFor="let dia of calendari()">
-    <h3 class="dia-titol">{{ dia.dia }}</h3>
-    <ul class="assignatures-llista">
-      <li class="assignatura-item" *ngFor="let assignatura of dia.assignatures">
-        {{ assignatura }}
-      </li>
-    </ul>
-  </div>
-</div>
+<main>
+  <h2 class="titol_pagina">Horari</h2>
+
+  @if (horarisManager.isLoading()) {
+    <p class="estat-missatge">Carregant horari…</p>
+  } @else if (horarisManager.error()) {
+    <p class="estat-missatge estat-error">{{ horarisManager.error() }}</p>
+  } @else if (calendari().length === 0) {
+    <p class="estat-missatge">No hi ha horari disponible.</p>
+  } @else {
+    <div class="calendari-frame">
+      @for (dia of calendari(); track $index) {
+        <div class="dia-col">
+          <div class="dia-titol">{{ dia.dia }}</div>
+          <ul class="assignatures-llista">
+            @for (assignatura of dia.assignatures; track $index) {
+              <li class="assignatura-item">{{ assignatura }}</li>
+            }
+          </ul>
+        </div>
+      }
+    </div>
+  }
+</main>

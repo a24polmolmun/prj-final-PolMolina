@@ -1,0 +1,87 @@
+/* ── Palette ─────────────────────────────────────────── */
+/* primary:   #312e81  (deep indigo)                     */
+/* secondary: #ffffff  (white)                           */
+/* tertiary:  #6366f1  (mid indigo)                      */
+
+/* ── Títol pàgina ────────────────────────────────────── */
+.titol_pagina {
+  color: #312e81;
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  padding: 24px 20px 8px;
+  margin: 0;
+}
+
+/* ── Calendari frame ─────────────────────────────────── */
+.calendari-frame {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+/* ── Dia column ──────────────────────────────────────── */
+.dia-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 140px;
+  flex: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(49, 46, 129, 0.35);
+}
+
+/* ── Dia title (header of card) ──────────────────────── */
+.dia-titol {
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: capitalize;
+  color: #ffffff;
+  background-color: #312e81;
+  padding: 10px 14px;
+  margin: 0;
+  text-align: center;
+}
+
+/* ── Assignatures list ───────────────────────────────── */
+.assignatures-llista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background-color: #6366f1;
+  flex: 1;
+}
+
+/* ── Assignatura items ───────────────────────────────── */
+.assignatura-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10px 8px;
+  color: #ffffff;
+  font-weight: 500;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  transition: background-color 0.2s;
+}
+
+.assignatura-item:first-child {
+  border-top: none;
+}
+
+.assignatura-item:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ── Estat missatges ─────────────────────────────────── */
+.estat-missatge {
+  padding: 20px;
+  color: #312e81;
+  font-weight: 500;
+}
+
+.estat-error {
+  color: #dc2626;
+}

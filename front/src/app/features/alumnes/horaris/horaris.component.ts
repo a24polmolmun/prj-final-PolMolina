@@ -1,10 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { HorarisManagerService } from '../../../shared/services/horaris/horaris-manager.service';
 
 @Component({
   selector: 'horaris-alumne',
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './horaris.component.html',
   styleUrl: './horaris.component.css',
 })
