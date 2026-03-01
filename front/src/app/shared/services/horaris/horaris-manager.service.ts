@@ -1,11 +1,6 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { ApiManagerService } from '../api/api-manager.service';
-import { AssignaturaHorari, Horari } from '../../models/horaris.model';
-
-export interface DiaCalendari {
-  dia: string;
-  assignatures: string[];
-}
+import { DiaCalendari, Horari } from '../../models/horaris.model';
 
 @Injectable({
   providedIn: 'root',
@@ -14,19 +9,10 @@ export class HorarisManagerService {
   private apiManager = inject(ApiManagerService);
 
   horaris = signal<Horari[]>([]);
-  horarisAssignaturaBrut = signal<AssignaturaHorari[]>([]);
   horarisAssignaturaNet = signal<DiaCalendari[]>([]);
   token = signal<string>('tokenAlumno');
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
-
-  private readonly diesOrdre = [
-    { lletra: 'L', nom: 'dilluns' },
-    { lletra: 'M', nom: 'dimarts' },
-    { lletra: 'X', nom: 'dimecres' },
-    { lletra: 'J', nom: 'dijous' },
-    { lletra: 'V', nom: 'divendres' },
-  ];
 
   /**
    * Carrega els horaris des de Laravel i actualitza els Signals

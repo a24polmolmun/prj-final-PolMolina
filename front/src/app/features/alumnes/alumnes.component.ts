@@ -31,6 +31,6 @@ export class AlumnesComponent implements OnInit {
   // cookie:id -> inscripcio:id -> assistencies / assignatures(llista)
   ngOnInit(): void {
     const tokenAlumne: string = this.inscritsManager.idAlumne();
-    this.inscritsManager.carregarInscritAlumne('3');
+    this.inscritsManager.carregarInscritAlumne(tokenAlumne);
   }
 }
