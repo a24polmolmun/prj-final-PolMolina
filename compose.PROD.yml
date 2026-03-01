@@ -36,6 +36,8 @@ services:
       dockerfile: ./back/principal/prod.Dockerfile
     ports:
       - 8000:8000
+    # volumes:
+    #   - ./back/principal:/app
     depends_on:
       - pfg1-postgres
     # entrypoint: ["/bin/sh", "-c"]
