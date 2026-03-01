@@ -41,7 +41,7 @@ services:
     depends_on:
       - pfg1-postgres
     # entrypoint: ["/bin/sh", "-c"]
-    command: sh -c "php artisan key:generate && php artisan storage:link || true && exec php-fpm"
+    command: sh -c "composer install --no-dev --no-interaction && php artisan key:generate && php artisan storage:link || true && exec php-fpm"
     networks:
       - general
 
