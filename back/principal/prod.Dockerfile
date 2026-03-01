@@ -1,11 +1,17 @@
 # Build stage - Construir dependencias y extensiones
-FROM php:8.4.2-fpm-alpine AS builder
+FROM php:8.4.2-fpm AS builder
 
 WORKDIR /app
 
 # Instalar dependencias del sistema requeridas para compilar extensiones
-RUN apk add --no-cache git unzip libpq-dev libzip-dev oniguruma-dev \
-    && docker-php-ext-install pdo pdo_pgsql zip bcmath mbstring
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    unzip \
+    libpq-dev \
+    libzip-dev \
+    libonig-dev \
+    && docker-php-ext-install pdo pdo_pgsql zip bcmath mbstring \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
@@ -22,25 +28,27 @@ COPY back/principal/ ./
 RUN composer dump-autoload --optimize
 
 # Production stage - Imagen final ligera
-FROM php:8.4.2-fpm-alpine
+FROM php:8.4.2-fpm
 
 WORKDIR /app
 
 # Instalar SOLO librerías en tiempo de ejecución (sin dependencias de compilación)
-RUN apk add --no-cache libpq libzip liboniguruma
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    libzip4 \
+    libonig5 \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copiar las extensiones de PHP ya compiladas desde la etapa builder
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
 
-# Copiar configuración PHP optimizada (Sintaxis Heredoc corregida)
-COPY <<EOF /usr/local/etc/php/conf.d/app.ini
-memory_limit=256M
-max_execution_time=30
-upload_max_filesize=20M
-post_max_size=20M
-expose_php=Off
-EOF
+# Copiar configuración PHP optimizada
+RUN echo "memory_limit=256M" > /usr/local/etc/php/conf.d/app.ini \
+    && echo "max_execution_time=30" >> /usr/local/etc/php/conf.d/app.ini \
+    && echo "upload_max_filesize=20M" >> /usr/local/etc/php/conf.d/app.ini \
+    && echo "post_max_size=20M" >> /usr/local/etc/php/conf.d/app.ini \
+    && echo "expose_php=Off" >> /usr/local/etc/php/conf.d/app.ini
 
 # Copiar aplicación completa (código + vendor) desde el builder
 COPY --from=builder /app /app
