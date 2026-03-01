@@ -76,12 +76,7 @@ jobs:
             echo "Copiant .env.PROD de Back Sensor..."
             #Per Ara res més
 
-            # 7. Instalar tot el back principal
-            echo "Instal·lant dependències del back principal..."
-            cd /prj-final-r-e-n-f-e/back/principal
-            composer install
-
-            # 8. Aixecar contenidors reconstruint la imatge
+            # 7. Aixecar contenidors reconstruint la imatge
             echo " Construint i aixecant contenidors..."
             cd /prj-final-r-e-n-f-e
             docker compose -f compose.PROD.yml up --build -d
