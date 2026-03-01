@@ -39,6 +39,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libonig5 \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Copiar composer desde la imagen oficial
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
 # Copiar las extensiones de PHP ya compiladas desde la etapa builder
 COPY --from=builder /usr/local/lib/php/extensions/ /usr/local/lib/php/extensions/
 COPY --from=builder /usr/local/etc/php/conf.d/ /usr/local/etc/php/conf.d/
