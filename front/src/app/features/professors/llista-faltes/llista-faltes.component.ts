@@ -21,24 +21,60 @@ export class LlistaFaltesComponent implements OnInit {
   assitenciesRanking = computed(() => {
     const llistaAssis = this.assistenciesManager.assistencies();
 
-    const acumulador: any = {};
+    // Primer de tot, ens quedem només amb els que han faltat
+    const totesLesFaltes = [];
 
-    for (const assis of llistaAssis) {
-      if (assis.estat === 'Falta') {
-        const nomAssig = assis.inscripcio?.assignatura?.nom || 'Sense Asignatura';
-        const nomAlumne = assis.inscripcio?.alumne?.nom || 'Anònim';
-
-        if (!acumulador[nomAssig]) {
-          acumulador[nomAssig] = {};
-        }
-        if (!acumulador[nomAssig][nomAlumne]) {
-          acumulador[nomAssig][nomAlumne] = 0;
-        }
-      
-        acumulador[nomAssig][nomAlumne]++;
+    for (let i = 0; i < llistaAssis.length; i++) {
+      if (llistaAssis[i].estat === 'Falta') {
+        totesLesFaltes.push(llistaAssis[i]);
       }
     }
 
-    return acumulador;
+    // Els agruparem per alumne i assignatura: comptem quantes faltes té cada nen per cada assignatura.
+    // Format de la llista:
+    // [ { nomAlumne: 'Joan', nomAssignatura: 'Matemàtiques', totalFaltes: 3 } ]
+
+    const diccionariAlumnesAssignatures: any = {};
+
+    for (let i = 0; i < totesLesFaltes.length; i++) {
+      const assis = totesLesFaltes[i];
+
+      // Pillem el nom sencer de l'alumne si ens l'ha passat el backend
+      let nomAlumne = 'Alumne Desconegut';
+      if (assis.inscripcio && assis.inscripcio.alumne) {
+        nomAlumne = assis.inscripcio.alumne.nom + ' ' + assis.inscripcio.alumne.cognom;
+      }
+
+      let nomAssignatura = 'Assignatura Desconeguda';
+      if (assis.inscripcio && assis.inscripcio.assignatura) {
+        nomAssignatura = assis.inscripcio.assignatura.nom;
+      }
+
+      const clauUnica = nomAlumne + '|||' + nomAssignatura;
+
+      if (!diccionariAlumnesAssignatures[clauUnica]) {
+        diccionariAlumnesAssignatures[clauUnica] = {
+          alumne: nomAlumne,
+          assignatura: nomAssignatura,
+          faltes: 0
+        };
+      }
+      diccionariAlumnesAssignatures[clauUnica].faltes++;
+    }
+
+    // Passem el diccionari a una llista (array) ordenadeta per l'HTML
+    const rankingArray = [];
+    for (const clau in diccionariAlumnesAssignatures) {
+      rankingArray.push({
+        nomAlumne: diccionariAlumnesAssignatures[clau].alumne,
+        nomAssignatura: diccionariAlumnesAssignatures[clau].assignatura,
+        totalFaltes: diccionariAlumnesAssignatures[clau].faltes
+      });
+    }
+
+    // Finalment, ho endrecem amb els alumnes amb més faltes primer
+    rankingArray.sort((a, b) => b.totalFaltes - a.totalFaltes);
+
+    return rankingArray;
   });
 }

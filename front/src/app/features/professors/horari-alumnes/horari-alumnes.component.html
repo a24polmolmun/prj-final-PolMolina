@@ -1,0 +1,106 @@
+<div class="disseny-principal">
+    <app-sidebar></app-sidebar>
+
+    <div class="contingut">
+        <div class="targeta-llista">
+            <div class="capçalera-llista">
+                <h1>Horari de la meva Tutoria</h1>
+                <p class="setmana-info">Gestió de l'horari setmanal de la classe</p>
+            </div>
+
+            <div class="contenedor-taula">
+                <table class="taula-horari">
+                    <thead>
+                        <tr>
+                            <th class="col-hora">Hora</th>
+                            <th>Lunes</th>
+                            <th>Martes</th>
+                            <th>Miércoles</th>
+                            <th>Jueves</th>
+                            <th>Viernes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (fila of graellaHorari(); track fila.hora) {
+                        <tr>
+                            <td class="hora-casella">{{ fila.hora }}</td>
+
+                            @for (assig of fila.assignatures; track $index) {
+                            @if (assig === 'ESBARJO') {
+                            <td class="casella-esbarjo"
+                                style="background-color: #f1f5f9; text-align: center; color: #94a3b8; font-weight: bold;">
+                                PATI
+                            </td>
+                            } @else if (assig !== '') {
+                            <td class="casella-activa">
+                                <div class="contingut-casella">
+                                    <!-- Usamos pre-line para que pille los saltos de línea \n que hemos metido en el TS -->
+                                    <span class="nom-assig" style="white-space: pre-line;">{{ assig }}</span>
+                                </div>
+                                <!-- Botón para modificar esta casilla en un futuro -->
+                                <button (click)="obrirModalCreacio($index, fila.hora)" class="btn-editar"
+                                    style="margin-top: 5px; font-size: 0.8rem;">Modificar</button>
+                            </td>
+                            } @else {
+                            <td class="casella-buida">
+                                <!-- Si no hay asignatura, mostramos el botón de añadir -->
+                                <button (click)="obrirModalCreacio($index, fila.hora)" class="btn-afegir">+</button>
+                            </td>
+                            }
+                            }
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- INTERFÍCIE FLOTANT (MODAL) PER EDITAR HORARI -->
+@if (mostrarModal()) {
+<div class="fons-modal"
+    style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
+    <div class="caixa-modal"
+        style="background: white; padding: 2rem; border-radius: 12px; width: 500px; max-width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+
+        <h2 style="margin-top: 0; color: #1e293b; font-size: 1.5rem; text-align: center;">
+            Modificar Casella {{ codiHoraSeleccionada() }}
+        </h2>
+        <p style="color: #64748b; margin-bottom: 20px; text-align: center;">Assigna l'assignatura i aula per aquesta
+            franja</p>
+        <!-- Selector d'Assignatura -->
+        <div style="margin-bottom: 1.5rem;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #334155;">Assignatura</label>
+            <select [(ngModel)]="idAssignaturaSeleccionada"
+                style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem;">
+                <option [ngValue]="null">-- Selecciona una Assignatura --</option>
+                @for (assig of assignaturesManagerService.assignatures(); track assig.id) {
+                <option [ngValue]="assig.id">{{ assig.nom }}</option>
+                }
+            </select>
+        </div>
+        <!-- Selector d'Aula -->
+        <div style="margin-bottom: 2rem;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #334155;">Aula</label>
+            <select [(ngModel)]="idAulaSeleccionada"
+                style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem;">
+                <option [ngValue]="null">-- Selecciona una Aula --</option>
+                @for (aula of aulesManagerService.aules(); track aula.id) {
+                <option [ngValue]="aula.id">{{ aula.nom }}</option>
+                }
+            </select>
+        </div>
+        <!-- Botons d'Acció -->
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+            <button (click)="mostrarModal.set(false)"
+                style="padding: 10px 20px; border: none; background: #e2e8f0; color: #475569; border-radius: 8px; cursor: pointer; font-weight: bold;">Cancel·lar</button>
+            <!-- El botón de salvar de momento no hace nada, se lo pondremos en el último paso! -->
+            <button
+                style="padding: 10px 20px; border: none; background: #6366f1; color: white; border-radius: 8px; cursor: pointer; font-weight: bold;">Desar
+                Canvis</button>
+        </div>
+
+    </div>
+</div>
+}

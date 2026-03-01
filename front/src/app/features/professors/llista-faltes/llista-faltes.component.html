@@ -1,11 +1,52 @@
-<app-sidebar></app-sidebar>
+<div class="disseny-principal">
+  <app-sidebar></app-sidebar>
 
-<div class="fons-organic">
-  <div class="forma forma-1"></div>
-  <div class="forma forma-2"></div>
-  <div class="forma forma-3"></div>
-</div>
+  <div class="fons-organic">
+    <div class="forma forma-1"></div>
+    <div class="forma forma-2"></div>
+    <div class="forma forma-3"></div>
+  </div>
 
-<div class="contingut">
-  <div class="targeta-llista"></div>
+  <div class="contingut">
+    <div class="targeta-llista">
+      <div class="capçalera-llista">
+        <h1>Rànquing de Faltes</h1>
+        <p class="setmana-info">Alumnes amb més absències acumulades</p>
+      </div>
+
+      <div class="contenedor-taula">
+        <table class="taula-assistencia">
+          <thead>
+            <tr>
+              <th class="col-nom">Nom de l'alumne</th>
+              <th class="col-nom">Assignatura</th>
+              <th class="col-dia">Total de Faltes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Iterem l'array que he arreglat al TypeScript -->
+            @for (alumne of assitenciesRanking(); track alumne.nomAlumne + alumne.nomAssignatura) {
+            <tr>
+              <td class="nom-alumne" style="font-weight: 600;">{{ alumne.nomAlumne }}</td>
+              <td class="nom-assignatura" style="color: #64748b;">{{ alumne.nomAssignatura }}</td>
+              <td class="celda-assistencia">
+                <div class="estat-input" data-estat="F"
+                  style="display: inline-flex; align-items: center; justify-content: center;">
+                  {{ alumne.totalFaltes }}
+                </div>
+              </td>
+            </tr>
+            }
+            @empty {
+            <tr>
+              <td colspan="3" style="text-align: center; padding: 20px; color: #64748b;">
+                No hi ha cap falta registrada al sistema encara.
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>

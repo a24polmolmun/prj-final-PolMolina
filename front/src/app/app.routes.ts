@@ -6,6 +6,8 @@ import { LoginComponent } from './features/login/login.component';
 import { LlistaClasseComponent } from './features/professors/llista-classe/llista-classe.component';
 import { LlistaAssignaturesComponent } from './features/professors/llista-assignatures/llista-assignatures.component';
 import { LlistaFaltesComponent } from './features/professors/llista-faltes/llista-faltes.component';
+import { GestioInscritsComponent } from './features/professors/gestio-classe/gestio-inscrits.component';
+import { HorariAlumnesComponent } from './features/professors/horari-alumnes/horari-alumnes.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -15,4 +17,6 @@ export const routes: Routes = [
   { path: 'llista-classe', component: LlistaClasseComponent },
   { path: 'llista-assignatures', component: LlistaAssignaturesComponent },
   { path: 'llista-faltes', component: LlistaFaltesComponent },
+  { path: 'gestio-inscrits', component: GestioInscritsComponent },
+  { path: 'horari-alumnes', component: HorariAlumnesComponent }
 ];
