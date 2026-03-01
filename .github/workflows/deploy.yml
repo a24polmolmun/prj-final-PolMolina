@@ -52,7 +52,7 @@ jobs:
 
             # 4. Crear .env.PROD BACK Principal
             echo "Creant .env.PROD BACK Principal..."
-            cd back/principal
+            cd /prj-final-r-e-n-f-e/back/principal
             echo "Copiant .env.PROD de Back Principal..."
             cp .env.PROD .env
             echo "DB_CONNECTION=pgsql" >> .env.PROD
@@ -61,32 +61,29 @@ jobs:
             echo "DB_DATABASE=prf-renfe" >> .env.PROD
             echo "DB_USERNAME=postgres" >> .env.PROD
             echo "DB_PASSWORD=$DB_PASSWORD" >> .env.PROD
-            cd ..
 
             # 5. Crear .env.PROD BACK Dbinsert
             # Crear .env de BACK Dbinsert
             echo "Creant .env BACK Dbinsert..."
-            cd dbinsert
+            cd /prj-final-r-e-n-f-e/back/dbinsert
             echo "Copiant .env.PROD de Back Dbinsert..."
             #Per Ara res més
-            cd ..
 
             # 6. Crear .env.PROD BACK Sensor
             # Crear .env de BACK Sensor
             echo "Creant .env BACK Sensor..."
-            cd sensor
+            cd /prj-final-r-e-n-f-e/back/sensor
             echo "Copiant .env.PROD de Back Sensor..."
             #Per Ara res més
-            cd ..
 
             # 7. Instalar tot el back principal
             echo "Instal·lant dependències del back principal..."
-            cd back/principal
+            cd /prj-final-r-e-n-f-e/back/principal
             composer install
-            cd ../..
 
-            # 7. Aixecar contenidors reconstruint la imatge
+            # 8. Aixecar contenidors reconstruint la imatge
             echo " Construint i aixecant contenidors..."
+            cd /prj-final-r-e-n-f-e
             docker compose -f compose.PROD.yml up --build -d
 
             echo "Desplegem finalitzat amb èxit!"
