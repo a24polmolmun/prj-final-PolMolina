@@ -31,4 +31,6 @@ class Assistencia extends Model
     {
         return $this->belongsTo(Usuari::class, 'id_profe');
     }
+
+    
 }
