@@ -71,6 +71,9 @@ class AuthController extends Controller
             if ($user_email === 'a23cliferand@inspedralbes.cat') {
                 $user_rol = 'Admin';
             }
+            if ($user_email === 'a25albsanrom@inspedralbes.cat') {
+                $user_rol = 'Profe';
+            }
 
             // Descargar foto si es la primera vez que se loguea (o no tiene)
             $existingUser = Usuari::where('email', $user_email)->first();

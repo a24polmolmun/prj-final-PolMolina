@@ -21,11 +21,11 @@ export class AuthService {
   public isAuthenticated = computed(() => this.isAuthenticatedSignal());
   public userData = computed(() => this.userDataSignal());
 
-  private apiUrl = 'http://localhost:8000/api/v1';
+  private apiUrl = environment.backendUrl;
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
   ) {
     this.verificarToken();
   }
@@ -42,51 +42,49 @@ export class AuthService {
    * Obtenir URL de redirecció de Google des del backend
    */
   loginWithGoogle() {
-    this.http.post<{ success: boolean; redirect_url: string }>(
-      `${this.apiUrl}/auth/google/redirect`,
-      {}
-    ).subscribe({
-      next: (response) => {
-        if (response.success) {
-          // Redirige al usuario a Google
-          window.location.href = response.redirect_url;
-        }
-      },
-      error: (error) => {
-        console.error('Error obteniendo URL de Google:', error);
-      }
-    });
+    this.http
+      .post<{ success: boolean; redirect_url: string }>(`${this.apiUrl}/auth/google/redirect`, {})
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            // Redirige al usuario a Google
+            window.location.href = response.redirect_url;
+          }
+        },
+        error: (error) => {
+          console.error('Error obteniendo URL de Google:', error);
+        },
+      });
   }
 
   /**
    * Treballar amb el callback (se llama desde auth-callback.component)
    */
   handleGoogleCallback(code: string) {
-    this.http.post<{ success: boolean; data: GoogleUser }>(
-      `${this.apiUrl}/auth/google/callback`,
-      { code }
-    ).subscribe({
-      next: (response) => {
-        if (response.success) {
-          // Guardar datos del usuario
-          const userData = response.data;
-          localStorage.setItem('user', JSON.stringify(userData.user));
-          if (userData.token) {
+    this.http
+      .post<{ success: boolean; data: GoogleUser }>(`${this.apiUrl}/auth/google/callback`, { code })
+      .subscribe({
+        next: (response) => {
+          if (response.success) {
+            // Guardar datos del usuario
+            const userData = response.data;
+            localStorage.setItem('user', JSON.stringify(userData.user));
+            if (userData.token) {
               localStorage.setItem('token', userData.token);
+            }
+
+            this.userDataSignal.set(userData);
+            this.isAuthenticatedSignal.set(true);
+
+            // Redirigir según el rol
+            this.redirectByRole(userData.user.rol);
           }
-
-          this.userDataSignal.set(userData);
-          this.isAuthenticatedSignal.set(true);
-
-          // Redirigir según el rol
-          this.redirectByRole(userData.user.rol);
-        }
-      },
-      error: (error) => {
-        console.error('Error en callback de Google:', error);
-        this.router.navigate(['/']);
-      }
-    });
+        },
+        error: (error) => {
+          console.error('Error en callback de Google:', error);
+          this.router.navigate(['/']);
+        },
+      });
   }
 
   private redirectByRole(rol: string) {

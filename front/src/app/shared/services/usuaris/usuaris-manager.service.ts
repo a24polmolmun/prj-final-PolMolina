@@ -104,4 +104,11 @@ export class UsuarisManagerService {
       throw err;
     }
   }
+
+  /**
+   * Retorna només els usuaris que són Alumnes
+   */
+  getAlumnes(): Usuari[] {
+    return this.usuaris().filter((u) => u.rol === 'Alumne');
+  }
 }

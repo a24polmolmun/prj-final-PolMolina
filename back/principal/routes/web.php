@@ -11,13 +11,15 @@ Route::get('/auth/google/callback', function (\Illuminate\Http\Request $request)
     $code = $request->get('code');
     $error = $request->get('error');
 
+    $frontendUrl = env('FRONTEND_URL', 'http://localhost:4200');
+
     if ($error) {
-        return redirect()->away('http://localhost:4200/?error=' . $error);
+        return redirect()->away($frontendUrl . '/?error=' . $error);
     }
 
     if ($code) {
-        return redirect()->away('http://localhost:4200/auth-callback?code=' . $code);
+        return redirect()->away($frontendUrl . '/auth/callback?code=' . $code);
     }
 
-    return redirect()->away('http://localhost:4200/?error=missing_code');
+    return redirect()->away($frontendUrl . '/?error=missing_code');
 });

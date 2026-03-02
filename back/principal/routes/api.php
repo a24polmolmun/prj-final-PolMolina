@@ -21,6 +21,9 @@ Route::prefix('v1')->group(function (): void {
     // Usuaris routes
     Route::apiResource('usuaris', UsuariController::class);
 
+    // Cursos routes
+    Route::apiResource('cursos', \App\Http\Controllers\CursController::class)->only(['index']);
+
     // Classes routes
     Route::apiResource('classes', ClasseController::class);
     Route::post('classes/assignarAlumnes', [ClasseController::class, 'assignarAlumnes']);

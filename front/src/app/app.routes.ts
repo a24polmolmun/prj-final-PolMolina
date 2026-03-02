@@ -19,5 +19,6 @@ export const routes: Routes = [
   { path: 'llista-assignatures', component: LlistaAssignaturesComponent },
   { path: 'llista-faltes', component: LlistaFaltesComponent },
   { path: 'gestio-inscrits', component: GestioInscritsComponent },
-  { path: 'horari-alumnes', component: HorariAlumnesComponent }
+  { path: 'horari-alumnes', component: HorariAlumnesComponent },
+  { path: 'auth/callback', component: AuthCallbackComponent },
 ];
