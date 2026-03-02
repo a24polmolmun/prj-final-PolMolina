@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +13,14 @@ export class LoginComponent {
   usuari = signal<string>('');
   error = signal<string>('');
 
-  constructor(private router: Router) {}
+    constructor(
+        private router: Router,
+        private authService: AuthService
+    ) { }
+
+    loginGoogle() {
+        this.authService.loginWithGoogle();
+    }
 
   iniciarSessio() {
     const tipus = this.usuari().toLowerCase().trim();

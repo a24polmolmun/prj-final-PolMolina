@@ -3,6 +3,7 @@ import { AlumnesComponent } from './features/alumnes/alumnes.component';
 import { ProfessorsComponent } from './features/professors/professors.component';
 import { AdministracioComponent } from './features/administracio/administracio.component';
 import { LoginComponent } from './features/login/login.component';
+import { AuthCallbackComponent } from './features/login/auth-callback.component';
 import { LlistaClasseComponent } from './features/professors/llista-classe/llista-classe.component';
 import { LlistaAssignaturesComponent } from './features/professors/llista-assignatures/llista-assignatures.component';
 import { LlistaFaltesComponent } from './features/professors/llista-faltes/llista-faltes.component';
