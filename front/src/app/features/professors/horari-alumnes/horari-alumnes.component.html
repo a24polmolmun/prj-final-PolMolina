@@ -1,105 +1,142 @@
 <div class="disseny-principal">
     <app-sidebar></app-sidebar>
 
+    <div class="fons-organic">
+        <div class="forma forma-1"></div>
+        <div class="forma forma-2"></div>
+        <div class="forma forma-3"></div>
+    </div>
+
     <div class="contingut">
-        <div class="targeta-llista">
-            <div class="capçalera-llista">
-                <h1>Horari de la meva Tutoria</h1>
-                <p class="setmana-info">Gestió de l'horari setmanal de la classe</p>
+        <div class="capçalera-moderna">
+            <h1>Horari Semanal</h1>
+            <div class="badge-classe" *ngIf="laMevaClasse()">
+                {{ laMevaClasse()?.nom }} • {{ laMevaClasse()?.curs?.nom }}
             </div>
+        </div>
 
-            <div class="contenedor-taula">
-                <table class="taula-horari">
-                    <thead>
-                        <tr>
-                            <th class="col-hora">Hora</th>
-                            <th>Dilluns</th>
-                            <th>Dimarts</th>
-                            <th>Dimecres</th>
-                            <th>Dijous</th>
-                            <th>Divendres</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (fila of quadreHorari(); track fila.hora) {
-                        <tr>
-                            <td class="hora-casella">{{ fila.hora }}</td>
+        <!-- Graella moderna de l'horari -->
+        <div class="grid-horari">
+            <!-- Headers de dies -->
+            <div></div> <!-- Espai buit per la columna de temps -->
+            <div class="dia-header">Dl</div>
+            <div class="dia-header">Dm</div>
+            <div class="dia-header">Dc</div>
+            <div class="dia-header">Dj</div>
+            <div class="dia-header">Dv</div>
 
-                            @for (assig of fila.assignatures; track $index) {
-                            @if (assig === 'ESBARJO') {
-                            <td class="casella-esbarjo"
-                                style="background-color: #f1f5f9; text-align: center; color: #94a3b8; font-weight: bold;">
-                                PATI
-                            </td>
-                            } @else if (assig !== '') {
-                            <td class="casella-activa">
-                                <div class="contingut-casella">
-                                    <span class="nom-assig" style="white-space: pre-line;">{{ assig }}</span>
+            <!-- Files d'hores -->
+            <ng-container *ngFor="let fila of quadreHorari(); let fIdx = index">
+                <!-- Columna de temps -->
+                <div class="col-temps">{{ fila.hora }}</div>
+
+                <!-- Sessions per cada dia -->
+                <ng-container *ngFor="let cell of fila.sessions; let dIdx = index">
+
+                    <!-- Franja Normal -->
+                    <div *ngIf="cell !== 'ESBARJO'" class="slot-sessio" [class.buit]="!cell"
+                        (click)="obrirModalEdicio(dIdx, fila.hora)">
+
+                        <div class="icona-afegir" *ngIf="!cell">+</div>
+
+                        <ng-container *ngIf="cell">
+                            <div class="info-sessio">
+                                <span class="assignatura">{{ obtenirNomAssig(cell) }}</span>
+                                <span class="aula">{{ obtenirNomAula(cell) }}</span>
+                            </div>
+
+                            <div class="profe-footer">
+                                <div class="avatar-mini">
+                                    {{ obtenirInicialsProfe(cell) }}
                                 </div>
-                                <button (click)="obrirModalEdicio($index, fila.hora)" class="btn-editar"
-                                    style="margin-top: 5px; font-size: 0.8rem;">Modificar</button>
-                            </td>
-                            } @else {
-                            <td class="casella-buida">
-                                <button (click)="obrirModalEdicio($index, fila.hora)" class="btn-afegir">+</button>
-                            </td>
-                            }
-                            }
-                        </tr>
-                        }
-                    </tbody>
-                </table>
+                                <span class="nom-profe">{{ obtenirNomProfe(cell) }}</span>
+                            </div>
+                        </ng-container>
+                    </div>
+
+                    <!-- Franja d'Esbarjo (només un cop per fila) -->
+                    <div *ngIf="cell === 'ESBARJO' && dIdx === 0" class="slot-sessio esbarjo">
+                        RECRES / ESBARJO
+                    </div>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+
+    <!-- Modal Redissenyat Premium -->
+    <div class="modal-overlay" *ngIf="mostrarModal()">
+        <div class="modal-card">
+            <button class="btn-close" (click)="mostrarModal.set(false)">×</button>
+            <div class="modal-header">
+                <h2>Configurar Sessió</h2>
+                <p class="modal-sub">Edita els detalls de la franja {{ codiHoraSeleccionada() }}</p>
+            </div>
+
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>Assignatura</label>
+                    <select class="select-modern" [(ngModel)]="idAssignaturaSeleccionada">
+                        <option [ngValue]="null">Selecciona una matèria...</option>
+                        <option *ngFor="let assig of serveiAssignatures.assignatures()" [value]="assig.id">
+                            {{ assig.nom }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="dual-inputs">
+                    <div class="input-group">
+                        <label>Aula</label>
+                        <select class="select-modern" [(ngModel)]="idAulaSeleccionada">
+                            <option [ngValue]="null">Triar aula...</option>
+                            <option *ngFor="let aula of serveiAules.aules()" [value]="aula.id">
+                                {{ aula.nom }}
+                            </option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>Professor Encarregat</label>
+                        <select class="select-modern" [(ngModel)]="idProfeSeleccionat">
+                            <option [ngValue]="null">Triar professor...</option>
+                            <option *ngFor="let profe of professorsDisponibles()" [value]="profe.id">
+                                {{ profe.nom }} {{ profe.cognom }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group section-alumnes">
+                    <div class="header-alumnes">
+                        <label>Alumnes convocats ({{ alumnesSeleccionatsIds().length }})</label>
+                        <button class="btn-text" (click)="toggleTotsAlumnes()">
+                            {{ totsSeleccionats() ? 'Desmarcar tots' : 'Marcar tots' }}
+                        </button>
+                    </div>
+                    <div class="selector-alumnes">
+                        <div class="alumne-card" *ngFor="let alumne of alumnesDelaClasse()"
+                            [class.selected]="estaSeleccionat(alumne.id)" (click)="toggleAlumne(alumne.id)">
+
+                            <div class="alumne-avatar"
+                                [style.background-color]="estaSeleccionat(alumne.id) ? 'var(--primary)' : '#e2e8f0'">
+                                {{ obtenirInicialsAlumne(alumne) }}
+                            </div>
+
+                            <div class="alumne-info">
+                                <span class="nom">{{ alumne.nom }} {{ alumne.cognom }}</span>
+                                <span class="estat">{{ estaSeleccionat(alumne.id) ? 'Convocat' : 'No convocat' }}</span>
+                            </div>
+
+                            <div class="check-indicator">
+                                <div class="check-dot" *ngIf="estaSeleccionat(alumne.id)"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-secondary" (click)="mostrarModal.set(false)">Cancel·lar</button>
+                <button class="btn btn-primary" (click)="desarCanvis()">Desar Configuració</button>
             </div>
         </div>
     </div>
 </div>
-
-<!-- INTERFÍCIE FLOTANT (MODAL) PER EDITAR HORARI -->
-@if (mostrarModal()) {
-<div class="fons-modal"
-    style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
-    <div class="caixa-modal"
-        style="background: white; padding: 2rem; border-radius: 12px; width: 500px; max-width: 90%; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
-
-        <h2 style="margin-top: 0; color: #1e293b; font-size: 1.5rem; text-align: center;">
-            Modificar Casella {{ codiHoraSeleccionada() }}
-        </h2>
-        <p style="color: #64748b; margin-bottom: 20px; text-align: center;">Assigna l'assignatura i aula per aquesta
-            franja</p>
-
-        <!-- Selector d'Assignatura -->
-        <div style="margin-bottom: 1.5rem;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #334155;">Assignatura</label>
-            <select [(ngModel)]="idAssignaturaSeleccionada"
-                style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem;">
-                <option [ngValue]="null">-- Selecciona una Assignatura --</option>
-                @for (assig of serveiAssignatures.assignatures(); track assig.id) {
-                <option [ngValue]="assig.id">{{ assig.nom }}</option>
-                }
-            </select>
-        </div>
-
-        <!-- Selector d'Aula -->
-        <div style="margin-bottom: 2rem;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #334155;">Aula</label>
-            <select [(ngModel)]="idAulaSeleccionada"
-                style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem;">
-                <option [ngValue]="null">-- Selecciona una Aula --</option>
-                @for (aula of serveiAules.aules(); track aula.id) {
-                <option [ngValue]="aula.id">{{ aula.nom }}</option>
-                }
-            </select>
-        </div>
-
-        <!-- Botons d'Acció -->
-        <div style="display: flex; gap: 10px; justify-content: flex-end;">
-            <button (click)="mostrarModal.set(false)"
-                style="padding: 10px 20px; border: none; background: #e2e8f0; color: #475569; border-radius: 8px; cursor: pointer; font-weight: bold;">Cancel·lar</button>
-            <button (click)="desarCanvis()"
-                style="padding: 10px 20px; border: none; background: #6366f1; color: white; border-radius: 8px; cursor: pointer; font-weight: bold;">Desar
-                Canvis</button>
-        </div>
-
-    </div>
-</div>
-}

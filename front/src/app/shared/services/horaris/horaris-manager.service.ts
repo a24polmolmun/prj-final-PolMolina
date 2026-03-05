@@ -104,4 +104,31 @@ export class HorarisManagerService {
       throw err;
     }
   }
+
+  /**
+   * Actualització granular (Tasca 3): Desa la franja, el profe i els alumnes
+   */
+  async actualitzarHorariGranular(dades: {
+    codi_hora: string;
+    id_classe: number;
+    id_assig: number;
+    id_aula: number;
+    id_profe: number;
+    alumnes_ids: number[];
+  }) {
+    try {
+      this.isLoading.set(true);
+      const resp = await this.apiManager.post<any>('/horaris/granular', dades);
+
+      // Recarreguem els horaris per tenir la versió més nova del servidor
+      await this.carregarHoraris();
+
+      return resp;
+    } catch (err) {
+      console.error('Error en actualització granular:', err);
+      throw err;
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
 }
