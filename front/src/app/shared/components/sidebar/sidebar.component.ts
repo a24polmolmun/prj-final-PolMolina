@@ -10,7 +10,5 @@ import { SidebarService } from '../../services/sidebar.service';
 })
 export class SidebarComponent {
   public sidebarService = inject(SidebarService);
-
-  // Temporal: Variable per controlar si l'usuari actual és tutor
   public esTutor = true;
 }

@@ -10,7 +10,7 @@ import { AssistenciesManagerService } from '../../../shared/services/assistencie
   styleUrl: './llista-faltes.component.css',
 })
 export class LlistaFaltesComponent implements OnInit {
-  assistenciesManager = inject(AssistenciesManagerService);
+  private assistenciesManager = inject(AssistenciesManagerService);
 
   ngOnInit() {
     this.assistenciesManager.carregarAssistencies();
@@ -39,26 +39,35 @@ export class LlistaFaltesComponent implements OnInit {
     for (let i = 0; i < totesLesFaltes.length; i++) {
       const assis = totesLesFaltes[i];
 
-      // Pillem el nom sencer de l'alumne si ens l'ha passat el backend
+      // 1. Obtenim el nom de l'alumne (Nom + Cognom)
+      // Si la informació d'inscripció o alumne no existeix, posem un valor per defecte.
       let nomAlumne = 'Alumne Desconegut';
       if (assis.inscripcio && assis.inscripcio.alumne) {
-        nomAlumne = assis.inscripcio.alumne.nom + ' ' + assis.inscripcio.alumne.cognom;
+        const nom = assis.inscripcio.alumne.nom || '';
+        const cognom = assis.inscripcio.alumne.cognom || '';
+        nomAlumne = (nom + ' ' + cognom).trim();
       }
 
+      // 2. Obtenim el nom de l'assignatura
       let nomAssignatura = 'Assignatura Desconeguda';
       if (assis.inscripcio && assis.inscripcio.assignatura) {
         nomAssignatura = assis.inscripcio.assignatura.nom;
       }
 
+      // 3. Creem una clau única que identifiqui la combinació Alumne-Assignatura
+      // Això ens permetrà agrupar totes les faltes d'un mateix alumne en una mateixa assignatura.
       const clauUnica = nomAlumne + '|||' + nomAssignatura;
 
+      // 4. Si és la primera vegada que trobem aquesta combinació, inicialitzem l'objecte al diccionari.
       if (!diccionariAlumnesAssignatures[clauUnica]) {
         diccionariAlumnesAssignatures[clauUnica] = {
           alumne: nomAlumne,
           assignatura: nomAssignatura,
-          faltes: 0
+          faltes: 0 // Comencem el comptador a zero
         };
       }
+
+      // 5. Incrementem el comptador de faltes per a aquest Alumne i Assignatura concrets.
       diccionariAlumnesAssignatures[clauUnica].faltes++;
     }
 

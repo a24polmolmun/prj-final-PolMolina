@@ -21,14 +21,16 @@ import { Horari } from '../../../shared/models/horaris.model';
 })
 export class HorariAlumnesComponent implements OnInit {
 
-  public serveiClasses = inject(ClassesManagerService);
-  public serveiHoraris = inject(HorarisManagerService);
-  public serveiAssignatures = inject(AssignaturesManagerService);
-  public serveiAules = inject(AulesManagerService);
-  public serveiAuth = inject(AuthService);
-  public serveiUsuaris = inject(UsuarisManagerService);
+  // Injecció de serveis en mode privat per a ús intern
+  serveiClasses = inject(ClassesManagerService);
+  serveiHoraris = inject(HorarisManagerService);
+  serveiAssignatures = inject(AssignaturesManagerService);
+  serveiAules = inject(AulesManagerService);
+  serveiAuth = inject(AuthService);
+  serveiUsuaris = inject(UsuarisManagerService);
 
   ngOnInit() {
+    // Carreguem totes les dades necessàries quan entrem a la pantalla
     this.serveiClasses.carregarClasses();
     this.serveiHoraris.carregarHoraris();
     this.serveiAssignatures.carregarAssignatures();
@@ -205,16 +207,18 @@ export class HorariAlumnesComponent implements OnInit {
   idProfeSeleccionat = signal<number | null>(null);
   alumnesSeleccionatsIds = signal<number[]>([]);
 
+  // Funció per obrir el modal de configuració en clicar una cel·la buida o existent
   obrirModalEdicio(diaIndex: number, horaLlegible: string) {
     const lletres = ['L', 'M', 'X', 'J', 'V'];
     const lletra = lletres[diaIndex];
 
+    // Calculem el número d'hora segons el text de la fila
     let numHora = 1;
-    if (horaLlegible.includes('09:00')) numHora = 2;
-    if (horaLlegible.includes('10:00')) numHora = 3;
-    if (horaLlegible.includes('11:30')) numHora = 4;
-    if (horaLlegible.includes('12:30')) numHora = 5;
-    if (horaLlegible.includes('13:30')) numHora = 6;
+    if (horaLlegible === '09:00') numHora = 2;
+    if (horaLlegible === '10:00') numHora = 3;
+    if (horaLlegible === '11:30') numHora = 4;
+    if (horaLlegible === '12:30') numHora = 5;
+    if (horaLlegible === '13:30') numHora = 6;
 
     const codiActual = lletra + numHora;
     this.codiHoraSeleccionada.set(codiActual);
@@ -261,29 +265,42 @@ export class HorariAlumnesComponent implements OnInit {
     this.mostrarModal.set(true);
   }
 
+  // Selecciona o deselecciona un alumne de la llista
   toggleAlumne(id: number) {
     const llista = this.alumnesSeleccionatsIds();
-    if (llista.includes(id)) {
-      const novaLlista: number[] = [];
+    let trobat = false;
+    for (let i = 0; i < llista.length; i++) {
+      if (llista[i] === id) {
+        trobat = true;
+        break;
+      }
+    }
+
+    const novaLlista: number[] = [];
+    if (trobat) {
+      // Si ja hi era, el treiem (copiant tots menys ell)
       for (let i = 0; i < llista.length; i++) {
-        const item = llista[i];
-        if (item !== id) {
-          novaLlista.push(item);
+        if (llista[i] !== id) {
+          novaLlista.push(llista[i]);
         }
       }
-      this.alumnesSeleccionatsIds.set(novaLlista);
     } else {
-      const novaLlista: number[] = [];
+      // Si no hi era, l'afegim
       for (let j = 0; j < llista.length; j++) {
         novaLlista.push(llista[j]);
       }
       novaLlista.push(id);
-      this.alumnesSeleccionatsIds.set(novaLlista);
     }
+    this.alumnesSeleccionatsIds.set(novaLlista);
   }
 
+  // Mira si un alumne concret està seleccionat
   estaSeleccionat(id: number): boolean {
-    return this.alumnesSeleccionatsIds().includes(id);
+    const llista = this.alumnesSeleccionatsIds();
+    for (let i = 0; i < llista.length; i++) {
+      if (llista[i] === id) return true;
+    }
+    return false;
   }
 
   async desarCanvis() {

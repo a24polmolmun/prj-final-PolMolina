@@ -13,12 +13,12 @@ import { AuthService } from '../../services/auth.service';
   styleUrl: './professors.component.css',
 })
 export class ProfessorsComponent implements OnInit {
-  assignaturesManager = inject(AssignaturesManagerService);
-  horarisManager = inject(HorarisManagerService);
-  imparteixManager = inject(ImparteixManagerService);
-  authService = inject(AuthService);
+  private assignaturesManager = inject(AssignaturesManagerService);
+  private horarisManager = inject(HorarisManagerService);
+  private imparteixManager = inject(ImparteixManagerService);
+  private authService = inject(AuthService);
 
-  // Dades de la classe actual conectada a la Base de Datos (ARA REACTIU!)
+  // Dades de la classe actual conectada a la Base de Datos per a la targeta
   classeActual = computed(() => {
     // Això llegeix constantment l'array d'assignatures del Manager
     const llistaDeLaravel = this.assignaturesManager.assignatures();
@@ -49,27 +49,6 @@ export class ProfessorsComponent implements OnInit {
   franjaHoraria = signal<'AM' | 'PM'>('AM');
 
   diesSetmana = ['Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres'];
-
-  // // Horari Matí
-  // horariFrontAM = [
-  //     { hora: '08:00', assignatures: ['Matemàtiques', 'Física', 'Química', 'Història', 'Filosofia'] },
-  //     { hora: '09:00', assignatures: ['Anglès', 'Matemàtiques', 'Física', 'Química', 'Història'] },
-  //     { hora: '10:00', assignatures: ['Filosofia', 'Anglès', 'Matemàtiques', 'Física', 'Química'] },
-  //     { hora: '11:00', assignatures: ['Història', 'Filosofia', 'Anglès', 'Matemàtiques', 'Física'] },
-  //     { hora: '11:30', assignatures: ['Esbarjo', 'Esbarjo', 'Esbarjo', 'Esbarjo', 'Esbarjo'] },
-  //     { hora: '12:00', assignatures: ['Química', 'Història', 'Filosofia', 'Anglès', 'Matemàtiques'] },
-  //     { hora: '13:00', assignatures: ['Tutoria', 'Projecte', 'Projecte', 'Esport', 'Lliure'] },
-  // ];
-
-  // // Horari Tarda
-  // horariFrontPM = [
-  //     { hora: '15:00', assignatures: ['Programació', 'Bases de Dades', 'Xarxes', 'Sistemes', 'Anglès Tècnic'] },
-  //     { hora: '16:00', assignatures: ['Bases de Dades', 'Programació', 'Xarxes', 'Sistemes', 'Anglès Tècnic'] },
-  //     { hora: '17:00', assignatures: ['Xarxes', 'Sistemes', 'Programació', 'Bases de Dades', 'Empresa'] },
-  //     { hora: '18:00', assignatures: ['Esbarjo', 'Esbarjo', 'Esbarjo', 'Esbarjo', 'Esbarjo'] },
-  //     { hora: '18:30', assignatures: ['Projecte', 'Empresa', 'FOL', 'Programació', 'Sistemes'] },
-  //     { hora: '19:30', assignatures: ['Projecte', 'Empresa', 'FOL', 'Programació', 'Sistemes'] },
-  // ];
 
   // Retorna l'horari segons la franja seleccionada
   horariActual = computed(() => {
@@ -184,6 +163,18 @@ export class ProfessorsComponent implements OnInit {
         }
       }
     }
+    // 7. Retallem les files buides al final per evitar espai blanc innecessari a la UI
+    while (graella.length > 0) {
+      const ultimaFila = graella[graella.length - 1];
+      const teContingut = ultimaFila.assignatures.some((a: string) => a !== '' && a !== 'ESBARJO');
+      // Si la fila és buida i no és una franja especial (com l'esbarjo si és l'última), la treiem
+      if (!teContingut) {
+        graella.pop();
+      } else {
+        break;
+      }
+    }
+
     return graella;
   });
 

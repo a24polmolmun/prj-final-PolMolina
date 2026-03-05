@@ -45,7 +45,6 @@ export class GestioInscritsComponent implements OnInit {
       await this.serveiUsuaris.carregarUsuaris();
       const tots = this.serveiUsuaris.usuaris();
 
-      // Fem servir bucles tradicionals (sense .filter) com has demanat
       const nomésAlumnes: Usuari[] = [];
       if (tots && Array.isArray(tots)) {
         for (let i = 0; i < tots.length; i++) {
