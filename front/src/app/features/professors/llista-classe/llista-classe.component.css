@@ -99,25 +99,60 @@
     max-height: calc(100vh - 120px);
     display: flex;
     flex-direction: column;
-    margin-bottom: 0;
+}
+
+.capçalera-llista {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 25px;
+    flex-shrink: 0;
+    gap: 20px;
 }
 
 h1 {
     color: var(--text-main);
     font-size: 2.2rem;
-    margin-bottom: 5px;
+    margin: 0;
     font-weight: 700;
-}
-
-.capçalera-llista {
-    margin-bottom: 20px;
-    flex-shrink: 0;
 }
 
 .setmana-info {
     color: #64748b;
     font-size: 1.1rem;
-    margin: 0;
+    margin-top: 5px;
+}
+
+.selector-sessio-container {
+    background: white;
+    padding: 12px 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.selector-sessio-container label {
+    font-weight: 600;
+    color: #475569;
+    white-space: nowrap;
+}
+
+.select-modern {
+    padding: 8px 15px;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-main);
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.select-modern:focus {
+    border-color: var(--primary-color);
 }
 
 .contenedor-taula {
@@ -128,14 +163,12 @@ h1 {
     background: rgba(255, 255, 255, 0.4);
     padding: 10px;
     flex-grow: 1;
-    min-height: 100px;
 }
 
 .taula-assistencia {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0 8px;
-    scroll-behavior: smooth;
 }
 
 .taula-assistencia th {
@@ -150,140 +183,143 @@ h1 {
     padding-left: 20px !important;
 }
 
-.col-dia {
-    min-width: 80px;
-}
-
-.nom-dia {
-    display: block;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.data-dia {
-    display: block;
-    font-size: 0.8rem;
-    color: #94a3b8;
-    font-weight: 400;
-}
-
-.taula-assistencia tbody tr {
-    transition: transform 0.2s;
-}
-
-.taula-assistencia tbody tr:hover {
-    transform: scale(1.005);
-}
-
 .taula-assistencia td {
     background: white;
-    padding: 15px;
+    padding: 12px 15px;
     border-top: 1px solid #f1f5f9;
     border-bottom: 1px solid #f1f5f9;
 }
 
 .taula-assistencia td:first-child {
     border-left: 1px solid #f1f5f9;
-    border-radius: 12px 0 0 12px;
-    font-weight: 500;
-    color: var(--text-main);
-    padding-left: 20px;
+    border-radius: 16px 0 0 16px;
 }
 
 .taula-assistencia td:last-child {
     border-right: 1px solid #f1f5f9;
-    border-radius: 0 12px 12px 0;
+    border-radius: 0 16px 16px 0;
+}
+
+.alumne-info-cell {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.alumne-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: var(--text-main);
+    font-size: 1rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.nom-text {
+    font-weight: 600;
+    color: var(--text-main);
 }
 
 .celda-assistencia {
     text-align: center;
 }
 
+.input-container-modern {
+    position: relative;
+    display: inline-block;
+}
+
 .estat-input {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    margin: 0 auto;
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
     text-align: center;
     font-weight: 700;
-    font-size: 1.1rem;
-    border: 2px solid transparent;
+    font-size: 1.3rem;
+    border: 2.5px solid transparent;
     background-color: #f1f5f9;
     color: #475569;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
     outline: none;
-    display: block;
 }
 
 .estat-input:focus {
-    transform: scale(1.15);
+    transform: scale(1.1);
     border-color: var(--primary-color);
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
-    z-index: 2;
+    background-color: white;
+    box-shadow: 0 10px 20px rgba(99, 102, 241, 0.15);
 }
 
-/* Colors d'estat basats en el valor de l'input */
-.estat-input[data-estat="."],
-.estat-input[value="."] {
-    background-color: #3ca381;
-    color: white;
-    box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+.help-hint {
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.65rem;
+    color: #94a3b8;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.2s;
 }
 
-.estat-input[data-estat="F"],
-.estat-input[value="F"],
-.estat-input[data-estat="f"],
-.estat-input[value="f"] {
-    background-color: #bd5252;
-    color: white;
-    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+.estat-input:focus+.help-hint {
+    opacity: 1;
 }
 
-.estat-input[data-estat="FJ"],
-.estat-input[value="FJ"],
-.estat-input[data-estat="fj"],
-.estat-input[value="fj"] {
-    background-color: #7e61c2;
-    color: white;
-    box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+/* Estats visuals */
+.estat-input[data-estat="."] {
+    background-color: #dcfce7;
+    color: #166534;
+    border-color: #bbf7d0;
 }
 
-.estat-input[data-estat="R"],
-.estat-input[value="R"],
-.estat-input[data-estat="r"],
-.estat-input[value="r"] {
-    background-color: #e0a43b;
-    color: white;
-    box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+.estat-input[data-estat="F"] {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border-color: #fecaca;
 }
 
-.estat-input[data-estat=""],
-.estat-input[value=""] {
-    background-color: #f1f5f9;
-    color: #475569;
-    border-color: #e2e8f0;
+.estat-input[data-estat="FJ"] {
+    background-color: #f5f3ff;
+    color: #5b21b6;
+    border-color: #ddd6fe;
+}
+
+.estat-input[data-estat="R"] {
+    background-color: #fef3c7;
+    color: #92400e;
+    border-color: #fde68a;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px !important;
+    color: #94a3b8;
+    font-style: italic;
 }
 
 .llegenda {
-    margin-top: 20px;
+    margin-top: 25px;
     display: flex;
-    gap: 15px;
+    gap: 20px;
     flex-wrap: wrap;
     justify-content: center;
     padding: 15px;
     background: rgba(255, 255, 255, 0.5);
-    border-radius: 16px;
-    flex-shrink: 0;
+    border-radius: 20px;
 }
 
 .item-llegenda {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: #475569;
+    font-weight: 500;
 }
 
 .punt {
@@ -294,11 +330,11 @@ h1 {
 
 .p-0 {
     background-color: #f1f5f9;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #cbd5e1;
 }
 
 .p-1 {
-    background-color: #10b981;
+    background-color: #22c55e;
 }
 
 .p-2 {
@@ -313,94 +349,13 @@ h1 {
     background-color: #f59e0b;
 }
 
-/* Media Queries per a Responsivitat Vertical i Horitzontal */
-@media (max-width: 1200px) {
-    .targeta-llista {
-        padding: 25px;
+@media (max-width: 900px) {
+    .capçalera-llista {
+        flex-direction: column;
+        align-items: stretch;
     }
 
     h1 {
         font-size: 1.8rem;
-    }
-}
-
-@media (max-height: 800px) {
-    .contingut {
-        padding: 10px;
-    }
-
-    .targeta-llista {
-        padding: 15px;
-        border-radius: 20px;
-    }
-
-    .capçalera-llista {
-        margin-bottom: 15px;
-    }
-
-    h1 {
-        font-size: 1.4rem;
-    }
-
-    .llegenda {
-        margin-top: 10px;
-        padding: 10px;
-    }
-
-    .taula-assistencia {
-        border-spacing: 0 4px;
-    }
-}
-
-@media (max-width: 768px) {
-    .contingut {
-        padding: 10px;
-        margin-top: 80px;
-    }
-
-    h1 {
-        font-size: 1.3rem;
-    }
-
-    .setmana-info {
-        font-size: 0.85rem;
-    }
-
-    .taula-assistencia th,
-    .taula-assistencia td {
-        padding: 8px;
-    }
-
-    .col-dia {
-        min-width: 50px;
-    }
-
-    .estat-input {
-        width: 26px;
-        height: 26px;
-        font-size: 0.85rem;
-    }
-
-    .llegenda {
-        gap: 8px;
-    }
-
-    .item-llegenda {
-        font-size: 0.75rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .col-nom {
-        font-size: 0.85rem;
-        padding-left: 10px !important;
-    }
-
-    .nom-dia {
-        font-size: 0.75rem;
-    }
-
-    .data-dia {
-        font-size: 0.7rem;
     }
 }

@@ -10,8 +10,26 @@
   <div class="contingut">
     <div class="targeta-llista">
       <div class="capçalera-llista">
-        <h1>Llista de Classe</h1>
-        <p class="setmana-info">Asistència de la setmana</p>
+        <div class="titol-seccio">
+          <h1>Passar Llista</h1>
+          <p class="setmana-info">Registre d'assistència granular</p>
+        </div>
+
+        <!-- Selector de Sessió -->
+        <div class="selector-sessio-container">
+          <label for="sessioSelect">Sessió:</label>
+          <select id="sessioSelect" class="select-modern" (change)="canviarSessio($event)"
+            [value]="sessioSeleccionadaId()">
+            @for (sessio of sessionsProfessor(); track sessio.id) {
+            <option [value]="sessio.id">
+              {{ sessio.codi_hora }} - {{ sessio.assignatura?.nom }} ({{ sessio.aula?.nom }})
+            </option>
+            }
+            @if (sessionsProfessor().length === 0) {
+            <option value="">No tens sessions configurades</option>
+            }
+          </select>
+        </div>
       </div>
 
       <div class="contenedor-taula">
@@ -19,25 +37,43 @@
           <thead>
             <tr>
               <th class="col-nom">Alumne</th>
-              @for (dia of diesSetmana; track $index) {
+              @for (dia of diesSetmana; track dia; let i = $index) {
               <th class="col-dia">
-                <span class="nom-dia">{{dia}}</span>
-                <span class="data-dia">{{datesSetmana[$index]}}</span>
+                <span class="nom-dia">{{ dia }}</span>
+                <span class="data-dia">{{ datesSetmana[i] }}</span>
               </th>
               }
             </tr>
           </thead>
           <tbody>
-            @for (alumne of alumnes(); track alumne.id; let i = $index) {
+            @for (alumne of alumnesFiltrats(); track alumne.id; let filaIndex = $index) {
             <tr>
-              <td class="nom-alumne">{{alumne.nom}}</td>
-              @for (data of datesSetmana; track $index; let j = $index) {
+              <td class="nom-alumne">
+                <div class="alumne-info-cell">
+                  <div class="alumne-avatar" [style.background-color]="'hsl(' + (filaIndex * 45) + ', 70%, 80%)'">
+                    {{ alumne.avatar }}
+                  </div>
+                  <span class="nom-text">{{ alumne.nom }}</span>
+                </div>
+              </td>
+
+              @for (diaVisible of datesSetmana; track diaVisible; let colIndex = $index) {
               <td class="celda-assistencia">
-                <input type="text" class="estat-input" [attr.data-estat]="alumne.assistencia[data]"
-                  [(ngModel)]="alumne.assistencia[data]" (keyup.enter)="moureFocus(i, j)" [id]="'input-' + i + '-' + j"
-                  maxlength="2" autocomplete="off">
+                <div class="input-container-modern">
+                  <input type="text" [id]="'input-' + filaIndex + '-' + colIndex" class="estat-input"
+                    [attr.data-estat]="alumne.assistencia[diaVisible]" [(ngModel)]="alumne.assistencia[diaVisible]"
+                    (blur)="guardarAssistencia(alumne, diaVisible, alumne.assistencia[diaVisible])"
+                    (keydown.enter)="moureFocus(filaIndex, colIndex)" maxlength="2" placeholder="." autocomplete="off">
+                </div>
               </td>
               }
+            </tr>
+            }
+            @if (alumnesFiltrats().length === 0 && sessioSeleccionadaId()) {
+            <tr>
+              <td colspan="6" class="empty-state">
+                No hi ha alumnes convocats per a aquesta sessió.
+              </td>
             </tr>
             }
           </tbody>
@@ -45,7 +81,7 @@
       </div>
 
       <div class="llegenda">
-        <div class="item-llegenda"><span class="punt p-0"></span> Pendent (buit)</div>
+        <div class="item-llegenda"><span class="punt p-0"></span> Pendent</div>
         <div class="item-llegenda"><span class="punt p-1"></span> . Assistit</div>
         <div class="item-llegenda"><span class="punt p-2"></span> F Falta</div>
         <div class="item-llegenda"><span class="punt p-3"></span> FJ Justificada</div>

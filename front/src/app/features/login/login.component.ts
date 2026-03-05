@@ -13,14 +13,14 @@ export class LoginComponent {
   usuari = signal<string>('');
   error = signal<string>('');
 
-    constructor(
-        private router: Router,
-        private authService: AuthService
-    ) { }
+  constructor(
+    private router: Router,
+    private authService: AuthService
+  ) { }
 
-    loginGoogle() {
-        this.authService.loginWithGoogle();
-    }
+  loginGoogle() {
+    this.authService.loginWithGoogle();
+  }
 
   iniciarSessio() {
     const tipus = this.usuari().toLowerCase().trim();

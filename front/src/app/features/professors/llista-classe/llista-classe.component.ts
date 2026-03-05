@@ -1,10 +1,12 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 import { InscritsManagerService } from '../../../shared/services/inscrits/inscrits-manager.service';
 import { AssistenciesManagerService } from '../../../shared/services/assistencies/assistencies-manager.service';
+import { HorarisManagerService } from '../../../shared/services/horaris/horaris-manager.service';
 import { getSimbolAssistencia } from '../../../shared/utils/assistencia-utils';
+import { Horari } from '../../../shared/models/horaris.model';
 
 @Component({
   selector: 'app-llista-classe',
@@ -16,100 +18,128 @@ import { getSimbolAssistencia } from '../../../shared/utils/assistencia-utils';
 export class LlistaClasseComponent implements OnInit {
   inscritsManager = inject(InscritsManagerService);
   assistenciesManager = inject(AssistenciesManagerService);
+  horarisManager = inject(HorarisManagerService);
 
   diesSetmana = ['Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres'];
-  datesSetmana: string[] = [];
-  datesRealsLaravel: string[] = [];
+  datesSetmana: string[] = []; // Formatat per mostrar (DD/MM)
+  datesRealsLaravel: string[] = []; // Formatat per a la BD (YYYY-MM-DD)
 
-  ngOnInit() {
+  // Sessions del professor (totes les que té assignades)
+  sessionsProfessor = computed(() => {
+    const totsElsHoraris = this.horarisManager.horaris();
+    const usuariLoguejat = JSON.parse(localStorage.getItem('usuari') || '{}');
+
+    // Filtrem per professor i eliminem duplicats de matèria/aula si n'hi ha (opcional)
+    return totsElsHoraris
+      .filter((h: Horari) => h.id_professor === usuariLoguejat.id)
+      .sort((a: Horari, b: Horari) => a.codi_hora.localeCompare(b.codi_hora));
+  });
+
+  sessioSeleccionadaId = signal<number | null>(null);
+
+  async ngOnInit() {
     this.inscritsManager.carregarInscrits();
     this.assistenciesManager.carregarAssistencies();
+    await this.horarisManager.carregarHoraris();
 
-    // Calcular els 5 dies de la setmana actual (de dilluns a divendres)
+    this.calcularDatesSetmana();
+
+    // Seleccionem la primera sessió si n'hi ha
+    const sessions = this.sessionsProfessor();
+    if (sessions.length > 0) {
+      this.sessioSeleccionadaId.set(sessions[0].id ?? null);
+    }
+  }
+
+  calcularDatesSetmana() {
     const avui = new Date();
-    const diaSetmana = avui.getDay() || 7; // Convertim Diumenge(0) a 7
-    avui.setDate(avui.getDate() - diaSetmana + 1); // Ens posem a Dilluns
+    const diaSetmana = avui.getDay() || 7; // Diumenge(0) -> 7
+    const dilluns = new Date(avui);
+    dilluns.setDate(avui.getDate() - diaSetmana + 1);
 
     for (let i = 0; i < 5; i++) {
-      const diaMates = new Date(avui);
-      diaMates.setDate(avui.getDate() + i);
+      const dia = new Date(dilluns);
+      dia.setDate(dilluns.getDate() + i);
 
-      const diaFormatat =
-        diaMates.getDate().toString().padStart(2, '0') +
-        '/' +
-        (diaMates.getMonth() + 1).toString().padStart(2, '0');
-
+      const diaFormatat = dia.getDate().toString().padStart(2, '0') + '/' + (dia.getMonth() + 1).toString().padStart(2, '0');
       this.datesSetmana.push(diaFormatat);
 
-      const anyBD = diaMates.getFullYear();
-      const mesBD = (diaMates.getMonth() + 1).toString().padStart(2, '0');
-      const diaBD = diaMates.getDate().toString().padStart(2, '0');
+      const anyBD = dia.getFullYear();
+      const mesBD = (dia.getMonth() + 1).toString().padStart(2, '0');
+      const diaBD = dia.getDate().toString().padStart(2, '0');
       this.datesRealsLaravel.push(`${anyBD}-${mesBD}-${diaBD}`);
     }
   }
 
-  // Aquest Signal recalcula la llista cada cop que canvien les dades del servidor
-  alumnes = computed(() => {
-    // 1. Obtenim tots els inscrits de l'institut
+  // Alumnes filtrats per la sessió seleccionada (AMB VISTA SETMANAL)
+  alumnesFiltrats = computed(() => {
+    const idSessio = this.sessioSeleccionadaId();
+    if (!idSessio) return [];
+
     const totsElsInscrits = this.inscritsManager.inscrits();
     const totesAssistencies = this.assistenciesManager.assistencies();
 
-    // 2. Definim de quina assignatura volem passar llista (Temporalment la 1)
-    const idAssignaturaActual = 1;
+    return totsElsInscrits
+      .filter((i: any) => i.id_horari === idSessio)
+      .map((inscripcio: any) => {
+        const assistenciaSetmanal: any = {};
 
-    // 3. Preparem la llista buida
-    const alumnesDestaClasse: any[] = [];
+        // Omplim els estats per a cada dia de la setmana
+        this.datesSetmana.forEach((diaVisible, index) => {
+          const dataBD = this.datesRealsLaravel[index];
+          const asis = totesAssistencies.find((a: any) =>
+            a.id_inscripcio === inscripcio.id &&
+            a.data && a.data.substring(0, 10) === dataBD
+          );
+          assistenciaSetmanal[diaVisible] = asis ? getSimbolAssistencia(asis.estat, !!asis.justificat) : '';
+        });
 
-    // 4. Busquem amb un bucle tradicional quins alumnes pertanyen a aquesta assignatura
-    for (let i = 0; i < totsElsInscrits.length; i++) {
-      const inscripcio = totsElsInscrits[i];
-
-      if (inscripcio.id_assignatura === idAssignaturaActual) {
-        // Si la inscripció té les dades de l'alumne (el "with" de Laravel), l'afegim
-        if (inscripcio.alumne && inscripcio.alumne.nom) {
-          // Preparem les caselles d'assistència per a la setmana actual
-          const assistenciaSetmana: any = {};
-
-          for (let d = 0; d < this.datesSetmana.length; d++) {
-            const dataMostrar = this.datesSetmana[d]; // Format: 18/11
-            const dataLaravel = this.datesRealsLaravel[d]; // Format: 2026-11-18
-
-            // Por defecte el quadre estarà buit
-            let estatCasella = '';
-
-            // Busquem si hi ha alguna assistència guardada per aquest alumne aquest dia
-            for (let a = 0; a < totesAssistencies.length; a++) {
-              const asis = totesAssistencies[a];
-
-              // Comprovem id_inscripcio i si la data coincideix amb YYYY-MM-DD
-              if (
-                asis.id_inscripcio === inscripcio.id &&
-                asis.data &&
-                asis.data.substring(0, 10) === dataLaravel
-              ) {
-                estatCasella = getSimbolAssistencia(asis.estat, !!asis.justificat);
-
-                break; // Un cop trobada no cal buscar més
-              }
-            }
-
-            assistenciaSetmana[dataMostrar] = estatCasella;
-          }
-
-          alumnesDestaClasse.push({
-            id: inscripcio.id_alumne,
-            id_inscripcio_db: inscripcio.id, // Per si ho necessitem si enviem coses al post
-            nom: inscripcio.alumne.nom + ' ' + inscripcio.alumne.cognom,
-            assistencia: assistenciaSetmana, // Assignem l'objecte resolt
-          });
-        }
-      }
-    }
-
-    return alumnesDestaClasse;
+        return {
+          id: inscripcio.id_alumne,
+          id_inscripcio_db: inscripcio.id,
+          nom: (inscripcio.alumne?.nom || '') + ' ' + (inscripcio.alumne?.cognom || ''),
+          avatar: this.obtenirInicialsAlumne(inscripcio.alumne),
+          assistencia: assistenciaSetmanal
+        };
+      });
   });
 
-  // Funció per moure el focus amb l'Enter, tal com tenies en la teva versió original
+  obtenirInicialsAlumne(alumne: any): string {
+    if (!alumne) return '??';
+    const nom = alumne.nom?.charAt(0) || '';
+    const cognom = alumne.cognom?.charAt(0) || '';
+    return (nom + cognom).toUpperCase();
+  }
+
+  canviarSessio(event: any) {
+    this.sessioSeleccionadaId.set(Number(event.target.value));
+  }
+
+  async guardarAssistencia(alumne: any, dataVisible: string, nouEstat: string) {
+    const indexDia = this.datesSetmana.indexOf(dataVisible);
+    const dataBD = this.datesRealsLaravel[indexDia];
+
+    if (!nouEstat) return;
+
+    const dades = {
+      id_inscripcio: alumne.id_inscripcio_db,
+      data: dataBD,
+      estat: this.mapejarSimbolAEstat(nouEstat),
+      id_profe: JSON.parse(localStorage.getItem('usuari') || '{}').id
+    };
+
+    const existent = this.assistenciesManager.assistencies().find((a: any) =>
+      a.id_inscripcio === alumne.id_inscripcio_db &&
+      a.data && a.data.substring(0, 10) === dataBD
+    );
+
+    if (existent) {
+      await this.assistenciesManager.actualitzarAssistencia(existent.id, dades as any);
+    } else {
+      await this.assistenciesManager.afegirAssistencia(dades as any);
+    }
+  }
+
   moureFocus(filaIndex: number, colIndex: number) {
     if (colIndex === this.datesSetmana.length - 1) {
       const seguentFilaCol0 = document.getElementById(`input-${filaIndex + 1}-0`);
@@ -117,6 +147,15 @@ export class LlistaClasseComponent implements OnInit {
     } else {
       const seguentCol = document.getElementById(`input-${filaIndex}-${colIndex + 1}`);
       if (seguentCol) seguentCol.focus();
+    }
+  }
+
+  private mapejarSimbolAEstat(simbol: string): string {
+    switch (simbol.toUpperCase()) {
+      case '.': return 'Assistit';
+      case 'F': return 'Falta';
+      case 'R': return 'Retart';
+      default: return 'Assistit';
     }
   }
 }
