@@ -1,69 +1,75 @@
+<!-- 
+    Aquí utilitzem:
+     - *ngIf i *ngFor: Per fer els ifs i els bucles amb la sintaxi de tota la vida.
+     - ng-container: Un contenidor invisible que no surt al DOM (F12), ideal per quan vols niar coses.
+     - ngModel: El "v-model" per als selectors i el modal.
+-->
 <div class="disseny-principal">
     <app-sidebar></app-sidebar>
 
-    <div class="fons-organic">
-        <div class="forma forma-1"></div>
-        <div class="forma forma-2"></div>
-        <div class="forma forma-3"></div>
-    </div>
 
     <div class="contingut">
-        <div class="capçalera-moderna">
-            <h1>Horari Semanal</h1>
-            <div class="badge-classe" *ngIf="laMevaClasse()">
-                {{ laMevaClasse()?.nom }} • {{ laMevaClasse()?.curs?.nom }}
+        <!-- Aquesta es la targeta gran que aguanta tot l'horari -->
+        <div class="targeta-horari-premium">
+            <div class="capçalera-moderna">
+                <h1>Horari Semanal</h1>
+                <!-- Ens ensenya el nom de la classe que estàs editant -->
+                <div class="badge-classe" *ngIf="laMevaClasse()">
+                    {{ laMevaClasse()?.nom }} • {{ laMevaClasse()?.curs?.nom }}
+                </div>
             </div>
-        </div>
 
-        <!-- Graella moderna de l'horari -->
-        <div class="grid-horari">
-            <!-- Headers de dies -->
-            <div></div> <!-- Espai buit per la columna de temps -->
-            <div class="dia-header">Dl</div>
-            <div class="dia-header">Dm</div>
-            <div class="dia-header">Dc</div>
-            <div class="dia-header">Dj</div>
-            <div class="dia-header">Dv</div>
+            <!-- Aquí es on es munta la quadrícula de l'horari -->
+            <div class="grid-horari">
+                <!-- Headers de dies -->
+                <div></div>
+                <div class="dia-header">Dilluns</div>
+                <div class="dia-header">Dimarts</div>
+                <div class="dia-header">Dimecres</div>
+                <div class="dia-header">Dijous</div>
+                <div class="dia-header">Divendres</div>
 
-            <!-- Files d'hores -->
-            <ng-container *ngFor="let fila of quadreHorari(); let fIdx = index">
-                <!-- Columna de temps -->
-                <div class="col-temps">{{ fila.hora }}</div>
+                <!-- Recorrem cada fila de l'horari (08:00, 09:00...) -->
+                <ng-container *ngFor="let fila of quadreHorari(); let fIdx = index">
+                    <!-- La columna de l'esquerra amb l'hora -->
+                    <div class="col-temps">{{ fila.hora }}</div>
 
-                <!-- Sessions per cada dia -->
-                <ng-container *ngFor="let cell of fila.sessions; let dIdx = index">
+                    <!-- Per cada dia de la setmana, posem el que toca a cada cel·la -->
+                    <ng-container *ngFor="let cell of fila.sessions; let dIdx = index">
 
-                    <!-- Franja Normal -->
-                    <div *ngIf="cell !== 'ESBARJO'" class="slot-sessio" [class.buit]="!cell"
-                        (click)="obrirModalEdicio(dIdx, fila.hora)">
+                        <!-- Si no es l'esbarjo, mostrem la sessió normal -->
+                        <div *ngIf="cell !== 'ESBARJO'" class="slot-sessio" [class.buit]="!cell"
+                            (click)="obrirModalEdicio(dIdx, fila.hora)">
 
-                        <div class="icona-afegir" *ngIf="!cell">+</div>
+                            <div class="icona-afegir" *ngIf="!cell">+</div>
 
-                        <ng-container *ngIf="cell">
-                            <div class="info-sessio">
-                                <span class="assignatura">{{ obtenirNomAssig(cell) }}</span>
-                                <span class="aula">{{ obtenirNomAula(cell) }}</span>
-                            </div>
-
-                            <div class="profe-footer">
-                                <div class="avatar-mini">
-                                    {{ obtenirInicialsProfe(cell) }}
+                            <!-- Si hi ha una classe ja configurada, posem el nom i el profe -->
+                            <ng-container *ngIf="cell">
+                                <div class="info-sessio">
+                                    <span class="assignatura">{{ obtenirNomAssig(cell) }}</span>
+                                    <span class="aula">{{ obtenirNomAula(cell) }}</span>
                                 </div>
-                                <span class="nom-profe">{{ obtenirNomProfe(cell) }}</span>
-                            </div>
-                        </ng-container>
-                    </div>
 
-                    <!-- Franja d'Esbarjo (només un cop per fila) -->
-                    <div *ngIf="cell === 'ESBARJO' && dIdx === 0" class="slot-sessio esbarjo">
-                        RECRES / ESBARJO
-                    </div>
+                                <div class="profe-footer">
+                                    <div class="avatar-mini">
+                                        {{ obtenirInicialsProfe(cell) }}
+                                    </div>
+                                    <span class="nom-profe">{{ obtenirNomProfe(cell) }}</span>
+                                </div>
+                            </ng-container>
+                        </div>
+
+                        <!-- L'esbarjo es una franja especial que creua tota la fila -->
+                        <div *ngIf="cell === 'ESBARJO' && dIdx === 0" class="slot-sessio esbarjo">
+                            ESBARJO
+                        </div>
+                    </ng-container>
                 </ng-container>
-            </ng-container>
+            </div>
         </div>
     </div>
 
-    <!-- Modal Redissenyat Premium -->
+    <!-- Aquest es el modal (la finestra que surt per sobre) per editar una hora -->
     <div class="modal-overlay" *ngIf="mostrarModal()">
         <div class="modal-card">
             <button class="btn-close" (click)="mostrarModal.set(false)">×</button>
@@ -73,6 +79,7 @@
             </div>
 
             <div class="modal-body">
+                <!-- Formulari per triar matèria, aula i professor -->
                 <div class="input-group">
                     <label>Assignatura</label>
                     <select class="select-modern" [(ngModel)]="idAssignaturaSeleccionada">
@@ -104,6 +111,7 @@
                     </div>
                 </div>
 
+                <!-- Llista d'alumnes per marcar qui ha de venir a aquesta sessió -->
                 <div class="input-group section-alumnes">
                     <div class="header-alumnes">
                         <label>Alumnes convocats ({{ alumnesSeleccionatsIds().length }})</label>
@@ -133,6 +141,7 @@
                 </div>
             </div>
 
+            <!-- Accions del modal: cancelar o guardar -->
             <div class="modal-actions">
                 <button class="btn btn-secondary" (click)="mostrarModal.set(false)">Cancel·lar</button>
                 <button class="btn btn-primary" (click)="desarCanvis()">Desar Configuració</button>

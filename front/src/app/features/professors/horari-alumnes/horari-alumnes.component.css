@@ -23,71 +23,10 @@
     overflow: hidden;
 }
 
-/* Fons amb partícules orgàniques */
-.fons-organic {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 0;
-    pointer-events: none;
-}
-
-.forma {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(100px);
-    opacity: 0.5;
-    animation: flotar 25s infinite ease-in-out;
-}
-
-.forma-1 {
-    top: -10%;
-    right: -5%;
-    width: 700px;
-    height: 700px;
-    background: radial-gradient(circle, var(--primary-light), transparent 70%);
-}
-
-.forma-2 {
-    bottom: -15%;
-    left: -5%;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, var(--secondary), transparent 70%);
-    animation-delay: -7s;
-}
-
-.forma-3 {
-    top: 30%;
-    left: 20%;
-    width: 400px;
-    height: 400px;
-    background: radial-gradient(circle, var(--accent), transparent 70%);
-    opacity: 0.3;
-    animation-delay: -12s;
-}
-
-@keyframes flotar {
-
-    0%,
-    100% {
-        transform: translate(0, 0) scale(1);
-    }
-
-    33% {
-        transform: translate(50px, -30px) scale(1.05);
-    }
-
-    66% {
-        transform: translate(-30px, 50px) scale(0.95);
-    }
-}
 
 .contingut {
     flex-grow: 1;
-    margin-top: 80px;
+    margin-top: 200px;
     padding: 30px;
     z-index: 1;
     overflow-y: auto;
@@ -98,47 +37,45 @@
 
 .capçalera-moderna {
     width: 100%;
-    max-width: 1300px;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
     text-align: left;
 }
 
 .capçalera-moderna h1 {
     font-size: 2.5rem;
-    font-weight: 800;
-    color: var(--text-dark);
+    font-weight: 900;
+    color: var(--primary);
     margin: 0;
     letter-spacing: -0.02em;
 }
 
-.badge-classe {
-    display: inline-block;
-    padding: 6px 16px;
-    background: white;
-    border-radius: 100px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--primary);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    margin-top: 10px;
+.targeta-horari-premium {
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 40px;
+    padding: 50px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
-/* Grilla d'Horari tipus Dashboard */
 .grid-horari {
     display: grid;
-    grid-template-columns: 100px repeat(5, 1fr);
+    grid-template-columns: 80px repeat(5, 1fr);
     gap: 15px;
     width: 100%;
-    max-width: 1300px;
 }
 
 .dia-header {
     text-align: center;
-    padding: 15px;
-    font-weight: 700;
-    color: var(--text-muted);
+    padding: 10px 0 20px 0;
+    font-weight: 900;
+    color: var(--primary);
     text-transform: uppercase;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     letter-spacing: 0.15em;
 }
 
@@ -146,19 +83,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 700;
+    font-weight: 800;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 .slot-sessio {
-    background: var(--glass);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 24px;
     min-height: 100px;
-    padding: 15px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -166,24 +101,26 @@
     cursor: pointer;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
 }
 
 .slot-sessio:hover {
-    transform: translateY(-5px) scale(1.02);
+    transform: translateY(-5px) scale(1.03);
     background: white;
-    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
     border-color: var(--primary-light);
+    z-index: 2;
 }
 
 .slot-sessio.buit {
-    background: rgba(255, 255, 255, 0.2);
-    border-style: dashed;
-    border-width: 2px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 2px dashed rgba(99, 102, 241, 0.2);
 }
 
 .slot-sessio.buit:hover {
     border-style: solid;
     background: white;
+    border-color: var(--primary-light);
 }
 
 .icona-afegir {
@@ -256,7 +193,6 @@
     font-weight: 500;
 }
 
-/* Modal UI Redesign */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -380,7 +316,6 @@
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
 
-/* Secció d'Alumnes */
 .section-alumnes {
     margin-top: 25px;
 }
