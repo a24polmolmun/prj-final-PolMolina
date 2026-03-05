@@ -31,6 +31,19 @@ export class ClassesManagerService {
   }
 
   /**
+   * Obté la classe assignada a un tutor específic
+   */
+  async obtenirClasseTutor(idTutor: number) {
+    try {
+      const resp = await this.apiManager.get<any>(`/classes/tutor/${idTutor}`);
+      return resp.data; // Retorna l'objecte Classe
+    } catch (err) {
+      console.error('Error obtenint la classe del tutor:', err);
+      return null;
+    }
+  }
+
+  /**
    * Crea una nova classe
    */
   async crearClasse(nom: string, curs_id: number) {

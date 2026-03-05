@@ -13,15 +13,15 @@
                     <thead>
                         <tr>
                             <th class="col-hora">Hora</th>
-                            <th>Lunes</th>
-                            <th>Martes</th>
-                            <th>Miércoles</th>
-                            <th>Jueves</th>
-                            <th>Viernes</th>
+                            <th>Dilluns</th>
+                            <th>Dimarts</th>
+                            <th>Dimecres</th>
+                            <th>Dijous</th>
+                            <th>Divendres</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @for (fila of graellaHorari(); track fila.hora) {
+                        @for (fila of quadreHorari(); track fila.hora) {
                         <tr>
                             <td class="hora-casella">{{ fila.hora }}</td>
 
@@ -34,17 +34,14 @@
                             } @else if (assig !== '') {
                             <td class="casella-activa">
                                 <div class="contingut-casella">
-                                    <!-- Usamos pre-line para que pille los saltos de línea \n que hemos metido en el TS -->
                                     <span class="nom-assig" style="white-space: pre-line;">{{ assig }}</span>
                                 </div>
-                                <!-- Botón para modificar esta casilla en un futuro -->
-                                <button (click)="obrirModalCreacio($index, fila.hora)" class="btn-editar"
+                                <button (click)="obrirModalEdicio($index, fila.hora)" class="btn-editar"
                                     style="margin-top: 5px; font-size: 0.8rem;">Modificar</button>
                             </td>
                             } @else {
                             <td class="casella-buida">
-                                <!-- Si no hay asignatura, mostramos el botón de añadir -->
-                                <button (click)="obrirModalCreacio($index, fila.hora)" class="btn-afegir">+</button>
+                                <button (click)="obrirModalEdicio($index, fila.hora)" class="btn-afegir">+</button>
                             </td>
                             }
                             }
@@ -69,34 +66,36 @@
         </h2>
         <p style="color: #64748b; margin-bottom: 20px; text-align: center;">Assigna l'assignatura i aula per aquesta
             franja</p>
+
         <!-- Selector d'Assignatura -->
         <div style="margin-bottom: 1.5rem;">
             <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #334155;">Assignatura</label>
             <select [(ngModel)]="idAssignaturaSeleccionada"
                 style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem;">
                 <option [ngValue]="null">-- Selecciona una Assignatura --</option>
-                @for (assig of assignaturesManagerService.assignatures(); track assig.id) {
+                @for (assig of serveiAssignatures.assignatures(); track assig.id) {
                 <option [ngValue]="assig.id">{{ assig.nom }}</option>
                 }
             </select>
         </div>
+
         <!-- Selector d'Aula -->
         <div style="margin-bottom: 2rem;">
             <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #334155;">Aula</label>
             <select [(ngModel)]="idAulaSeleccionada"
                 style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem;">
                 <option [ngValue]="null">-- Selecciona una Aula --</option>
-                @for (aula of aulesManagerService.aules(); track aula.id) {
+                @for (aula of serveiAules.aules(); track aula.id) {
                 <option [ngValue]="aula.id">{{ aula.nom }}</option>
                 }
             </select>
         </div>
+
         <!-- Botons d'Acció -->
         <div style="display: flex; gap: 10px; justify-content: flex-end;">
             <button (click)="mostrarModal.set(false)"
                 style="padding: 10px 20px; border: none; background: #e2e8f0; color: #475569; border-radius: 8px; cursor: pointer; font-weight: bold;">Cancel·lar</button>
-            <!-- El botón de salvar de momento no hace nada, se lo pondremos en el último paso! -->
-            <button
+            <button (click)="desarCanvis()"
                 style="padding: 10px 20px; border: none; background: #6366f1; color: white; border-radius: 8px; cursor: pointer; font-weight: bold;">Desar
                 Canvis</button>
         </div>
