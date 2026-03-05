@@ -87,6 +87,29 @@ export class AuthService {
       });
   }
 
+  /**
+   * Login temporal amb email (per a proves)
+   */
+  loginTemporal(email: string) {
+    return this.http
+      .post<{ success: boolean; data: any }>(`${this.apiUrl}/auth/login-temporal`, { email });
+  }
+
+  guardarSessio(data: any) {
+    // data conté { user: {...}, token, rol }
+    localStorage.setItem('user', JSON.stringify(data.user));
+    // També guardem el camp 'usuari' per compatibilitat amb components que busquen 'usuari' en lloc de 'user'
+    localStorage.setItem('usuari', JSON.stringify(data.user));
+
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+    }
+
+    this.userDataSignal.set(data);
+    this.isAuthenticatedSignal.set(true);
+    this.redirectByRole(data.user.rol);
+  }
+
   private redirectByRole(rol: string) {
     switch (rol?.toLowerCase()) {
       case 'profe':

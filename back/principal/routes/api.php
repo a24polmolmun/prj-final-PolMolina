@@ -17,6 +17,7 @@ Route::prefix('v1')->group(function (): void {
     // Rutes d'autenticació (sense autenticació requerida)
     Route::post('auth/google/redirect', [AuthController::class, 'googleRedirectUrl']);
     Route::post('auth/google/callback', [AuthController::class, 'googleCallback']);
+    Route::post('auth/login-temporal', [AuthController::class, 'loginTemporal']);
 
     // Rutes d'Usuaris
     Route::apiResource('usuaris', UsuariController::class);
