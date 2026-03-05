@@ -42,7 +42,14 @@ export class HorariAlumnesComponent implements OnInit {
     if (!usuariLoguejat || !usuariLoguejat.id) return null;
 
     const llistaClasses = this.serveiClasses.classes();
-    return llistaClasses.find(c => c.id_tutor === usuariLoguejat.id) || null;
+    if (llistaClasses && Array.isArray(llistaClasses)) {
+      for (let i = 0; i < llistaClasses.length; i++) {
+        if (llistaClasses[i].id_tutor === usuariLoguejat.id) {
+          return llistaClasses[i];
+        }
+      }
+    }
+    return null;
   });
 
   // Alumnes que pertanyen a aquesta classe (Llista Maestra)
@@ -51,13 +58,33 @@ export class HorariAlumnesComponent implements OnInit {
     if (!classe) return [];
 
     const usuaris = this.serveiUsuaris.usuaris() as Usuari[];
-    return usuaris.filter((u: Usuari) => (u.rol?.toLowerCase().includes('alumne')) && u.id_classe === classe.id);
+    const result: Usuari[] = [];
+    if (usuaris && Array.isArray(usuaris)) {
+      for (let i = 0; i < usuaris.length; i++) {
+        const u = usuaris[i];
+        const rol = u.rol?.toLowerCase() || '';
+        if (rol.includes('alumne') && u.id_classe === classe.id) {
+          result.push(u);
+        }
+      }
+    }
+    return result;
   });
 
   // Tots els professors disponibles
   professorsDisponibles = computed(() => {
     const usuaris = this.serveiUsuaris.usuaris() as Usuari[];
-    return usuaris.filter((u: Usuari) => u.rol?.toLowerCase().includes('profe') || u.rol?.toLowerCase().includes('instr'));
+    const result: Usuari[] = [];
+    if (usuaris && Array.isArray(usuaris)) {
+      for (let i = 0; i < usuaris.length; i++) {
+        const u = usuaris[i];
+        const rol = u.rol?.toLowerCase() || '';
+        if (rol.includes('profe') || rol.includes('instr')) {
+          result.push(u);
+        }
+      }
+    }
+    return result;
   });
 
   // Filtrem els horaris que pertanyen a aquesta classe
@@ -66,7 +93,15 @@ export class HorariAlumnesComponent implements OnInit {
     if (!classe) return [];
 
     const totsHoraris = this.serveiHoraris.horaris() as Horari[];
-    return totsHoraris.filter((h: Horari) => h.id_classe === classe.id);
+    const result: Horari[] = [];
+    if (totsHoraris && Array.isArray(totsHoraris)) {
+      for (let i = 0; i < totsHoraris.length; i++) {
+        if (totsHoraris[i].id_classe === classe.id) {
+          result.push(totsHoraris[i]);
+        }
+      }
+    }
+    return result;
   });
 
   // Graella visual (Estructura de dades per al Grid)
@@ -85,26 +120,28 @@ export class HorariAlumnesComponent implements OnInit {
       { hora: '13:30', sessions: [null, null, null, null, null] },
     ];
 
-    elsMeusHoraris.forEach((horari: Horari) => {
-      if (horari.codi_hora) {
-        const lletraDia = horari.codi_hora.charAt(0);
-        const numeroHora = parseInt(horari.codi_hora.substring(1));
+    if (elsMeusHoraris && Array.isArray(elsMeusHoraris)) {
+      for (let i = 0; i < elsMeusHoraris.length; i++) {
+        const horari = elsMeusHoraris[i];
+        if (horari.codi_hora) {
+          const lletraDia = horari.codi_hora.charAt(0);
+          const numeroHora = parseInt(horari.codi_hora.substring(1));
 
-        const dies: { [key: string]: number } = { 'L': 0, 'M': 1, 'X': 2, 'J': 3, 'V': 4 };
-        const indexColumna = dies[lletraDia] ?? -1;
+          const dies: { [key: string]: number } = { 'L': 0, 'M': 1, 'X': 2, 'J': 3, 'V': 4 };
+          const indexColumna = dies[lletraDia] ?? -1;
 
-        if (indexColumna !== -1) {
-          let indexFila = -1;
-          if (numeroHora <= 3) indexFila = numeroHora - 1;
-          else if (numeroHora <= 6) indexFila = numeroHora;
+          if (indexColumna !== -1) {
+            let indexFila = -1;
+            if (numeroHora <= 3) indexFila = numeroHora - 1;
+            else if (numeroHora <= 6) indexFila = numeroHora;
 
-          if (indexFila !== -1 && graella[indexFila]) {
-            // Guardem l'objecte horari sencer per accedir a tot el detall
-            graella[indexFila].sessions[indexColumna] = horari;
+            if (indexFila !== -1 && graella[indexFila]) {
+              graella[indexFila].sessions[indexColumna] = horari;
+            }
           }
         }
       }
-    });
+    }
 
     return graella;
   });
@@ -149,7 +186,13 @@ export class HorariAlumnesComponent implements OnInit {
     if (this.totsSeleccionats()) {
       this.alumnesSeleccionatsIds.set([]);
     } else {
-      const totsIds = this.alumnesDelaClasse().map((a: Usuari) => a.id);
+      const alumnes = this.alumnesDelaClasse();
+      const totsIds: number[] = [];
+      if (alumnes && Array.isArray(alumnes)) {
+        for (let i = 0; i < alumnes.length; i++) {
+          totsIds.push(alumnes[i].id);
+        }
+      }
       this.alumnesSeleccionatsIds.set(totsIds);
     }
   }
@@ -176,20 +219,43 @@ export class HorariAlumnesComponent implements OnInit {
     const codiActual = lletra + numHora;
     this.codiHoraSeleccionada.set(codiActual);
 
-    const existent = this.horariDelaClasse().find((h: Horari) => h.codi_hora === codiActual);
+    const horaris = this.horariDelaClasse();
+    let existent: Horari | null = null;
+    if (horaris && Array.isArray(horaris)) {
+      for (let i = 0; i < horaris.length; i++) {
+        if (horaris[i].codi_hora === codiActual) {
+          existent = horaris[i];
+          break;
+        }
+      }
+    }
 
     if (existent) {
       this.idAssignaturaSeleccionada.set(existent.id_assig);
       this.idAulaSeleccionada.set(existent.id_aula);
       this.idProfeSeleccionat.set(existent.id_professor || null);
 
-      const idsJaInscrits = existent.inscrits?.map(i => i.id_alumne) || [];
+      const idsJaInscrits: number[] = [];
+      const inscritsRelacio = existent.inscrits;
+      if (inscritsRelacio && Array.isArray(inscritsRelacio)) {
+        for (let j = 0; j < inscritsRelacio.length; j++) {
+          idsJaInscrits.push(inscritsRelacio[j].id_alumne);
+        }
+      }
       this.alumnesSeleccionatsIds.set(idsJaInscrits);
     } else {
       this.idAssignaturaSeleccionada.set(null);
       this.idAulaSeleccionada.set(null);
       this.idProfeSeleccionat.set(this.serveiAuth.usuarioInfo?.id || null);
-      this.alumnesSeleccionatsIds.set(this.alumnesDelaClasse().map((a: Usuari) => a.id));
+
+      const alumnes = this.alumnesDelaClasse();
+      const totsIds: number[] = [];
+      if (alumnes && Array.isArray(alumnes)) {
+        for (let k = 0; k < alumnes.length; k++) {
+          totsIds.push(alumnes[k].id);
+        }
+      }
+      this.alumnesSeleccionatsIds.set(totsIds);
     }
 
     this.mostrarModal.set(true);
@@ -198,9 +264,21 @@ export class HorariAlumnesComponent implements OnInit {
   toggleAlumne(id: number) {
     const llista = this.alumnesSeleccionatsIds();
     if (llista.includes(id)) {
-      this.alumnesSeleccionatsIds.set(llista.filter(aid => aid !== id));
+      const novaLlista: number[] = [];
+      for (let i = 0; i < llista.length; i++) {
+        const item = llista[i];
+        if (item !== id) {
+          novaLlista.push(item);
+        }
+      }
+      this.alumnesSeleccionatsIds.set(novaLlista);
     } else {
-      this.alumnesSeleccionatsIds.set([...llista, id]);
+      const novaLlista: number[] = [];
+      for (let j = 0; j < llista.length; j++) {
+        novaLlista.push(llista[j]);
+      }
+      novaLlista.push(id);
+      this.alumnesSeleccionatsIds.set(novaLlista);
     }
   }
 

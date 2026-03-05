@@ -18,9 +18,9 @@ import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.com
 })
 export class GestioInscritsComponent implements OnInit {
   // Inyectem els serveis de forma senzilla
-  private serveiAuth = inject(AuthService);
-  private serveiClasses = inject(ClassesManagerService);
-  private serveiUsuaris = inject(UsuarisManagerService);
+  public serveiAuth = inject(AuthService);
+  public serveiClasses = inject(ClassesManagerService);
+  public serveiUsuaris = inject(UsuarisManagerService);
 
   // Variables per guardar la informació que pintarem
   classeTrobada = signal<Classe | null>(null);
@@ -45,13 +45,25 @@ export class GestioInscritsComponent implements OnInit {
       await this.serveiUsuaris.carregarUsuaris();
       const tots = this.serveiUsuaris.usuaris();
 
-      // Filtrem per tenir només els Alumnes disponibles al sistema
-      const nomésAlumnes = tots.filter(u => u.rol === 'Alumne');
+      // Fem servir bucles tradicionals (sense .filter) com has demanat
+      const nomésAlumnes: Usuari[] = [];
+      if (tots && Array.isArray(tots)) {
+        for (let i = 0; i < tots.length; i++) {
+          if (tots[i].rol === 'Alumne') {
+            nomésAlumnes.push(tots[i]);
+          }
+        }
+      }
       this.alumnesDisponibles.set(nomésAlumnes);
 
       // Filtrem només els que pertanyen a AQUESTA classe (Llista Mestra)
       if (classe) {
-        const elsMeusAlumnes = nomésAlumnes.filter(u => u.id_classe === classe.id);
+        const elsMeusAlumnes: Usuari[] = [];
+        for (let j = 0; j < nomésAlumnes.length; j++) {
+          if (nomésAlumnes[j].id_classe === classe.id) {
+            elsMeusAlumnes.push(nomésAlumnes[j]);
+          }
+        }
         this.alumnesDeLaClasse.set(elsMeusAlumnes);
       }
     }
@@ -73,5 +85,21 @@ export class GestioInscritsComponent implements OnInit {
       alert('Alumne tret de la classe.');
       await this.carregarDades(); // Actualitzem la vista
     }
+  }
+
+  hiHaResultats(): boolean {
+    const llista = this.alumnesDisponibles();
+    const cerca = this.cercaAlumne.toLowerCase();
+
+    if (!llista || !Array.isArray(llista)) return false;
+
+    for (let i = 0; i < llista.length; i++) {
+      const nom = llista[i].nom.toLowerCase();
+      const email = llista[i].email.toLowerCase();
+      if (nom.includes(cerca) || email.includes(cerca)) {
+        return true;
+      }
+    }
+    return false;
   }
 }

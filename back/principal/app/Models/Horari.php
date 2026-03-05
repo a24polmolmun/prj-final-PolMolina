@@ -38,4 +38,9 @@ class Horari extends Model
     {
         return $this->belongsTo(Aula::class, 'id_aula');
     }
+
+    public function inscrits()
+    {
+        return $this->hasMany(Inscrit::class, 'id_horari');
+    }
 }

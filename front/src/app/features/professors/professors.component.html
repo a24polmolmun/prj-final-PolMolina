@@ -59,10 +59,10 @@
                     }
 
                     <!-- Files hores i assignatures -->
-                    @for (franja of horariActual(); track franja) {
+                    @for (franja of horariActual(); track franja.hora) {
                     <div class="cel-la-hora">{{ franja.hora }}</div>
-                    @for (assignatura of franja.assignatures; track assignatura) {
-                    <div class="cel-la-assignatura" [class.esbarjo]="assignatura === 'Esbarjo'">
+                    @for (assignatura of franja.assignatures; track $index) {
+                    <div class="cel-la-assignatura" [class.esbarjo]="assignatura === 'ESBARJO'">
                         <span class="text-assignatura">{{ assignatura }}</span>
                     </div>
                     }
