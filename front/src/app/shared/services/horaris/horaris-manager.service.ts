@@ -20,8 +20,9 @@ export class HorarisManagerService {
     this.error.set(null);
 
     try {
-      const data = await this.apiManager.get<Horari[]>('/horaris');
-      this.horaris.set(data);
+      const resp = await this.apiManager.get<any>('/horaris');
+      const llista = resp.data || resp;
+      this.horaris.set(llista);
     } catch (err) {
       this.error.set("Hauria d'haver carregat l'horari, però hi ha error");
       console.error(err);

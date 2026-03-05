@@ -75,26 +75,44 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <ng-container *ngFor="let alumne of alumnesDisponibles()">
-                                <tr
-                                    *ngIf="alumne.nom.toLowerCase().includes(cercaAlumne.toLowerCase()) || alumne.email.toLowerCase().includes(cercaAlumne.toLowerCase())">
-                                    <td>
-                                        <div style="font-weight: 600;">{{ alumne.nom }}</div>
-                                        <div style="font-size: 0.8rem; color: #94a3b8;">{{ alumne.email }}</div>
-                                    </td>
-                                    <td>
-                                        <span *ngIf="alumne.id_classe === classeTrobada()?.id"
-                                            class="insignia insignia-success">A la classe</span>
-                                        <span *ngIf="alumne.id_classe && alumne.id_classe !== classeTrobada()?.id"
-                                            class="insignia insignia-warning">Altra classe</span>
-                                        <span *ngIf="!alumne.id_classe" class="insignia"
-                                            style="background: #f1f5f9; color: #64748b;">Lliure</span>
-                                    </td>
-                                    <td style="text-align: center;">
-                                        <button *ngIf="alumne.id_classe !== classeTrobada()?.id"
-                                            class="boto-accio boto-afegir" (click)="afegirAlumneAClasse(alumne.email)">
-                                            Inscriure
-                                        </button>
+                            <!-- Indicador de Càrrega -->
+                            <tr *ngIf="serveiUsuaris.isLoading()">
+                                <td colspan="3" style="text-align: center; padding: 25px;">
+                                    <div class="loading-spinner-small"></div>
+                                    <span style="color: #64748b; margin-left: 12px; font-weight: 500;">Cercant alumnes a
+                                        la base de dades...</span>
+                                </td>
+                            </tr>
+
+                            <!-- Resultats -->
+                            <ng-container *ngIf="!serveiUsuaris.isLoading()">
+                                <ng-container *ngFor="let alumne of alumnesDisponibles(); let i = index">
+                                    <tr
+                                        *ngIf="alumne.nom.toLowerCase().includes(cercaAlumne.toLowerCase()) || alumne.email.toLowerCase().includes(cercaAlumne.toLowerCase())">
+                                        <td>
+                                            <div style="font-weight: 600;">{{ alumne.nom }}</div>
+                                            <div style="font-size: 0.8rem; color: #94a3b8;">{{ alumne.email }}</div>
+                                        </td>
+                                        <td>
+                                            <span *ngIf="alumne.id_classe === classeTrobada()?.id"
+                                                class="insignia insignia-success">A la classe</span>
+                                            <span *ngIf="alumne.id_classe && alumne.id_classe !== classeTrobada()?.id"
+                                                class="insignia insignia-warning">Altra classe</span>
+                                            <span *ngIf="!alumne.id_classe" class="insignia"
+                                                style="background: #f1f5f9; color: #64748b;">Lliure</span>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <button *ngIf="alumne.id_classe !== classeTrobada()?.id"
+                                                class="boto-accio boto-afegir"
+                                                (click)="afegirAlumneAClasse(alumne.email)">
+                                                Inscriure
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </ng-container>
+                                <tr *ngIf="!hiHaResultats()">
+                                    <td colspan="3" style="text-align: center; padding: 20px; color: #64748b;">
+                                        No s'han trobat resultats per a la cerca de "{{ cercaAlumne }}".
                                     </td>
                                 </tr>
                             </ng-container>

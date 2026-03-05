@@ -4,6 +4,7 @@ import { SidebarComponent } from '../../shared/components/sidebar/sidebar.compon
 import { AssignaturesManagerService } from '../../shared/services/assignatures/assignatures-manager.service';
 import { HorarisManagerService } from '../../shared/services/horaris/horaris-manager.service';
 import { ImparteixManagerService } from '../../shared/services/imparteix/imparteix-manager.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-professors',
@@ -15,6 +16,7 @@ export class ProfessorsComponent implements OnInit {
   assignaturesManager = inject(AssignaturesManagerService);
   horarisManager = inject(HorarisManagerService);
   imparteixManager = inject(ImparteixManagerService);
+  authService = inject(AuthService);
 
   // Dades de la classe actual conectada a la Base de Datos (ARA REACTIU!)
   classeActual = computed(() => {
@@ -76,35 +78,19 @@ export class ProfessorsComponent implements OnInit {
     const totsHoraris = this.horarisManager.horaris();
 
     // 2. Definim quin profe som per poder filtrar què ens toca donar
-    const idProfeLoguejat = 1; // Més endavant ho agafarem del Login
+    const usuariLoguejat = this.authService.usuarioInfo;
+    if (!usuariLoguejat || !usuariLoguejat.id) return [];
 
-    // 3. Busquem quines assignatures dono jo
-    const lesMevesAssignatures: number[] = [];
-    for (let i = 0; i < totesImparticions.length; i++) {
-      const imparticioActual = totesImparticions[i];
+    const idProfeLoguejat = usuariLoguejat.id;
 
-      if (imparticioActual.id_profe === idProfeLoguejat) {
-        lesMevesAssignatures.push(imparticioActual.id_assignatura);
-      }
-    }
-
-    // 4. Recollim només els horaris que coincideixin amb les meves assignatures
+    // 3. Busquem els horaris on JO sóc el professor assignat
     const elsMeusHoraris: any[] = [];
-    for (let j = 0; j < totsHoraris.length; j++) {
-      const horariActualAux = totsHoraris[j];
-      let esMeva = false;
-
-      // Comprovem si l'horari actual és d'alguna de les meves assignatures
-      for (let k = 0; k < lesMevesAssignatures.length; k++) {
-        if (horariActualAux.id_assig === lesMevesAssignatures[k]) {
-          esMeva = true;
-          break; // Ja hem trobat que és meva, no cal comprovar més
+    if (totsHoraris && Array.isArray(totsHoraris)) {
+      for (let j = 0; j < totsHoraris.length; j++) {
+        const horariActualAux = totsHoraris[j];
+        if (horariActualAux.id_professor === idProfeLoguejat) {
+          elsMeusHoraris.push(horariActualAux);
         }
-      }
-
-      // Si és meva, la guardem a la llista d'horaris definitius
-      if (esMeva) {
-        elsMeusHoraris.push(horariActualAux);
       }
     }
 

@@ -20,8 +20,9 @@ export class ClassesManagerService {
     this.error.set(null);
 
     try {
-      const data = await this.apiManager.get<Classe[]>('/classes');
-      this.classes.set(data);
+      const resp = await this.apiManager.get<any>('/classes');
+      const llista = resp.data || resp;
+      this.classes.set(llista);
     } catch (err) {
       this.error.set('Alguna cosa ha fallat demanant les classes al Laravel');
       console.error(err);
@@ -53,7 +54,13 @@ export class ClassesManagerService {
       const novaClasse = resp.data || resp;
 
       const llistaActual = this.classes();
-      this.classes.set([...llistaActual, novaClasse]);
+      const llistaNova = [];
+      for (let i = 0; i < llistaActual.length; i++) {
+        llistaNova.push(llistaActual[i]);
+      }
+      llistaNova.push(novaClasse);
+
+      this.classes.set(llistaNova);
       return novaClasse;
     } catch (err) {
       console.error('Error creant classe:', err);
