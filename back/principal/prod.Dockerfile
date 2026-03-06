@@ -68,8 +68,8 @@ RUN mkdir -p storage/logs bootstrap/cache \
     && chown -R www-data:www-data /app \
     && chmod -R 755 storage bootstrap/cache
 
-# Pre-generar cachés de Laravel (config, rutas, vistas)
-RUN cd /app && php artisan config:cache && php artisan route:cache && php artisan view:cache
+# Pre-generar cachés de Laravel (config, rutas)
+RUN cd /app && php artisan config:cache && php artisan route:cache
 
 # Generar archivo de preload para opcache
 RUN cd /app && php artisan package:discover --ansi
