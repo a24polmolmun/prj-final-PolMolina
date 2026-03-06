@@ -1,5 +1,7 @@
 ## docker compose -f compose.DEV.yml up --build
 
+## docker compose exec pfg1-back php artisan migrate:fresh --seed
+
 ## docker exec pfg1-back php artisan db:seed
 services:
   # Frontend Angular
