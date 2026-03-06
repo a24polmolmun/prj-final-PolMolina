@@ -15,10 +15,12 @@ class EnsureCors
      */
     public function handle(Request $request, Closure $next): Response
     {
+        $allowedOrigin = env('CORS_ALLOWED_ORIGIN', 'http://localhost:4200');
+
         // Intercept OPTIONS requests and return 200 early without going to next middlewares
         if ($request->isMethod('OPTIONS')) {
             $response = new Response();
-            $response->headers->set('Access-Control-Allow-Origin', 'http://localhost:4200');
+            $response->headers->set('Access-Control-Allow-Origin', $allowedOrigin);
             $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
             $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
             $response->headers->set('Access-Control-Allow-Credentials', 'true');
@@ -28,7 +30,7 @@ class EnsureCors
 
         $response = $next($request);
 
-        $response->headers->set('Access-Control-Allow-Origin', 'http://localhost:4200');
+        $response->headers->set('Access-Control-Allow-Origin', $allowedOrigin);
         $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
         $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
         $response->headers->set('Access-Control-Allow-Credentials', 'true');

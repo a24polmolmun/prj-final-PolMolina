@@ -18,7 +18,7 @@ class ClasseController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => Classe::with(['curs', 'aula'])->get(),
+            'data' => Classe::with(['curs', 'aula', 'tutor'])->get(),
             'message' => 'Classes obtingudes correctament'
         ], Response::HTTP_OK);
     }

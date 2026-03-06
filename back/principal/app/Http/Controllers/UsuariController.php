@@ -16,7 +16,7 @@ class UsuariController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => Usuari::all(),
+            'data' => Usuari::with(['classe'])->get(),
             'message' => 'Usuaris obtinguts correctament'
         ], Response::HTTP_OK);
     }

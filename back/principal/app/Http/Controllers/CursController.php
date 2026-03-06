@@ -15,7 +15,7 @@ class CursController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => Curs::all(),
+            'data' => Curs::with(['tutor', 'periode'])->get(),
             'message' => 'Cursos obtinguts correctament'
         ], Response::HTTP_OK);
     }

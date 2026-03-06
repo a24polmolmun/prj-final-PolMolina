@@ -75,33 +75,36 @@ class AuthController extends Controller
                 $user_rol = 'Profe';
             }
 
-            // Descargar foto si es la primera vez que se loguea (o no tiene)
-            $existingUser = Usuari::where('email', $user_email)->first();
-            $photoPath = $existingUser ? $existingUser->photo : null;
+            // Verificar si el usuari ja existeix a la base de dades
+            $user = Usuari::where('email', $user_email)->first();
 
-            if (!$photoPath && $googleUser->getAvatar()) {
-                try {
-                    $contents = Http::get($googleUser->getAvatar())->body();
-                    // Guardar la foto con el nombre del email
-                    $filename = 'photos/' . $user_email . '.jpg';
-                    Storage::disk('public')->put($filename, $contents);
-                    $photoPath = '/storage/' . $filename; // Esta será la ruta para acceder desde frontend
-                } catch (\Exception $e) {
-                    Log::error('Error guardando la foto de perfil: ' . $e->getMessage());
+            // Si el usuario NO existeix
+            if (!$user) {
+                // Descarreguem la foto de perfil
+                $photoPath = null;
+                if ($googleUser->getAvatar()) {
+                    try {
+                        $contents = Http::get($googleUser->getAvatar())->body();
+                        // Guardar la foto amb el nom basat en l'email de l'usuari
+                        $filename = 'photos/' . $user_email . '.jpg';
+                        Storage::disk('public')->put($filename, $contents);
+                        $photoPath = '/storage/' . $filename; // Aquesta es la ruta per accedir a la foto des del frontend
+                    } catch (\Exception $e) {
+                        Log::error('Error guardando la foto de perfil: ' . $e->getMessage());
+                    }
                 }
-            }
 
-            // Crear o actualitzar l'usuari
-            $user = Usuari::updateOrCreate(
-                ['email' => $user_email],
-                [
+                // Crear el nou usuari
+                $user = Usuari::create([
+                    'email' => $user_email,
                     'google_id' => $googleUser->getId(),
                     'nom' => $googleUser->getName(),
                     'rol' => $user_rol,
                     'token' => $googleUser->token,
                     'photo' => $photoPath
-                ]
-            );
+                ]);
+            }
+            // Si el usuari YA existe, no modificar res - només autenticar
 
             // Generem el token de Sanctum per l'usuari
             $token = $user->createToken('google-auth')->plainTextToken;

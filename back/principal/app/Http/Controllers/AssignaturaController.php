@@ -16,7 +16,7 @@ class AssignaturaController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => Assignatura::all(),
+            'data' => Assignatura::with(['classeProjecte'])->get(),
             'message' => 'Assignatures obtingudes correctament'
         ], Response::HTTP_OK);
     }
