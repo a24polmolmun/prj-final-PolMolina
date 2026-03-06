@@ -35,7 +35,7 @@ services:
       context: .
       dockerfile: ./back/principal/prod.Dockerfile
     ports:
-      - 8000:8000
+      - 8000:9000
     # volumes:
     #   - ./back/principal:/app
     depends_on:
