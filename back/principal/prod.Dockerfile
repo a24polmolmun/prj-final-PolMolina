@@ -65,6 +65,9 @@ COPY --from=builder /app /app
 
 # Crear directorios necesarios con permisos adecuados
 RUN mkdir -p storage/logs bootstrap/cache \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
     && chown -R www-data:www-data /app \
     && chmod -R 755 storage bootstrap/cache
 
