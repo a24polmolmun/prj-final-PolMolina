@@ -219,12 +219,8 @@ class AssistenciaController extends Controller
             'message' => 'Dades obtingudes correctament'
         ], Response::HTTP_OK);
     }
-    public function assistenciaPerAlumne($tokenAlumne){
+    public function assistenciaPerAlumne($alumneId){
         $resultat = [];
-        //Get id * token
-        $alumneId = DB::table('usuaris')
-            ->where('token', $tokenAlumne)
-            ->value('id');
 
         //Get inscripcions * alumne
         $inscripcions = DB::table('inscrits')
