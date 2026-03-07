@@ -219,14 +219,22 @@ class AssistenciaController extends Controller
             'message' => 'Dades obtingudes correctament'
         ], Response::HTTP_OK);
     }
-    public function assistenciaPerAlumne($alumneId){
+    public function assistenciaPerAlumne($tokenAlumne){
         $resultat = [];
+        //Get id * token
+        $alumneId = DB::table('usuaris')
+            ->where('token', $tokenAlumne)
+            ->value('id');
 
         //Get inscripcions * alumne
         $inscripcions = DB::table('inscrits')
             ->where('id_alumne', $alumneId)
             ->select('id', 'id_assignatura')
             ->get();
+        
+        $retard_total = 0;
+        $faltes_total = 0;
+        $justificades_total = 0;
         
         //Get dades
         foreach ($inscripcions as $inscripcio) {
@@ -246,11 +254,12 @@ class AssistenciaController extends Controller
                 ->select('id','estat')
                 ->get();
             
-            
+
             foreach($assistenciesValue as $valor) {    
                 switch ($valor->estat) {
                     case 'Retart':
                         $retard++;
+                        $retard_total++;
                         break;
                     case 'Falta':
                         $findJustificacio = DB::table('justificants')
@@ -260,10 +269,11 @@ class AssistenciaController extends Controller
 
                         if ($findJustificacio == true){
                             $justificades++;
+                            $justificades_total++;
                         } else {
                             $faltes++;
+                            $faltes_total++;
                         } 
-
                         break;
                 }
             }
@@ -276,6 +286,14 @@ class AssistenciaController extends Controller
             );
             $resultat[] = $entry;
         };
+
+        $entry_total = (object) array(
+            'nom_assignatura' => [ (object) ['nom' => 'Total'] ],
+            'retards' => $retard_total,
+            'faltes' => $faltes_total,
+            'justificades' => $justificades_total,
+        );
+        array_unshift($resultat, $entry_total);
         return $resultat;
     }
 }

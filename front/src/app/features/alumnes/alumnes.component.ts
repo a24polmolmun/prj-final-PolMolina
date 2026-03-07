@@ -17,7 +17,7 @@ export interface assistenciaPerUsuari {
 export class AlumnesComponent implements OnInit {
   inscritsManager = inject(InscritsManagerService);
 
-  indexActual = signal(-1);
+  indexActual = signal(0);
   showDespegable = signal(false);
   inscritsPerUsuari = this.inscritsManager.inscritsPerUsuari;
 
@@ -30,7 +30,7 @@ export class AlumnesComponent implements OnInit {
   }
   // cookie:id -> inscripcio:id -> assistencies / assignatures(llista)
   ngOnInit(): void {
-    const idAlumne: number = Number(this.inscritsManager.idAlumne());
+    const tokenAlumne: string = this.inscritsManager.idAlumne();
     this.inscritsManager.carregarInscritAlumne('3');
   }
 }
