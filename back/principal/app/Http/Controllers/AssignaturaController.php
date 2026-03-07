@@ -28,7 +28,7 @@ class AssignaturaController extends Controller
     {
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
-            'interval' => 'nullable|integer',
+            'interval' => 'nullable|string',
             'exempcio' => 'nullable|boolean',
         ]);
 
@@ -78,7 +78,7 @@ class AssignaturaController extends Controller
 
         $validated = $request->validate([
             'nom' => 'sometimes|required|string|max:255',
-            'interval' => 'nullable|integer',
+            'interval' => 'nullable|string',
             'exempcio' => 'nullable|boolean',
         ]);
 

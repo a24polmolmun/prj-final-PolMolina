@@ -20,7 +20,6 @@ import { Horari } from '../../../shared/models/horaris.model';
   styleUrl: './horari-alumnes.component.css',
 })
 export class HorariAlumnesComponent implements OnInit {
-
   // Injecció de serveis en mode privat per a ús intern
   serveiClasses = inject(ClassesManagerService);
   serveiHoraris = inject(HorarisManagerService);
@@ -46,7 +45,7 @@ export class HorariAlumnesComponent implements OnInit {
     const llistaClasses = this.serveiClasses.classes();
     if (llistaClasses && Array.isArray(llistaClasses)) {
       for (let i = 0; i < llistaClasses.length; i++) {
-        if (llistaClasses[i].id_tutor === usuariLoguejat.id) {
+        if (Number(llistaClasses[i].id_tutor) === Number(usuariLoguejat.id)) {
           return llistaClasses[i];
         }
       }
@@ -129,7 +128,7 @@ export class HorariAlumnesComponent implements OnInit {
           const lletraDia = horari.codi_hora.charAt(0);
           const numeroHora = parseInt(horari.codi_hora.substring(1));
 
-          const dies: { [key: string]: number } = { 'L': 0, 'M': 1, 'X': 2, 'J': 3, 'V': 4 };
+          const dies: { [key: string]: number } = { L: 0, M: 1, X: 2, J: 3, V: 4 };
           const indexColumna = dies[lletraDia] ?? -1;
 
           if (indexColumna !== -1) {
@@ -304,15 +303,24 @@ export class HorariAlumnesComponent implements OnInit {
   }
 
   async desarCanvis() {
+    console.log('[desarCanvis] inici');
     const classe = this.laMevaClasse();
-    if (!classe) return;
+    console.log('[desarCanvis] classe:', classe);
+    console.log('[desarCanvis] usuariLoguejat:', this.serveiAuth.usuarioInfo);
+    if (!classe) {
+      alert(
+        "No s'ha trobat cap classe assignada al teu usuari. Comprova que ets tutor d'una classe.",
+      );
+      return;
+    }
 
     const asigId = this.idAssignaturaSeleccionada();
     const aulaId = this.idAulaSeleccionada();
     const profeId = this.idProfeSeleccionat();
+    console.log('[desarCanvis] asigId:', asigId, '| aulaId:', aulaId, '| profeId:', profeId);
 
-    if (asigId === null || aulaId === null || profeId === null) {
-      alert("Si us plau, selecciona Assignatura, Aula i Professor.");
+    if (asigId == null || aulaId == null || profeId == null) {
+      alert('Si us plau, selecciona Assignatura, Aula i Professor.');
       return;
     }
 
@@ -322,13 +330,15 @@ export class HorariAlumnesComponent implements OnInit {
       id_assig: asigId,
       id_aula: aulaId,
       id_profe: profeId,
-      alumnes_ids: this.alumnesSeleccionatsIds()
+      alumnes_ids: this.alumnesSeleccionatsIds(),
     };
 
     try {
+      console.log('comienzo');
       await this.serveiHoraris.actualitzarHorariGranular(dadesGranulars);
+      console.log('enviao');
       this.mostrarModal.set(false);
-      alert("Horari i alumnes actualitzats correctament.");
+      alert('Horari i alumnes actualitzats correctament.');
     } catch (error) {
       console.error("Error desar l'horari granular", error);
       alert("S'ha produït un error al desar la configuració.");

@@ -33,7 +33,9 @@ export class AuthService {
   private verificarToken() {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      this.userDataSignal.set(JSON.parse(storedUser));
+      const user = JSON.parse(storedUser);
+      const token = localStorage.getItem('token') ?? undefined;
+      this.userDataSignal.set({ user, token });
       this.isAuthenticatedSignal.set(true);
     }
   }
@@ -91,8 +93,9 @@ export class AuthService {
    * Login temporal amb email (per a proves)
    */
   loginTemporal(email: string) {
-    return this.http
-      .post<{ success: boolean; data: any }>(`${this.apiUrl}/auth/login-temporal`, { email });
+    return this.http.post<{ success: boolean; data: any }>(`${this.apiUrl}/auth/login-temporal`, {
+      email,
+    });
   }
 
   guardarSessio(data: any) {
