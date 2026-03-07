@@ -20,7 +20,7 @@ class AssistenciaController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => Assistencia::with(['inscripcio', 'professor'])->get(),
+            'data' => Assistencia::with(['inscripcio.alumne', 'inscripcio.assignatura', 'professor'])->get(),
             'message' => 'Assistències obtingudes correctament'
         ], Response::HTTP_OK);
     }
@@ -173,7 +173,7 @@ class AssistenciaController extends Controller
                         $assignatura = $horari->assignatura;
 
                         // Si hi ha projecte i l'assignatura no és excepció, usar projecte
-                        if ($projecte && !$assignatura->excepcio) {
+                        if ($projecte && $assignatura->esSubstituible()) {
                             $assignatura = $projecte;
                         }
 
@@ -207,7 +207,18 @@ class AssistenciaController extends Controller
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
+    public function perAssignatura($id){
+        $dades = Assistencia::whereHas('inscripcio', 
+        function($query) use ($id){
+            $query->where('id_assignatura', $id);
+        })->get();
 
+        return response()->json([
+            'success' => true,
+            'data' => $dades,
+            'message' => 'Dades obtingudes correctament'
+        ], Response::HTTP_OK);
+    }
     public function assistenciaPerAlumne($tokenAlumne){
         $resultat = [];
         //Get id * token
@@ -286,3 +297,4 @@ class AssistenciaController extends Controller
         return $resultat;
     }
 }
+
