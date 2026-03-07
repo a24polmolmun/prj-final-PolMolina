@@ -60,7 +60,7 @@ jobs:
             echo "DB_PASSWORD=$DB_PASSWORD" >> .env
             echo "GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" >> .env
             echo "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET" >> .env
-            echo "GOOGLE_REDIRECT_URI=$GOOGLE_REDIRECT_URI >> .env
+            echo "GOOGLE_REDIRECT_URI=$GOOGLE_REDIRECT_URI" >> .env
 
             # 5. Crear .env.PROD BACK Dbinsert
             # Crear .env de BACK Dbinsert
