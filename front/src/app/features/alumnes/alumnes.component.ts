@@ -1,5 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { InscritsManagerService } from '../../shared/services/inscrits/inscrits-manager.service';
+import { AuthService } from '../../services/auth.service';
 
 export interface assistenciaPerUsuari {
   nom_assignatura: { nom: string }[];
@@ -16,6 +17,7 @@ export interface assistenciaPerUsuari {
 })
 export class AlumnesComponent implements OnInit {
   inscritsManager = inject(InscritsManagerService);
+  authService = inject(AuthService);
 
   indexActual = signal(0);
   showDespegable = signal(false);
@@ -28,9 +30,9 @@ export class AlumnesComponent implements OnInit {
   showAssignaturas() {
     this.showDespegable.set(!this.showDespegable());
   }
-  // cookie:id -> inscripcio:id -> assistencies / assignatures(llista)
+
   ngOnInit(): void {
-    const tokenAlumne: string = this.inscritsManager.idAlumne();
-    this.inscritsManager.carregarInscritAlumne('3');
+    const idAlumne = String(this.authService.usuarioInfo?.id);
+    this.inscritsManager.carregarInscritAlumne(idAlumne);
   }
 }
