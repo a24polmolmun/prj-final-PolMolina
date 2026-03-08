@@ -13,7 +13,6 @@ export class Horaris implements OnInit {
   calendari = this.horarisManager.horarisAssignaturaNet;
 
   ngOnInit() {
-    const tokenAlumne: string = this.horarisManager.token();
-    this.horarisManager.getHorari(tokenAlumne);
+    this.horarisManager.getHorari();
   }
 }

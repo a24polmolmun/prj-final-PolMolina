@@ -42,7 +42,7 @@ Route::prefix('v1')->group(function (): void {
     // Rutes d'Horaris
     Route::post('horaris/granular', [HorariController::class, 'actualitzarHorariGranular']);
     Route::apiResource('horaris', HorariController::class);
-    Route::get('/horaris/usuari/{token}', [HorariController::class, 'getHorari']);
+    Route::get('/horaris/usuari/{id}', [HorariController::class, 'getHorari']);
 
     // Rutes d'Imparteix
     Route::apiResource('imparteix', ImparteixController::class);

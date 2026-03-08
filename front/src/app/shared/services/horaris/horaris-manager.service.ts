@@ -10,7 +10,6 @@ export class HorarisManagerService {
 
   horaris = signal<Horari[]>([]);
   horarisAssignaturaNet = signal<DiaCalendari[]>([]);
-  token = signal<string>('tokenAlumno');
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
 
@@ -108,18 +107,27 @@ export class HorarisManagerService {
     }
   }
 
-  async getHorari(token: string) {
+  async getHorari() {
     try {
       this.isLoading.set(true);
       this.error.set(null);
+      const storedUser = localStorage.getItem('user');
+      if (!storedUser) {
+        this.error.set('No hi ha usuari autenticat');
+        return;
+      }
+      const user = JSON.parse(storedUser);
+      const userId: number = user.id;
       this.horarisAssignaturaNet.set(
-        await this.apiManager.get<DiaCalendari[]>(`/horaris/usuari/${token}`),
+        await this.apiManager.get<DiaCalendari[]>(`/horaris/usuari/${userId}`),
       );
     } catch (err) {
       console.error(`Error al obtenir l'horari de l'usuari: `, err);
+    } finally {
+      this.isLoading.set(false);
     }
   }
-  
+
   /**
    * Actualització granular (Tasca 3): Desa la franja, el profe i els alumnes
    */

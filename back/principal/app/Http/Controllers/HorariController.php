@@ -161,10 +161,10 @@ class HorariController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function getHorari($tokenUser) {
+    public function getHorari($id) {
 
         $user = DB::table('usuaris')
-            ->where('token', $tokenUser)
+            ->where('id', $id)
             ->select('id', 'rol')
             ->first();
 
