@@ -21,3 +21,8 @@ export interface Horari {
   created_at?: string;
   updated_at?: string;
 }
+
+export interface DiaCalendari {
+  dia: string;
+  assignatures: string[];
+}
