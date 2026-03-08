@@ -50,7 +50,7 @@ class UsuarisSeeder extends Seeder
                 'password' => null,
                 'token' => null,
                 'nfc_id' => null,
-                'id_classe' => null,
+                'id_classe' => 1, // 1SMIXA1
                 'horari_guardies' => null
             ],
             [
@@ -63,9 +63,14 @@ class UsuarisSeeder extends Seeder
                 'password' => null,
                 'token' => null,
                 'nfc_id' => null,
-                'id_classe' => null,
+                'id_classe' => 1, // 1SMIXA1
                 'horari_guardies' => null
             ]
         ]);
+
+        // Sincronizar secuencia en PostgreSQL automáticamente después del Seed
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            DB::statement("SELECT setval(pg_get_serial_sequence('usuaris', 'id'), coalesce(max(id),0) + 1, false) FROM usuaris;");
+        }
     }
 }

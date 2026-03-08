@@ -20,8 +20,9 @@ export class AssignaturesManagerService {
     this.error.set(null);
 
     try {
-      const data = await this.apiManager.get<Assignatura[]>('/assignatures');
-      this.assignatures.set(data);
+      const resp = await this.apiManager.get<any>('/assignatures');
+      const llista = resp.data || resp;
+      this.assignatures.set(llista);
     } catch (err) {
       this.error.set('Error carregant assignatures del backend');
       console.error(err);
@@ -35,7 +36,8 @@ export class AssignaturesManagerService {
    */
   async afegirAssignatura(novaAssignatura: Partial<Assignatura>) {
     try {
-      const creada = await this.apiManager.post<Assignatura>('/assignatures', novaAssignatura);
+      const response = await this.apiManager.post<any>('/assignatures', novaAssignatura);
+      const creada = response.data || response;
 
       // Lògica primitiva: obtenir, copiar, afegir, guardar
       const llistaActual = this.assignatures();
@@ -59,10 +61,11 @@ export class AssignaturesManagerService {
    */
   async actualitzarAssignatura(id: number, dadesActualitzades: Partial<Assignatura>) {
     try {
-      const actualitzacio = await this.apiManager.put<Assignatura>(
+      const response = await this.apiManager.put<any>(
         `/assignatures/${id}`,
         dadesActualitzades,
       );
+      const actualitzacio = response.data || response;
 
       // Lògica primitiva: bucle manual per actualitzar la llista
       const llistaActual = this.assignatures();
