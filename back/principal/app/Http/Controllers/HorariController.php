@@ -98,7 +98,7 @@ class HorariController extends Controller
             'id_assig' => 'required|exists:assignatures,id',
             'id_aula' => 'required|exists:aules,id',
             'id_profe' => 'required|exists:usuaris,id',
-            'alumnes_ids' => 'required|array', // IDs dels alumnes seleccionats per aquesta hora
+            'alumnes_ids' => 'present|array', // IDs dels alumnes seleccionats per aquesta hora (pot ser buit)
         ]);
 
         // 1. Busquem si ja existeix l'horari per aquesta classe i hora, o el creem
