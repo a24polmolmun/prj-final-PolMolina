@@ -1,6 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { InscritsManagerService } from '../../shared/services/inscrits/inscrits-manager.service';
 import { AuthService } from '../../services/auth.service';
+import { SidebarAlumneComponent } from '../../shared/components/sidebar/alumnes/sidebarAlumne.component'; 
 
 export interface assistenciaPerUsuari {
   nom_assignatura: { nom: string }[];
@@ -11,7 +12,7 @@ export interface assistenciaPerUsuari {
 
 @Component({
   selector: 'app-alumnes',
-  imports: [],
+  imports: [SidebarAlumneComponent],
   templateUrl: './alumnes.component.html',
   styleUrl: './alumnes.component.css',
 })
