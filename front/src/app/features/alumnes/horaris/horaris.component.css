@@ -5,7 +5,6 @@
   --primary-light: #818cf8;
   --secondary: #a78bfa;
   --accent: #f472b6;
-  --bg-main: #f0f2f5;
   --text-dark: #1e293b;
   --text-muted: #64748b;
 }
@@ -14,15 +13,15 @@
 #horari-alumne-page {
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-main);
-  min-height: 100%;
+  min-height: 100vh;
   font-family: 'Outfit', sans-serif;
 }
 
 /* -- Contingut */
 .contingut {
   flex-grow: 1;
-  padding: 30px;
+  margin-top: 180px;
+  padding: 20px 40px;
   display: flex;
   flex-direction: column;
   align-items: center;
