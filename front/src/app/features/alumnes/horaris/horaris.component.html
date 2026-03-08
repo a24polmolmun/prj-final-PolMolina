@@ -1,0 +1,72 @@
+<alumne-sidebar></alumne-sidebar>
+<div id="horari-alumne-page">
+  <div class="contingut">
+    <div class="targeta-horari-premium">
+      <div class="capçalera-moderna">
+        <h2 class="titol_pagina">Horari Semanal</h2>
+      </div>
+
+      @if (horarisManager.isLoading()) {
+        <p class="estat-missatge">Carregant horari…</p>
+      } @else if (horarisManager.error()) {
+        <p class="estat-missatge estat-error">{{ horarisManager.error() }}</p>
+      } @else if (calendari().length === 0) {
+        <p class="estat-missatge">No hi ha horari disponible.</p>
+      } @else {
+        <div class="scroll-wrapper">
+          <div class="grid-horari">
+            <!-- ── Fila capsçaleres ── -->
+            <div></div>
+            @for (dia of calendari(); track $index) {
+              <div class="dia-header">{{ dia.dia }}</div>
+            }
+
+            <!-- ── PRE-ESBARJO: hores 08:00 · 09:00 · 10:00 ── -->
+            <div class="columna-temps">
+              <div class="col-temps">08:00</div>
+              <div class="col-temps">09:00</div>
+              <div class="col-temps">10:00</div>
+            </div>
+            @for (dia of calendari(); track $index) {
+              <div class="dia-col">
+                @for (assignatura of dia.assignatures; track $index) {
+                  @if ($index < 3) {
+                    <div class="slot-sessio">
+                      <div class="info-sessio">
+                        <span class="assignatura-nom">{{ assignatura }}</span>
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+            }
+
+            <!-- ── ESBARJO a les 11:00 ── -->
+            <div class="col-temps esbarjo-temps">11:00</div>
+            <div class="slot-sessio esbarjo">ESBARJO</div>
+
+            <!-- ── POST-ESBARJO: hores 11:30 · 12:30 · 13:30 ── -->
+            <div class="columna-temps">
+              <div class="col-temps">11:30</div>
+              <div class="col-temps">12:30</div>
+              <div class="col-temps">13:30</div>
+            </div>
+            @for (dia of calendari(); track $index) {
+              <div class="dia-col">
+                @for (assignatura of dia.assignatures; track $index) {
+                  @if ($index >= 3) {
+                    <div class="slot-sessio">
+                      <div class="info-sessio">
+                        <span class="assignatura-nom">{{ assignatura }}</span>
+                      </div>
+                    </div>
+                  }
+                }
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

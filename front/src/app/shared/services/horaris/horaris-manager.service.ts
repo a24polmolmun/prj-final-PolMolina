@@ -1,6 +1,6 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
 import { ApiManagerService } from '../api/api-manager.service';
-import { Horari } from '../../models/horaris.model';
+import { DiaCalendari, Horari } from '../../models/horaris.model';
 
 @Injectable({
   providedIn: 'root',
@@ -9,6 +9,7 @@ export class HorarisManagerService {
   private apiManager = inject(ApiManagerService);
 
   horaris = signal<Horari[]>([]);
+  horarisAssignaturaNet = signal<DiaCalendari[]>([]);
   isLoading = signal<boolean>(false);
   error = signal<string | null>(null);
 
@@ -103,6 +104,27 @@ export class HorarisManagerService {
     } catch (err) {
       console.error(`Error esborrant horari ${id}:`, err);
       throw err;
+    }
+  }
+
+  async getHorari() {
+    try {
+      this.isLoading.set(true);
+      this.error.set(null);
+      const storedUser = localStorage.getItem('user');
+      if (!storedUser) {
+        this.error.set('No hi ha usuari autenticat');
+        return;
+      }
+      const user = JSON.parse(storedUser);
+      const userId: number = user.id;
+      this.horarisAssignaturaNet.set(
+        await this.apiManager.get<DiaCalendari[]>(`/horaris/usuari/${userId}`),
+      );
+    } catch (err) {
+      console.error(`Error al obtenir l'horari de l'usuari: `, err);
+    } finally {
+      this.isLoading.set(false);
     }
   }
 

@@ -6,6 +6,7 @@ use App\Models\Horari;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class HorariController extends Controller
 {
@@ -158,5 +159,82 @@ class HorariController extends Controller
             'success' => true,
             'message' => 'Horari eliminat correctament'
         ], Response::HTTP_OK);
+    }
+
+    public function getHorari($id) {
+
+        $user = DB::table('usuaris')
+            ->where('id', $id)
+            ->select('id', 'rol')
+            ->first();
+
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Usuari no trobat'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $userId = $user->id;
+        $userRol = $user->rol;
+
+        $assignatures = [];
+
+        if ($userRol === 'Alumne') {
+            $assignatures = DB::table('inscrits')
+                ->where('id_alumne', $userId)
+                ->pluck('id_assignatura');
+        } else if ($userRol === 'Profe') {
+            $assignatures = DB::table('imparteix')
+                ->where('id_profe', $userId)
+                ->pluck('id_assignatura');
+        }
+
+        $diesOrdre = [
+            ['lletra' => 'L', 'nom' => 'dilluns'],
+            ['lletra' => 'M', 'nom' => 'dimarts'],
+            ['lletra' => 'X', 'nom' => 'dimecres'],
+            ['lletra' => 'J', 'nom' => 'dijous'],
+            ['lletra' => 'V', 'nom' => 'divendres'],
+        ];
+
+        $mapa = ['L' => [], 'M' => [], 'X' => [], 'J' => [], 'V' => []];
+
+        foreach ($assignatures as $assignatura) {
+            $nom_assignatura = DB::table('assignatures')
+                ->where('id', $assignatura)
+                ->value('nom');
+
+            $horaris_assignatura = DB::table('horaris')
+                ->where('id_assig', $assignatura)
+                ->pluck('codi_hora');
+
+            $entry = (object) array(
+                'assignatura' => $nom_assignatura,
+                'horari' => $horaris_assignatura
+            );
+
+            foreach ($entry->horari as $codi) {
+                $lletra = $codi[0];
+                $hora   = (int) substr($codi, 1);
+                if (array_key_exists($lletra, $mapa)) {
+                    $mapa[$lletra][] = ['hora' => $hora, 'assignatura' => $entry->assignatura];
+                }
+            }
+        }
+
+        $resultat = [];
+        foreach ($diesOrdre as $dia) {
+            $entrades = $mapa[$dia['lletra']];
+            if (count($entrades) > 0) {
+                usort($entrades, fn($a, $b) => $a['hora'] - $b['hora']);
+                $resultat[] = [
+                    'dia'          => $dia['nom'],
+                    'assignatures' => array_column($entrades, 'assignatura'),
+                ];
+            }
+        }
+
+        return response()->json($resultat, Response::HTTP_OK);
     }
 }
