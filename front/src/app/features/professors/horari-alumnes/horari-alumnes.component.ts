@@ -160,7 +160,7 @@ export class HorariAlumnesComponent implements OnInit {
 
   obtenirNomProfe(cell: any): string {
     if (!cell || cell === 'ESBARJO') return '';
-    if (cell.professor) return `${cell.professor.nom} ${cell.professor.cognom}`;
+    if (cell.professor) return `${cell.professor.nom ?? ''} ${cell.professor.cognom ?? ''}`.trim();
     return 'Professor';
   }
 
