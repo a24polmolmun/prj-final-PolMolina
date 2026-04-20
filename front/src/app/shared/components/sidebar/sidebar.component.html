@@ -1,14 +1,26 @@
 <nav class="barra-superior">
   <div class="contenedor-navegacio-centrat">
-    <!-- 1. Llista d'Assignatures -->
+
+    <!-- 0. ADMIN: Gestió d'Usuaris (Només Admin) -->
+    @if (rol() === 'admin') {
+    <a routerLink="/administracio" routerLinkActive="actiu" class="element-navegacio">
+      <div class="caixa-icona">
+        <img src="/img/menu/iconos/usuari-icona.png" alt="Admin" style="filter: hue-rotate(280deg);" />
+      </div>
+    </a>
+    }
+
+    <!-- 1. Llista d'Assignatures (Profe o Admin) -->
+    @if (rol() === 'profe' || rol() === 'admin') {
     <a routerLink="/llista-assignatures" routerLinkActive="actiu" class="element-navegacio">
       <div class="caixa-icona">
         <img src="/img/menu/iconos/assignatures-icona.png" alt="Assignatures" />
       </div>
     </a>
+    }
 
-    <!-- 2. Gestió Inscrits (Tutor) -->
-    @if (esTutor) {
+    <!-- 2. Gestió Inscrits (Tutor/Profe/Admin) -->
+    @if (esTutor()) {
     <a routerLink="/gestio-inscrits" routerLinkActive="actiu" class="element-navegacio">
       <div class="caixa-icona">
         <img src="/img/menu/iconos/justif-icona.png" alt="Gestió Inscrits" />
@@ -17,29 +29,33 @@
     }
 
     <!-- 3. Llista Classe -->
+    @if (rol() === 'profe' || rol() === 'admin') {
     <a routerLink="/llista-classe" routerLinkActive="actiu" class="element-navegacio">
       <div class="caixa-icona">
         <img src="/img/menu/iconos/llista-icona.png" alt="Llista" />
       </div>
     </a>
+    }
 
-    <!-- 4. CENTRE: Professors (Inici) -->
-    <a routerLink="/professors" routerLinkActive="actiu" [routerLinkActiveOptions]="{ exact: true }"
-      class="element-navegacio">
+    <!-- 4. CENTRE: Inici (Depèn del rol) -->
+    <a [routerLink]="rol() === 'admin' ? '/administracio' : (rol() === 'profe' ? '/professors' : '/alumnes')"
+      routerLinkActive="actiu" [routerLinkActiveOptions]="{ exact: true }" class="element-navegacio">
       <div class="caixa-icona">
         <img src="/img/menu/iconos/inici-icona.png" alt="Inici" />
       </div>
     </a>
 
     <!-- 5. Llista Faltes -->
+    @if (rol() === 'profe' || rol() === 'admin') {
     <a routerLink="/llista-faltes" routerLinkActive="actiu" class="element-navegacio">
       <div class="caixa-icona">
         <img src="/img/menu/iconos/rellotge-icona.png" alt="Faltes" />
       </div>
     </a>
+    }
 
     <!-- 6. Horari Alumnes (Tutor) -->
-    @if (esTutor) {
+    @if (esTutor() && rol() !== 'admin') {
     <a routerLink="/horari-alumnes" routerLinkActive="actiu" class="element-navegacio">
       <div class="caixa-icona">
         <img src="/img/menu/iconos/calendari-icona.png" alt="Horari Alumnes" />

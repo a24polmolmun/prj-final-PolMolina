@@ -1,14 +1,22 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { SidebarService } from '../../services/sidebar.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
+  standalone: true,
   imports: [RouterLink, RouterLinkActive],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent {
   public sidebarService = inject(SidebarService);
-  public esTutor = true;
+  private authService = inject(AuthService);
+
+  // Obtenim el rol de l'usuari loguejat de forma reactiva
+  public rol = computed(() => this.authService.userData()?.user.rol?.toLowerCase() || '');
+
+  // Mantinc esTutor per compatibilitat, però ara depèn del rol
+  public esTutor = computed(() => this.rol() === 'profe' || this.rol() === 'admin');
 }

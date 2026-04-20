@@ -1,12 +1,19 @@
-FROM php:8.4.2
+FROM php:8.4.2-alpine
 
 WORKDIR /app
 
-# Instalar todo en un RUN (mejor cache)
-RUN apt-get update && apt-get install -y \
-    git unzip libpq-dev libzip-dev libonig-dev \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* \
-    && docker-php-ext-install pdo pdo_pgsql zip bcmath mbstring
+# Instalar dependencias del sistema mínimas necesarias para Laravel
+RUN apk add --no-cache \
+    git \
+    unzip \
+    libpq-dev \
+    libzip-dev \
+    oniguruma-dev \
+    postgresql-dev \
+    linux-headers
+
+# Instalar extensiones de PHP
+RUN docker-php-ext-install pdo pdo_pgsql zip bcmath mbstring
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

@@ -11,49 +11,55 @@ use App\Http\Controllers\ImparteixController;
 use App\Http\Controllers\AssistenciaController;
 use App\Http\Controllers\JustificantController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CursController;
 
 Route::prefix('v1')->group(function (): void {
 
-    // Rutes d'autenticació (sense autenticació requerida)
-    Route::post('auth/google/redirect', [AuthController::class, 'googleRedirectUrl']);
-    Route::post('auth/google/callback', [AuthController::class, 'googleCallback']);
-    Route::post('auth/login-temporal', [AuthController::class, 'loginTemporal']);
+    // --- RUTES PÚBLIQUES (Autenticació) ---
+    Route::post('auth/google/redirect', [AuthController::class , 'googleRedirectUrl']);
+    Route::post('auth/google/callback', [AuthController::class , 'googleCallback']);
+    Route::post('auth/login-temporal', [AuthController::class , 'loginTemporal']);
 
-    // Rutes d'Usuaris
-    Route::apiResource('usuaris', UsuariController::class);
+    // --- RUTES PROTEGIDES (Requereixen Token Sanctum) ---
+    Route::middleware('auth:sanctum')->group(function () {
 
-    // Rutes de Cursos
-    Route::apiResource('cursos', \App\Http\Controllers\CursController::class)->only(['index']);
+            // Usuaris
+            Route::apiResource('usuaris', UsuariController::class);
 
-    // Rutes de Classes
-    Route::get('classes/tutor/{idTutor}', [ClasseController::class, 'obtenirClasseTutor']);
-    Route::post('classes/assignarAlumnes', [ClasseController::class, 'assignarAlumnes']);
-    Route::post('classes/treureAlumne', [ClasseController::class, 'treureAlumne']);
-    Route::apiResource('classes', ClasseController::class);
+            // Cursos (Només lectura o CRUD complet segons necessitat, per ara index)
+            Route::apiResource('cursos', CursController::class)->only(['index']);
 
-    // Rutes d'Assignatures
-    Route::apiResource('assignatures', AssignaturaController::class);
+            // Classes
+            Route::get('classes/tutor/{idTutor}', [ClasseController::class , 'obtenirClasseTutor']);
+            Route::post('classes/assignarAlumnes', [ClasseController::class , 'assignarAlumnes']);
+            Route::post('classes/treureAlumne', [ClasseController::class , 'treureAlumne']);
+            Route::apiResource('classes', ClasseController::class);
 
-    // Rutes d'Aules
-    Route::apiResource('aules', AulaController::class);
+            // Assignatures
+            Route::apiResource('assignatures', AssignaturaController::class);
 
-    // Rutes d'Inscrits
-    Route::apiResource('inscrits', InscritController::class);
+            // Aules
+            Route::apiResource('aules', AulaController::class);
 
-    // Rutes d'Horaris
-    Route::post('horaris/granular', [HorariController::class, 'actualitzarHorariGranular']);
-    Route::apiResource('horaris', HorariController::class);
-    Route::get('/horaris/usuari/{id}', [HorariController::class, 'getHorari']);
+            // Inscrits
+            Route::apiResource('inscrits', InscritController::class);
 
-    // Rutes d'Imparteix
-    Route::apiResource('imparteix', ImparteixController::class);
+            // Horaris
+            Route::post('horaris/granular', [HorariController::class , 'actualitzarHorariGranular']);
+            Route::apiResource('horaris', HorariController::class);
+            Route::get('/horaris/usuari/{id}', [HorariController::class , 'getHorari']);
 
-    // Rutes d'Assistència
-    Route::apiResource('assistencies', AssistenciaController::class);
-    Route::get('assistencies/alumne/{alumneId}', action: [AssistenciaController::class, 'assistenciaPerAlumne']);
-    Route::post('assistencies/generar', [AssistenciaController::class, 'generar']);
-    Route::get('assistencia/assignatura/{id}', [AssistenciaController::class, 'perAssignatura']);
+            // Imparteix
+            Route::apiResource('imparteix', ImparteixController::class);
 
-    // Rutes de Justificants
-    Route::apiResource('justificants', JustificantController::class);
-});
+            // Assistència
+            Route::apiResource('assistencies', AssistenciaController::class);
+            Route::get('assistencies/alumne/{alumneId}', [AssistenciaController::class , 'assistenciaPerAlumne']);
+            Route::post('assistencies/generar', [AssistenciaController::class , 'generar']);
+            Route::get('assistencia/assignatura/{id}', [AssistenciaController::class , 'perAssignatura']);
+
+            // Justificants
+            Route::apiResource('justificants', JustificantController::class);
+        }
+        );
+    });

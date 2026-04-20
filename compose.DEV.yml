@@ -145,7 +145,10 @@ volumes:
   mongo-bd:
   rabbitmq_data:
 
+
 networks:
   general:
     driver: bridge
+    driver_opts:
+      com.docker.network.driver.mtu: 1400
     name: general

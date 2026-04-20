@@ -1,0 +1,79 @@
+<div class="gestio-wrapper">
+    <div class="header-base">
+        <h2>Gestió d'Usuaris</h2>
+        <p>Administra els comptes de professors, alumnes i administradors.</p>
+    </div>
+
+    <div class="crud-container">
+        <!-- Formulari -->
+        <div class="form-card">
+            <h3>{{ editantId() ? 'Editar Usuari' : 'Afegir Nou Usuari' }}</h3>
+            <form (submit)="guardarUsuari(); $event.preventDefault()">
+                <div class="form-group">
+                    <label>Nom</label>
+                    <input type="text" [(ngModel)]="formUsuari.nom" name="nom" required placeholder="Ex: Joan">
+                </div>
+                <div class="form-group">
+                    <label>Cognom</label>
+                    <input type="text" [(ngModel)]="formUsuari.cognom" name="cognom" required placeholder="Ex: Garcia">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" [(ngModel)]="formUsuari.email" name="email" required
+                        placeholder="joan@inspedralbes.cat">
+                </div>
+                <div class="form-group">
+                    <label>Rol</label>
+                    <select [(ngModel)]="formUsuari.rol" name="rol">
+                        <option value="Alumne">Alumne</option>
+                        <option value="Profe">Professor</option>
+                        <option value="Admin">Administrador</option>
+                    </select>
+                </div>
+                <div class="form-group" *ngIf="formUsuari.rol === 'Alumne'">
+                    <label>Email Pares (opcional)</label>
+                    <input type="email" [(ngModel)]="formUsuari.email_pares" name="email_pares">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary" [disabled]="isLoading()">
+                        {{ editantId() ? 'Actualitzar' : 'Crear Usuari' }}
+                    </button>
+                    <button type="button" class="btn-secondary" (click)="cancelar()" *ngIf="editantId()">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Llista -->
+        <div class="list-card">
+            <div *ngIf="isLoading()" class="loading">Carregant usuaris...</div>
+            <div *ngIf="error()" class="error-msg">{{ error() }}</div>
+
+            <table *ngIf="!isLoading()">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Rol</th>
+                        <th>Accions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let u of usuaris()">
+                        <td>{{ u.nom }} {{ u.cognom }}</td>
+                        <td>{{ u.email }}</td>
+                        <td>
+                            <span class="badge" [ngClass]="u.rol.toLowerCase()">{{ u.rol }}</span>
+                        </td>
+                        <td class="actions">
+                            <button class="btn-icon" (click)="preparaEdicio(u)" title="Editar">✏️</button>
+                            <button class="btn-icon danger" (click)="esborrarUsuari(u.id)" title="Eliminar">🗑️</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

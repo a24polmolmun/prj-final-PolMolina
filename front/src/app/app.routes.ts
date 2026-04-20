@@ -11,12 +11,22 @@ import { LlistaFaltesComponent } from './features/professors/llista-faltes/llist
 import { GestioInscritsComponent } from './features/professors/gestio-classe/gestio-inscrits.component';
 import { HorariAlumnesComponent } from './features/professors/horari-alumnes/horari-alumnes.component';
 
+import { GestioUsuarisComponent } from './features/administracio/gestio-usuaris/gestio-usuaris.component';
+import { AdminLayoutComponent } from './features/administracio/admin-layout.component';
+
 export const routes: Routes = [
   { path: '', component: LoginComponent },
   { path: 'alumnes', component: AlumnesComponent },
   { path: 'alumnes/horaris', component: Horaris },
   { path: 'professors', component: ProfessorsComponent },
-  { path: 'administracio', component: AdministracioComponent },
+  {
+    path: 'administracio',
+    component: AdminLayoutComponent,
+    children: [
+      { path: '', component: AdministracioComponent },
+      { path: 'usuaris', component: GestioUsuarisComponent },
+    ]
+  },
   { path: 'llista-classe', component: LlistaClasseComponent },
   { path: 'llista-assignatures', component: LlistaAssignaturesComponent },
   { path: 'llista-faltes', component: LlistaFaltesComponent },
