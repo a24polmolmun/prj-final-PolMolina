@@ -28,6 +28,9 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         <a routerLink="/administracio/classes" routerLinkActive="active" class="nav-link">
           Gestió de Classes / Grups
         </a>
+        <a routerLink="/administracio/assignatures" routerLinkActive="active" class="nav-link">
+          Gestió d'Assignatures
+        </a>
       </div>
 
       <div class="footer-sidebar">

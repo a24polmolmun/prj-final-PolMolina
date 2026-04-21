@@ -30,6 +30,7 @@ class AssignaturaController extends Controller
             'nom' => 'required|string|max:255',
             'interval' => 'nullable|string',
             'exempcio' => 'nullable|boolean',
+            'id_classe_projecte' => 'nullable|exists:classes,id',
         ]);
 
         $assignatura = Assignatura::create($validated);
@@ -80,6 +81,7 @@ class AssignaturaController extends Controller
             'nom' => 'sometimes|required|string|max:255',
             'interval' => 'nullable|string',
             'exempcio' => 'nullable|boolean',
+            'id_classe_projecte' => 'nullable|exists:classes,id',
         ]);
 
         $assignatura->update($validated);

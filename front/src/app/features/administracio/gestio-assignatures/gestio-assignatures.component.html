@@ -1,0 +1,107 @@
+<div class="gestio-wrapper">
+    <header class="header-base">
+        <h2>Gestió d'Assignatures</h2>
+        <p>Defineix i gestiona les matèries del centre i les seves configuracions.</p>
+    </header>
+
+    <div class="crud-container">
+        <!-- Formulari -->
+        <section class="form-card">
+            <h3>{{ editantId() ? 'Editar Assignatura' : 'Nova Assignatura' }}</h3>
+
+            <div class="form-group">
+                <label>Nom de l'Assignatura</label>
+                <input type="text" [(ngModel)]="formAssignatura.nom" placeholder="Ex: Matemàtiques, Projecte..." />
+            </div>
+
+            <div class="form-group">
+                <label>Curs Acadèmic (Interval)</label>
+                <select [(ngModel)]="formAssignatura.interval">
+                    <option [ngValue]="null">Selecciona un Curs...</option>
+                    @for (p of periodes(); track p.id) {
+                    <option [value]="p.nom">{{ p.nom }}</option>
+                    }
+                </select>
+                <small style="color: #64748b; font-size: 0.8rem; display: block; margin-top: 5px;">
+                    Indica en quin curs s'imparteix (ex: 2025-2026).
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label>Vincular a Clase (Projecte)</label>
+                <select [(ngModel)]="formAssignatura.id_classe_projecte">
+                    <option [ngValue]="null">Cap (Assignatura Estàndard)</option>
+                    @for (c of classes(); track c.id) {
+                    <option [value]="c.id">{{ c.nom }}</option>
+                    }
+                </select>
+                <small style="color: #64748b; font-size: 0.8rem; display: block; margin-top: 5px;">
+                    Només si és una assignatura específica d'una classe.
+                </small>
+            </div>
+
+            <div class="form-group checkbox-group">
+                <label>
+                    <input type="checkbox" [(ngModel)]="formAssignatura.exempcio" />
+                    Permetre Exempció
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button class="btn-primary" (click)="guardarAssignatura()">
+                    {{ editantId() ? 'Actualitzar' : 'Crear Assignatura' }}
+                </button>
+                @if (editantId()) {
+                <button class="btn-secondary" (click)="cancelar()">Cancel·lar</button>
+                }
+            </div>
+        </section>
+
+        <!-- Llista -->
+        <section class="list-card">
+            @if (isLoading()) {
+            <div class="loading">Carregant dades...</div>
+            } @else {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Interval</th>
+                        <th>Classe (Proj)</th>
+                        <th>Exempció</th>
+                        <th>Accions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (a of assignatures(); track a.id) {
+                    <tr>
+                        <td><strong>{{ a.nom }}</strong></td>
+                        <td>{{ formatInterval(a.interval) }}</td>
+                        <td>
+                            @if (a.classe_projecte) {
+                            <span class="badge project">{{ a.classe_projecte.nom }}</span>
+                            } @else {
+                            <span class="no-data">Global</span>
+                            }
+                        </td>
+                        <td>
+                            <span class="badge" [ngClass]="a.exempcio ? 'exempte' : 'normal'">
+                                {{ a.exempcio ? 'Sí' : 'No' }}
+                            </span>
+                        </td>
+                        <td class="actions">
+                            <button class="btn-edit" (click)="preparaEdicio(a)">Editar</button>
+                            <button class="btn-delete" (click)="esborrarAssignatura(a.id)">Esborrar</button>
+                        </td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td colspan="5" class="no-data">No hi ha assignatures registrades.</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+            }
+        </section>
+    </div>
+</div>

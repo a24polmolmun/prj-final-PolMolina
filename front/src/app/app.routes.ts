@@ -16,6 +16,7 @@ import { GestioCursosComponent } from './features/administracio/gestio-cursos/ge
 import { AdminLayoutComponent } from './features/administracio/admin-layout.component';
 import { GestioPeriodes } from './features/administracio/gestio-periodes/gestio-periodes';
 import { GestioClassesComponent } from './features/administracio/gestio-classes/gestio-classes.component';
+import { GestioAssignaturesComponent } from './features/administracio/gestio-assignatures/gestio-assignatures.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -31,6 +32,7 @@ export const routes: Routes = [
       { path: 'cursos', component: GestioCursosComponent },
       { path: 'periodes', component: GestioPeriodes },
       { path: 'classes', component: GestioClassesComponent },
+      { path: 'assignatures', component: GestioAssignaturesComponent },
     ]
   },
   { path: 'llista-classe', component: LlistaClasseComponent },
