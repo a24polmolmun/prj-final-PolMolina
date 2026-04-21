@@ -23,7 +23,8 @@
   margin-top: 2rem;
 }
 
-.form-card, .list-card {
+.form-card,
+.list-card {
   background: white;
   padding: 1.5rem;
   border-radius: 12px;
@@ -49,7 +50,8 @@ h3 {
   font-size: 0.9rem;
 }
 
-.form-group input, .form-group select {
+.form-group input,
+.form-group select {
   width: 100%;
   padding: 0.6rem;
   border: 1px solid #e2e8f0;
@@ -114,21 +116,60 @@ td {
   text-transform: uppercase;
 }
 
-.badge.alumne { background: #dcfce7; color: #166534; }
-.badge.profe { background: #dbeafe; color: #1e40af; }
-.badge.admin { background: #fef3c7; color: #92400e; }
-
-.btn-icon {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 1.1rem;
-  padding: 0.3rem;
-  border-radius: 4px;
+.badge.alumne {
+  background: #dcfce7;
+  color: #166534;
 }
 
-.btn-icon:hover { background: #f1f5f9; }
-.btn-icon.danger:hover { background: #fee2e2; }
+.badge.profe {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.badge.admin {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: 100px;
+}
+
+.btn-edit,
+.btn-delete {
+  padding: 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  width: 100%;
+  text-align: center;
+}
+
+.btn-edit {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+
+.btn-edit:hover {
+  background-color: #e2e8f0;
+  color: #1e293b;
+}
+
+.btn-delete {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.btn-delete:hover {
+  background-color: #fecaca;
+  color: #991b1b;
+}
 
 @media (max-width: 1024px) {
   .crud-container {

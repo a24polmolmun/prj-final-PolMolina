@@ -22,6 +22,11 @@
                     <input type="email" [(ngModel)]="formUsuari.email" name="email" required
                         placeholder="joan@inspedralbes.cat">
                 </div>
+                <div class="form-group" *ngIf="!editantId()">
+                    <label>Contrasenya</label>
+                    <input type="password" [(ngModel)]="formUsuari.password" name="password" [required]="!editantId()"
+                        placeholder="Mínim 8 caràcters">
+                </div>
                 <div class="form-group">
                     <label>Rol</label>
                     <select [(ngModel)]="formUsuari.rol" name="rol">
@@ -37,10 +42,10 @@
 
                 <div class="form-actions">
                     <button type="submit" class="btn-primary" [disabled]="isLoading()">
-                        {{ editantId() ? 'Actualitzar' : 'Crear Usuari' }}
+                        {{ editantId() ? 'Actualitzar Usuari' : 'Crear Usuari' }}
                     </button>
                     <button type="button" class="btn-secondary" (click)="cancelar()" *ngIf="editantId()">
-                        Cancelar
+                        Cancel·lar
                     </button>
                 </div>
             </form>
@@ -68,8 +73,8 @@
                             <span class="badge" [ngClass]="u.rol.toLowerCase()">{{ u.rol }}</span>
                         </td>
                         <td class="actions">
-                            <button class="btn-icon" (click)="preparaEdicio(u)" title="Editar">✏️</button>
-                            <button class="btn-icon danger" (click)="esborrarUsuari(u.id)" title="Eliminar">🗑️</button>
+                            <button class="btn-edit" (click)="preparaEdicio(u)">Editar</button>
+                            <button class="btn-delete" (click)="esborrarUsuari(u.id)">Esborrar</button>
                         </td>
                     </tr>
                 </tbody>

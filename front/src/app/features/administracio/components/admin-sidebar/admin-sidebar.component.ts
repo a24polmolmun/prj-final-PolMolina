@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
-    selector: 'app-admin-sidebar',
-    standalone: true,
-    imports: [RouterLink, RouterLinkActive],
-    template: `
+  selector: 'app-admin-sidebar',
+  standalone: true,
+  imports: [RouterLink, RouterLinkActive],
+  template: `
     <nav class="admin-sidebar">
       <div class="logo">
         <img src="/img/logo.png" alt="Logo" />
@@ -14,13 +14,13 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       
       <div class="menu-links">
         <a routerLink="/administracio" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
-          <i class="icon">🏠</i> Inici
+          Inici
         </a>
         <a routerLink="/administracio/usuaris" routerLinkActive="active" class="nav-link">
-          <i class="icon">👥</i> Gestió d'Usuaris
+          Gestió d'Usuaris
         </a>
-        <a class="nav-link disabled">
-          <i class="icon">📚</i> Gestió de Cursos
+        <a routerLink="/administracio/cursos" routerLinkActive="active" class="nav-link">
+          Gestió de Cursos
         </a>
       </div>
 
@@ -31,7 +31,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       </div>
     </nav>
   `,
-    styles: [`
+  styles: [`
     .admin-sidebar {
       width: 260px;
       height: 100vh;

@@ -33,6 +33,7 @@ export class GestioUsuarisComponent implements OnInit {
             nom: '',
             cognom: '',
             email: '',
+            password: '',
             rol: 'Alumne',
             email_pares: ''
         };
@@ -51,14 +52,21 @@ export class GestioUsuarisComponent implements OnInit {
     async guardarUsuari() {
         try {
             const id = this.editantId();
+
+            // Netejar dades (evitar enviar password buit en edició)
+            const dadesAEnviar = { ...this.formUsuari };
+            if (!dadesAEnviar.password || dadesAEnviar.password.trim() === '') {
+                delete dadesAEnviar.password;
+            }
+
             if (id) {
-                await this.usuarisService.actualitzarUsuari(id, this.formUsuari);
+                await this.usuarisService.actualitzarUsuari(id, dadesAEnviar);
             } else {
-                await this.usuarisService.afegirUsuari(this.formUsuari);
+                await this.usuarisService.afegirUsuari(dadesAEnviar);
             }
             this.preparaNouUsuari();
         } catch (err) {
-            alert('Error guardant usuari');
+            alert('Error guardant usuari: Verifiqueu les dades (Email únic, contrasenya min 8 caràcters)');
         }
     }
 

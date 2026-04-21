@@ -12,6 +12,7 @@ import { GestioInscritsComponent } from './features/professors/gestio-classe/ges
 import { HorariAlumnesComponent } from './features/professors/horari-alumnes/horari-alumnes.component';
 
 import { GestioUsuarisComponent } from './features/administracio/gestio-usuaris/gestio-usuaris.component';
+import { GestioCursosComponent } from './features/administracio/gestio-cursos/gestio-cursos.component';
 import { AdminLayoutComponent } from './features/administracio/admin-layout.component';
 
 export const routes: Routes = [
@@ -25,6 +26,7 @@ export const routes: Routes = [
     children: [
       { path: '', component: AdministracioComponent },
       { path: 'usuaris', component: GestioUsuarisComponent },
+      { path: 'cursos', component: GestioCursosComponent },
     ]
   },
   { path: 'llista-classe', component: LlistaClasseComponent },

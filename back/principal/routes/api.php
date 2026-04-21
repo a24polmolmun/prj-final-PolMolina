@@ -15,19 +15,10 @@ use App\Http\Controllers\CursController;
 
 Route::prefix('v1')->group(function (): void {
 
-    // --- RUTES PÚBLIQUES (Autenticació) ---
-    Route::post('auth/google/redirect', [AuthController::class , 'googleRedirectUrl']);
-    Route::post('auth/google/callback', [AuthController::class , 'googleCallback']);
-    Route::post('auth/login-temporal', [AuthController::class , 'loginTemporal']);
+    Route::apiResource('usuaris', UsuariController::class);
+    Route::apiResource('cursos', CursController::class)->only(['index']);
 
-    // --- RUTES PROTEGIDES (Requereixen Token Sanctum) ---
     Route::middleware('auth:sanctum')->group(function () {
-
-            // Usuaris
-            Route::apiResource('usuaris', UsuariController::class);
-
-            // Cursos (Només lectura o CRUD complet segons necessitat, per ara index)
-            Route::apiResource('cursos', CursController::class)->only(['index']);
 
             // Classes
             Route::get('classes/tutor/{idTutor}', [ClasseController::class , 'obtenirClasseTutor']);

@@ -37,18 +37,9 @@ export class UsuarisManagerService {
    */
   async afegirUsuari(nouUsuari: Partial<Usuari>) {
     try {
-      const creada = await this.apiManager.post<Usuari>('/usuaris', nouUsuari);
-
-      // Lògica primitiva
-      const llistaActual = this.usuaris();
-      const llistaNova = [];
-      for (let i = 0; i < llistaActual.length; i++) {
-        llistaNova.push(llistaActual[i]);
-      }
-      llistaNova.push(creada);
-
-      this.usuaris.set(llistaNova);
-      return creada;
+      await this.apiManager.post<any>('/usuaris', nouUsuari);
+      await this.carregarUsuaris();
+      return true;
     } catch (err) {
       console.error('Error creant usuari:', err);
       throw err;
@@ -60,22 +51,9 @@ export class UsuarisManagerService {
    */
   async actualitzarUsuari(id: number, dadesActualitzades: Partial<Usuari>) {
     try {
-      const actualitzacio = await this.apiManager.put<Usuari>(`/usuaris/${id}`, dadesActualitzades);
-
-      // Lògica primitiva
-      const llistaActual = this.usuaris();
-      const llistaNova = [];
-      for (let i = 0; i < llistaActual.length; i++) {
-        const element = llistaActual[i];
-        if (element.id === id) {
-          llistaNova.push(actualitzacio);
-        } else {
-          llistaNova.push(element);
-        }
-      }
-
-      this.usuaris.set(llistaNova);
-      return actualitzacio;
+      await this.apiManager.put<any>(`/usuaris/${id}`, dadesActualitzades);
+      await this.carregarUsuaris();
+      return true;
     } catch (err) {
       console.error(`Error actualitzant usuari ${id}:`, err);
       throw err;
@@ -88,18 +66,7 @@ export class UsuarisManagerService {
   async esborrarUsuari(id: number) {
     try {
       await this.apiManager.delete(`/usuaris/${id}`);
-
-      // Lògica primitiva
-      const llistaActual = this.usuaris();
-      const llistaNova = [];
-      for (let i = 0; i < llistaActual.length; i++) {
-        const element = llistaActual[i];
-        if (element.id !== id) {
-          llistaNova.push(element);
-        }
-      }
-
-      this.usuaris.set(llistaNova);
+      await this.carregarUsuaris();
       return true;
     } catch (err) {
       console.error(`Error esborrant usuari ${id}:`, err);

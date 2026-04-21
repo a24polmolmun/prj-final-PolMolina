@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,16 +12,21 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([
-                // Tablas sin dependencias
-            UsuarisSeeder::class,
-            PeriodesSeeder::class,
-            AulesSeeder::class,
-                // Tablas que dependen de las anteriores
-            CursSeeder::class,       // depende de: usuaris, periodes
-            ClassesSeeder::class,    // depende de: cursos, usuaris
-            AssignaturesSeeder::class,  // depende de: classes
-            HorarisSeeder::class,    // depende de: assignatures, classes, aules
-        ]);
+        // Deshabilitar FK temporalmente (Postgres)
+        DB::statement('SET session_replication_role = replica;');
+
+        try {
+            $this->call(PeriodesSeeder::class);
+            $this->call(AulesSeeder::class);
+            $this->call(UsuarisSeeder::class);
+            $this->call(CursSeeder::class);
+            $this->call(ClassesSeeder::class);
+            $this->call(AssignaturesSeeder::class);
+        // $this->call(HorarisSeeder::class);
+        }
+        finally {
+            // Re-habilitar FK siempre
+            DB::statement('SET session_replication_role = DEFAULT;');
+        }
     }
 }

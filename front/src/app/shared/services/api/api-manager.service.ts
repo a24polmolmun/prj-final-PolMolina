@@ -16,7 +16,7 @@ export class ApiManagerService {
    */
   async get<T>(endpoint: string): Promise<T> {
     try {
-      const data = await firstValueFrom(this.http.get<T>(`${this.baseUrl}${endpoint}`));
+      const data = await firstValueFrom(this.http.get<T>(`${this.baseUrl}${endpoint}`, { withCredentials: true }));
       return data;
     } catch (error) {
       console.error(`Error en GET ${endpoint}:`, error);
@@ -26,7 +26,7 @@ export class ApiManagerService {
 
   async post<T>(endpoint: string, body: any): Promise<T> {
     try {
-      const data = await firstValueFrom(this.http.post<T>(`${this.baseUrl}${endpoint}`, body));
+      const data = await firstValueFrom(this.http.post<T>(`${this.baseUrl}${endpoint}`, body, { withCredentials: true }));
       return data;
     } catch (error) {
       console.error(`Error en POST ${endpoint}:`, error);
@@ -39,7 +39,7 @@ export class ApiManagerService {
    */
   async put<T>(endpoint: string, body: any): Promise<T> {
     try {
-      const data = await firstValueFrom(this.http.put<T>(`${this.baseUrl}${endpoint}`, body));
+      const data = await firstValueFrom(this.http.put<T>(`${this.baseUrl}${endpoint}`, body, { withCredentials: true }));
       return data;
     } catch (error) {
       console.error(`Error en PUT ${endpoint}:`, error);
@@ -52,7 +52,7 @@ export class ApiManagerService {
    */
   async delete<T>(endpoint: string): Promise<T> {
     try {
-      const data = await firstValueFrom(this.http.delete<T>(`${this.baseUrl}${endpoint}`));
+      const data = await firstValueFrom(this.http.delete<T>(`${this.baseUrl}${endpoint}`, { withCredentials: true }));
       return data;
     } catch (error) {
       console.error(`Error en DELETE ${endpoint}:`, error);
