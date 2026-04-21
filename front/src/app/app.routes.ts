@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+import { Routes } from '@angular/router'; // Forçant recompilació
 import { AlumnesComponent } from './features/alumnes/alumnes.component';
 import { ProfessorsComponent } from './features/professors/professors.component';
 import { AdministracioComponent } from './features/administracio/administracio.component';
@@ -14,6 +14,8 @@ import { HorariAlumnesComponent } from './features/professors/horari-alumnes/hor
 import { GestioUsuarisComponent } from './features/administracio/gestio-usuaris/gestio-usuaris.component';
 import { GestioCursosComponent } from './features/administracio/gestio-cursos/gestio-cursos.component';
 import { AdminLayoutComponent } from './features/administracio/admin-layout.component';
+import { GestioPeriodes } from './features/administracio/gestio-periodes/gestio-periodes';
+import { GestioClassesComponent } from './features/administracio/gestio-classes/gestio-classes.component';
 
 export const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -27,6 +29,8 @@ export const routes: Routes = [
       { path: '', component: AdministracioComponent },
       { path: 'usuaris', component: GestioUsuarisComponent },
       { path: 'cursos', component: GestioCursosComponent },
+      { path: 'periodes', component: GestioPeriodes },
+      { path: 'classes', component: GestioClassesComponent },
     ]
   },
   { path: 'llista-classe', component: LlistaClasseComponent },

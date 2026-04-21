@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'; // Re-build
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
@@ -21,6 +21,12 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
         </a>
         <a routerLink="/administracio/cursos" routerLinkActive="active" class="nav-link">
           Gestió de Cursos
+        </a>
+        <a routerLink="/administracio/periodes" routerLinkActive="active" class="nav-link">
+          Gestió de Periodes
+        </a>
+        <a routerLink="/administracio/classes" routerLinkActive="active" class="nav-link">
+          Gestió de Classes / Grups
         </a>
       </div>
 

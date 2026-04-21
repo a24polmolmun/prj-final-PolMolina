@@ -30,15 +30,16 @@ class ClasseController extends Controller
     {
         $validated = $request->validate([
             'nom' => 'required|string|max:255',
-            'curs_id' => 'required|exists:cursos,id',
-            'aula_id' => 'nullable|exists:aules,id',
+            'id_curs' => 'required|exists:cursos,id',
+            'id_aula' => 'nullable|exists:aules,id',
+            'id_tutor' => 'nullable|exists:usuaris,id',
         ]);
 
         $classe = Classe::create($validated);
 
         return response()->json([
             'success' => true,
-            'data' => $classe->load(['curs', 'aula']),
+            'data' => $classe->load(['curs', 'aula', 'tutor']),
             'message' => 'Classe creada correctament'
         ], Response::HTTP_CREATED);
     }
@@ -48,7 +49,7 @@ class ClasseController extends Controller
      */
     public function show($id)
     {
-        $classe = Classe::with(['curs', 'aula'])->find($id);
+        $classe = Classe::with(['curs', 'aula', 'tutor'])->find($id);
 
         if (!$classe) {
             return response()->json([
@@ -80,15 +81,16 @@ class ClasseController extends Controller
 
         $validated = $request->validate([
             'nom' => 'sometimes|required|string|max:255',
-            'curs_id' => 'sometimes|required|exists:cursos,id',
-            'aula_id' => 'nullable|exists:aules,id',
+            'id_curs' => 'sometimes|required|exists:cursos,id',
+            'id_aula' => 'nullable|exists:aules,id',
+            'id_tutor' => 'nullable|exists:usuaris,id',
         ]);
 
         $classe->update($validated);
 
         return response()->json([
             'success' => true,
-            'data' => $classe->load(['curs', 'aula']),
+            'data' => $classe->load(['curs', 'aula', 'tutor']),
             'message' => 'Classe actualitzada correctament'
         ], Response::HTTP_OK);
     }
@@ -107,6 +109,7 @@ class ClasseController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
 
+        // Podries validar si hi ha alumnes o horaris abans d'eliminar
         $classe->delete();
 
         return response()->json([
@@ -206,7 +209,8 @@ class ClasseController extends Controller
                             'id_assignatura' => $idAssignatura,
                         ]);
                         $comptadorInscripcions++;
-                    } catch (\Exception $e) {
+                    }
+                    catch (\Exception $e) {
                         $errors[] = "Error en inscriure {$alumne->email} a l'assignatura {$idAssignatura}: " . $e->getMessage();
                     }
                 }

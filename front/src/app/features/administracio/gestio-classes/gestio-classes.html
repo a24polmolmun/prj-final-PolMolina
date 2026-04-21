@@ -1,0 +1,89 @@
+<div class="gestio-wrapper">
+    <div class="header-base">
+        <h2>Gestió de Classes / Grups</h2>
+        <p>Organitza els alumnes en grups i assigna tutors i aules.</p>
+    </div>
+
+    <div class="crud-container">
+        <!-- Form -->
+        <div class="form-card">
+            <h3>{{ editantId() ? 'Editar Classe' : 'Afegir Nova Classe' }}</h3>
+            <form (submit)="guardarClasse(); $event.preventDefault()">
+                <div class="form-group">
+                    <label>Nom de la Classe</label>
+                    <input type="text" [(ngModel)]="formClasse.nom" name="nom" placeholder="Ex: 1r DAM, 2n DAW..."
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label>Curs Organitzatiu</label>
+                    <select [(ngModel)]="formClasse.id_curs" name="id_curs" required>
+                        <option [ngValue]="undefined" disabled>Selecciona un curs...</option>
+                        <option *ngFor="let c of cursos()" [value]="c.id">
+                            {{ c.nom }} ({{ c.tipus }})
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Tutor de la Classe</label>
+                    <select [(ngModel)]="formClasse.id_tutor" name="id_tutor">
+                        <option [ngValue]="null">Sense Tutor</option>
+                        <option *ngFor="let t of tutorsSugerits()" [value]="t.id">
+                            {{ t.nom }} {{ t.cognom }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Aula Assignada</label>
+                    <select [(ngModel)]="formClasse.id_aula" name="id_aula">
+                        <option [ngValue]="null">Sense Aula</option>
+                        <option *ngFor="let a of aules()" [value]="a.id">
+                            {{ a.nom }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary" [disabled]="isLoading()">
+                        {{ editantId() ? 'Actualitzar' : 'Crear Classe' }}
+                    </button>
+                    <button type="button" class="btn-secondary" (click)="cancelar()" *ngIf="editantId()">
+                        Cancel·lar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- List -->
+        <div class="list-card">
+            <div *ngIf="isLoading()" class="loading">Carregant classes...</div>
+            <div *ngIf="error()" class="error-msg">{{ error() }}</div>
+
+            <table *ngIf="!isLoading()">
+                <thead>
+                    <tr>
+                        <th>Classe</th>
+                        <th>Curs</th>
+                        <th>Tutor</th>
+                        <th>Aula</th>
+                        <th>Accions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let c of classes()">
+                        <td><strong>{{ c.nom }}</strong></td>
+                        <td>{{ c.curs?.nom || '---' }}</td>
+                        <td>{{ c.tutor ? c.tutor.nom + ' ' + (c.tutor.cognom || '') : '---' }}</td>
+                        <td>{{ c.aula?.nom || '---' }}</td>
+                        <td class="actions">
+                            <button class="btn-edit" (click)="preparaEdicio(c)">Editar</button>
+                            <button class="btn-delete" (click)="esborrarClasse(c.id)">Esborrar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

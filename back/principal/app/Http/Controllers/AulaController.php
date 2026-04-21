@@ -27,9 +27,7 @@ class AulaController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'numero' => 'required|string|unique:aules,numero',
-            'capacitat' => 'required|integer|min:1',
-            'ubicacio' => 'required|string|max:255',
+            'nom' => 'required|string|unique:aules,nom',
         ]);
 
         $aula = Aula::create($validated);
@@ -77,9 +75,7 @@ class AulaController extends Controller
         }
 
         $validated = $request->validate([
-            'numero' => 'sometimes|required|string|unique:aules,numero,' . $id,
-            'capacitat' => 'sometimes|required|integer|min:1',
-            'ubicacio' => 'sometimes|required|string|max:255',
+            'nom' => 'sometimes|required|string|unique:aules,nom,' . $id,
         ]);
 
         $aula->update($validated);

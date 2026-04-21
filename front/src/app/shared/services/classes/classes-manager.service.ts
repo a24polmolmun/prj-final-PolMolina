@@ -1,6 +1,18 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { ApiManagerService } from '../api/api-manager.service';
-import { Classe } from '../../models/classe.model';
+
+export interface Classe {
+  id: number;
+  id_curs: number;
+  nom: string;
+  id_tutor: number | null;
+  id_aula: number | null;
+  curs?: any;
+  tutor?: any;
+  aula?: any;
+  created_at?: string;
+  updated_at?: string;
+}
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +25,7 @@ export class ClassesManagerService {
   error = signal<string | null>(null);
 
   /**
-   * Carrega les classes des de Laravel i actualitza els Signals
+   * Carrega les classes des de Laravel
    */
   async carregarClasses() {
     this.isLoading.set(true);
@@ -21,10 +33,11 @@ export class ClassesManagerService {
 
     try {
       const resp = await this.apiManager.get<any>('/classes');
+      // Laravel retorna { success: true, data: [...] }
       const llista = resp.data || resp;
       this.classes.set(llista);
     } catch (err) {
-      this.error.set('Alguna cosa ha fallat demanant les classes al Laravel');
+      this.error.set("No s'han pogut obtenir les classes");
       console.error(err);
     } finally {
       this.isLoading.set(false);
@@ -32,36 +45,13 @@ export class ClassesManagerService {
   }
 
   /**
-   * Obté la classe assignada a un tutor específic
-   */
-  async obtenirClasseTutor(idTutor: number) {
-    try {
-      const resp = await this.apiManager.get<any>(`/classes/tutor/${idTutor}`);
-      return resp.data; // Retorna l'objecte Classe
-    } catch (err) {
-      console.error('Error obtenint la classe del tutor:', err);
-      return null;
-    }
-  }
-
-  /**
    * Crea una nova classe
    */
-  async crearClasse(nom: string, curs_id: number) {
+  async afegirClasse(novaClasse: Partial<Classe>) {
     try {
-      const resp = await this.apiManager.post<any>('/classes', { nom, curs_id });
-      // El backend retorna { success: true, data: Classe, message: ... }
-      const novaClasse = resp.data || resp;
-
-      const llistaActual = this.classes();
-      const llistaNova = [];
-      for (let i = 0; i < llistaActual.length; i++) {
-        llistaNova.push(llistaActual[i]);
-      }
-      llistaNova.push(novaClasse);
-
-      this.classes.set(llistaNova);
-      return novaClasse;
+      await this.apiManager.post<any>('/classes', novaClasse);
+      await this.carregarClasses();
+      return true;
     } catch (err) {
       console.error('Error creant classe:', err);
       throw err;
@@ -69,33 +59,69 @@ export class ClassesManagerService {
   }
 
   /**
-   * Assigna una llista d'emails d'alumnes a una classe
+   * Actualitza una classe existent
    */
-  async assignarAlumnes(classe_id: number, emails: string[]) {
+  async actualitzarClasse(id: number, dadesActualitzades: Partial<Classe>) {
     try {
-      const resp = await this.apiManager.post<any>('/classes/assignarAlumnes', {
-        classe_id,
-        emails,
-      });
-      return resp;
+      await this.apiManager.put<any>(`/classes/${id}`, dadesActualitzades);
+      await this.carregarClasses();
+      return true;
     } catch (err) {
-      console.error('Error enviant alumnes a la classe:', err);
+      console.error(`Error actualitzant classe ${id}:`, err);
       throw err;
     }
   }
 
   /**
-   * Treu un alumne d'una classe i elimina les seves inscripcions
+   * Esborra una classe
    */
-  async treureAlumne(classe_id: number, alumne_id: number) {
+  async esborrarClasse(id: number) {
     try {
-      const resp = await this.apiManager.post<any>('/classes/treureAlumne', {
-        classe_id,
-        alumne_id,
-      });
-      return resp;
+      await this.apiManager.delete(`/classes/${id}`);
+      await this.carregarClasses();
+      return true;
     } catch (err) {
-      console.error('Error treient alumne de la classe:', err);
+      console.error(`Error esborrant classe ${id}:`, err);
+      throw err;
+    }
+  }
+
+  /**
+   * Mètodes addicionals per compatibilitat amb altres components (gestio-inscrits.component.ts)
+   */
+
+  async obtenirClasseTutor(idTutor: number) {
+    try {
+      const resp = await this.apiManager.get<any>(`/classes/tutor/${idTutor}`);
+      return resp.data || resp;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  async assignarAlumnes(classeId: number, emails: string[]) {
+    try {
+      await this.apiManager.post<any>('/classes/assignarAlumnes', {
+        classe_id: classeId,
+        emails: emails
+      });
+      return true;
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
+
+  async treureAlumne(classeId: number, alumneId: number) {
+    try {
+      await this.apiManager.post<any>('/classes/treureAlumne', {
+        classe_id: classeId,
+        alumne_id: alumneId
+      });
+      return true;
+    } catch (err) {
+      console.error(err);
       throw err;
     }
   }

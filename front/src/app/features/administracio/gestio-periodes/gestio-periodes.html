@@ -1,0 +1,92 @@
+<div class="gestio-wrapper">
+    <div class="header-base">
+        <h2>Gestió de Periodes Acadèmics</h2>
+        <p>Defineix els trimestres i les dates de cada curs escolar.</p>
+    </div>
+
+    <div class="crud-container">
+        <!-- Formulari -->
+        <div class="form-card">
+            <h3>{{ editantId() ? 'Editar Periode' : 'Afegir Nou Curs Acadèmic' }}</h3>
+            <form (submit)="guardarPeriode(); $event.preventDefault()">
+
+                <div class="trimester-grid">
+                    <div class="trimester-box">
+                        <h4>1r Trimestre</h4>
+                        <div class="form-group">
+                            <label>Inici</label>
+                            <input type="date" [(ngModel)]="formPeriode.trimestre_1_ini" name="t1_ini" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Fi</label>
+                            <input type="date" [(ngModel)]="formPeriode.trimestre_1_fi" name="t1_fi" required>
+                        </div>
+                    </div>
+
+                    <div class="trimester-box">
+                        <h4>2n Trimestre</h4>
+                        <div class="form-group">
+                            <label>Inici</label>
+                            <input type="date" [(ngModel)]="formPeriode.trimestre_2_ini" name="t2_ini" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Fi</label>
+                            <input type="date" [(ngModel)]="formPeriode.trimestre_2_fi" name="t2_fi" required>
+                        </div>
+                    </div>
+
+                    <div class="trimester-box">
+                        <h4>3r Trimestre</h4>
+                        <div class="form-group">
+                            <label>Inici</label>
+                            <input type="date" [(ngModel)]="formPeriode.trimestre_3_ini" name="t3_ini" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Fi</label>
+                            <input type="date" [(ngModel)]="formPeriode.trimestre_3_fi" name="t3_fi" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary" [disabled]="isLoading()">
+                        {{ editantId() ? 'Actualitzar Periode' : 'Crear Periode' }}
+                    </button>
+                    <button type="button" class="btn-secondary" (click)="cancelar()" *ngIf="editantId()">
+                        Cancel·lar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Llista -->
+        <div class="list-card">
+            <div *ngIf="isLoading()" class="loading">Carregant periodes...</div>
+            <div *ngIf="error()" class="error-msg">{{ error() }}</div>
+
+            <table *ngIf="!isLoading()">
+                <thead>
+                    <tr>
+                        <th>Any Acadèmic</th>
+                        <th>1r Trimestre</th>
+                        <th>2n Trimestre</th>
+                        <th>3r Trimestre</th>
+                        <th>Accions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let p of periodes()">
+                        <td><strong>{{ p.anual }}</strong></td>
+                        <td>{{ p.trimestre_1_ini | date:'dd/MM' }} - {{ p.trimestre_1_fi | date:'dd/MM' }}</td>
+                        <td>{{ p.trimestre_2_ini | date:'dd/MM' }} - {{ p.trimestre_2_fi | date:'dd/MM' }}</td>
+                        <td>{{ p.trimestre_3_ini | date:'dd/MM' }} - {{ p.trimestre_3_fi | date:'dd/MM' }}</td>
+                        <td class="actions">
+                            <button class="btn-edit" (click)="preparaEdicio(p)">Editar</button>
+                            <button class="btn-delete" (click)="esborrarPeriode(p.id)">Esborrar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

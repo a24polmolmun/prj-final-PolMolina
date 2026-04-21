@@ -1,0 +1,80 @@
+<div class="gestio-wrapper">
+    <div class="header-base">
+        <h2>Gestió de Cursos</h2>
+        <p>Administra els cursos acadèmics, els tipus de grau i els tutors assignats.</p>
+    </div>
+
+    <div class="crud-container">
+        <!-- Formulari -->
+        <div class="form-card">
+            <h3>{{ editantId() ? 'Editar Curs' : 'Afegir Nou Curs' }}</h3>
+            <form (submit)="guardarCurs(); $event.preventDefault()">
+                <div class="form-group">
+                    <label>Nom del Curs</label>
+                    <input type="text" [(ngModel)]="formCurs.nom" name="nom" required placeholder="Ex: 1r DAW">
+                </div>
+
+                <div class="form-group">
+                    <label>Tipus de Grau</label>
+                    <select [(ngModel)]="formCurs.tipus" name="tipus" required>
+                        <option value="GS">Grau Superior (GS)</option>
+                        <option value="GM">Grau Mitjà (GM)</option>
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label>Periode Escolar</label>
+                    <select [(ngModel)]="formCurs.id_periode" name="id_periode">
+                        <option [value]="undefined">Sense periode assignat</option>
+                        <option *ngFor="let p of periodes()" [value]="p.id">
+                            {{ p.anual }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary" [disabled]="isLoading()">
+                        {{ editantId() ? 'Actualitzar Curs' : 'Crear Curs' }}
+                    </button>
+                    <button type="button" class="btn-secondary" (click)="cancelar()" *ngIf="editantId()">
+                        Cancel·lar
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Llista -->
+        <div class="list-card">
+            <div *ngIf="isLoading()" class="loading">Carregant cursos...</div>
+            <div *ngIf="error()" class="error-msg">{{ error() }}</div>
+
+            <table *ngIf="!isLoading()">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Tipus</th>
+                        <th>Curs Acadèmic</th>
+                        <th>Accions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let c of cursos()">
+                        <td>{{ c.nom }}</td>
+                        <td>
+                            <span class="badge" [ngClass]="c.tipus.toLowerCase()">{{ c.tipus }}</span>
+                        </td>
+                        <td>
+                            <span *ngIf="c.periode">{{ c.periode.anual }}</span>
+                            <span *ngIf="!c.periode" class="no-data">-</span>
+                        </td>
+                        <td class="actions">
+                            <button class="btn-edit" (click)="preparaEdicio(c)">Editar</button>
+                            <button class="btn-delete" (click)="esborrarCurs(c.id)">Esborrar</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
