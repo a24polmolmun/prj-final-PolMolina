@@ -17,7 +17,6 @@ export class LlistaAssignaturesComponent implements OnInit {
   novaAssignaturaNom = signal<string>('');
   novaAssignaturaDataInici = signal<string>('');
   novaAssignaturaDataFi = signal<string>('');
-  novaAssignaturaExempcio = signal<boolean>(false);
 
   ngOnInit(): void {
     // Carreguem les dades només entrar a la pantalla
@@ -48,14 +47,13 @@ export class LlistaAssignaturesComponent implements OnInit {
     const nom = this.novaAssignaturaNom();
     const inici = this.novaAssignaturaDataInici();
     const fi = this.novaAssignaturaDataFi();
-    const exempcio = this.novaAssignaturaExempcio();
 
     if (!nom) {
       alert("El nom de l'assignatura és obligatori.");
       return;
     }
 
-    const requestData: any = { nom, exempcio };
+    const requestData: any = { nom };
 
     // Si hi ha dates, creem el format JSON que espera el seeder/base de dades
     if (inici && fi) {
@@ -67,7 +65,6 @@ export class LlistaAssignaturesComponent implements OnInit {
         this.novaAssignaturaNom.set('');
         this.novaAssignaturaDataInici.set('');
         this.novaAssignaturaDataFi.set('');
-        this.novaAssignaturaExempcio.set(false);
       })
       .catch(err => {
         console.error('Error al crear l\'assignatura', err);

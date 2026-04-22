@@ -38,8 +38,7 @@ export class GestioAssignaturesComponent implements OnInit {
     private getEmptyAssignatura(): Partial<Assignatura> {
         return {
             nom: '',
-            interval: 'Setmanal',
-            exempcio: false,
+            interval: null,
             id_classe_projecte: null
         };
     }
@@ -84,6 +83,7 @@ export class GestioAssignaturesComponent implements OnInit {
 
     formatInterval(val: any): string {
         if (!val) return 'N/A';
+        // Ara guardem el nom del període directament, però mantenim la compatibilitat amb JSON per si de cas
         try {
             const parsed = JSON.parse(val);
             if (Array.isArray(parsed) && parsed.length > 0) {
@@ -93,7 +93,7 @@ export class GestioAssignaturesComponent implements OnInit {
                 }
             }
         } catch (e) {
-            // Not JSON
+            // Not JSON (el cas nou: nom del curs)
         }
         return val;
     }

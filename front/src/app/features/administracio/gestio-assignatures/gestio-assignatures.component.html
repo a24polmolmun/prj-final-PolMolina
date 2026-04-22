@@ -19,7 +19,7 @@
                 <select [(ngModel)]="formAssignatura.interval">
                     <option [ngValue]="null">Selecciona un Curs...</option>
                     @for (p of periodes(); track p.id) {
-                    <option [value]="p.nom">{{ p.nom }}</option>
+                    <option [value]="p.anual">{{ p.anual }}</option>
                     }
                 </select>
                 <small style="color: #64748b; font-size: 0.8rem; display: block; margin-top: 5px;">
@@ -40,11 +40,8 @@
                 </small>
             </div>
 
-            <div class="form-group checkbox-group">
-                <label>
-                    <input type="checkbox" [(ngModel)]="formAssignatura.exempcio" />
-                    Permetre Exempció
-                </label>
+            <div class="form-group">
+                <!-- Checkbox eliminat per simplicitat -->
             </div>
 
             <div class="form-actions">
@@ -66,9 +63,8 @@
                 <thead>
                     <tr>
                         <th>Nom</th>
-                        <th>Interval</th>
+                        <th>Curs Acadèmic</th>
                         <th>Classe (Proj)</th>
-                        <th>Exempció</th>
                         <th>Accions</th>
                     </tr>
                 </thead>
@@ -83,11 +79,6 @@
                             } @else {
                             <span class="no-data">Global</span>
                             }
-                        </td>
-                        <td>
-                            <span class="badge" [ngClass]="a.exempcio ? 'exempte' : 'normal'">
-                                {{ a.exempcio ? 'Sí' : 'No' }}
-                            </span>
                         </td>
                         <td class="actions">
                             <button class="btn-edit" (click)="preparaEdicio(a)">Editar</button>

@@ -6,7 +6,6 @@ export interface Assignatura {
   nom: string;
   id_classe_projecte: number | null;
   interval: string | null;
-  exempcio: boolean;
   classe_projecte?: any;
   created_at?: string;
   updated_at?: string;
