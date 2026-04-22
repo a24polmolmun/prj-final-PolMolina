@@ -1,6 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 interface GoogleUser {
@@ -92,10 +93,8 @@ export class AuthService {
   /**
    * Login temporal amb email (per a proves)
    */
-  loginTemporal(email: string) {
-    return this.http.post<{ success: boolean; data: any }>(`${this.apiUrl}/auth/login-temporal`, {
-      email,
-    });
+  loginTemporal(email: string, password: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/auth/login-temporal`, { email, password });
   }
 
   guardarSessio(data: any) {
@@ -131,8 +130,13 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuari'); // Netejar també la clau de compatibilitat
+
     this.userDataSignal.set(null);
     this.isAuthenticatedSignal.set(false);
+
+    // Anem al login
     this.router.navigate(['/']);
   }
 

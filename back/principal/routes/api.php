@@ -16,6 +16,11 @@ use App\Http\Controllers\PeriodeController;
 
 Route::prefix('v1')->group(function (): void {
 
+    // Autenticació
+    Route::post('auth/google/redirect', [AuthController::class , 'googleRedirectUrl']);
+    Route::post('auth/google/callback', [AuthController::class , 'googleCallback']);
+    Route::post('auth/login-temporal', [AuthController::class , 'loginTemporal']);
+
     Route::apiResource('usuaris', UsuariController::class);
     Route::apiResource('cursos', CursController::class);
     Route::apiResource('periodes', PeriodeController::class);

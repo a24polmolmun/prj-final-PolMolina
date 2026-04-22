@@ -65,6 +65,32 @@ class UsuarisSeeder extends Seeder
                 'nfc_id' => null,
                 'id_classe' => 1, // 1SMIXA1
                 'horari_guardies' => null
+            ],
+            [
+                'id' => 5,
+                'nom' => 'Admin Proves',
+                'cognom' => null,
+                'rol' => 'Admin',
+                'email' => 'a23cliferand@inspedralbes.cat',
+                'email_pares' => null,
+                'password' => null,
+                'token' => null,
+                'nfc_id' => null,
+                'id_classe' => null,
+                'horari_guardies' => null
+            ],
+            [
+                'id' => 6,
+                'nom' => 'Alumne Proves',
+                'cognom' => null,
+                'rol' => 'Alumne',
+                'email' => 'a24alumne@inspedralbes.cat',
+                'email_pares' => null,
+                'password' => null,
+                'token' => null,
+                'nfc_id' => null,
+                'id_classe' => 2, // 1DAWA
+                'horari_guardies' => null
             ]
         ]);
 

@@ -24,7 +24,8 @@ class AuthController extends Controller
                 'redirect_url' => $redirectUrl,
                 'message' => 'URL de redirección generada correctament'
             ], Response::HTTP_OK);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             Log::error('Error generant URL de Google OAuth: ' . $e->getMessage());
 
             return response()->json([
@@ -89,7 +90,8 @@ class AuthController extends Controller
                         $filename = 'photos/' . $user_email . '.jpg';
                         Storage::disk('public')->put($filename, $contents);
                         $photoPath = '/storage/' . $filename; // Aquesta es la ruta per accedir a la foto des del frontend
-                    } catch (\Exception $e) {
+                    }
+                    catch (\Exception $e) {
                         Log::error('Error guardando la foto de perfil: ' . $e->getMessage());
                     }
                 }
@@ -119,7 +121,8 @@ class AuthController extends Controller
                 'message' => 'Autenticació correcta'
             ], Response::HTTP_OK);
 
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             Log::error('Error en callback de Google OAuth: ' . $e->getMessage());
 
             return response()->json([
@@ -134,16 +137,28 @@ class AuthController extends Controller
     {
         try {
             $request->validate([
-                'email' => 'required|email'
+                'email' => 'required|email',
+                'password' => 'required|string'
             ]);
 
-            $user = Usuari::where('email', $request->email)->first();
+            $user_email = strtolower(trim($request->email));
+
+            // Verificar si el usuari existeix a la base de dades
+            $user = Usuari::where('email', $user_email)->first();
 
             if (!$user) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Usuari no trobat a la base de dades'
+                    'message' => 'Usuari no trobat a la base de dades. L\'has de crear primer des del panell d\'administració.'
                 ], Response::HTTP_NOT_FOUND);
+            }
+
+            // Verificar contrasenya
+            if (!\Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Contrasenya incorrecta.'
+                ], Response::HTTP_UNAUTHORIZED);
             }
 
             // Generem token temporal
@@ -159,7 +174,8 @@ class AuthController extends Controller
                 'message' => 'Login temporal correcte'
             ], Response::HTTP_OK);
 
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error en el login temporal',

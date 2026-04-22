@@ -19,4 +19,8 @@ export class SidebarComponent {
 
   // Mantinc esTutor per compatibilitat, però ara depèn del rol
   public esTutor = computed(() => this.rol() === 'profe' || this.rol() === 'admin');
+
+  logout() {
+    this.authService.logout();
+  }
 }

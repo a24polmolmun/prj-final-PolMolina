@@ -1,5 +1,6 @@
-import { Component } from '@angular/core'; // Re-build
+import { Component, inject } from '@angular/core'; // Re-build
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../../../services/auth.service';
 
 @Component({
   selector: 'app-admin-sidebar',
@@ -34,7 +35,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       </div>
 
       <div class="footer-sidebar">
-        <a routerLink="/" class="nav-link logout">
+        <a (click)="logout()" class="nav-link logout">
           <i class="icon">🚪</i> Sortir
         </a>
       </div>
@@ -86,7 +87,16 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
       padding: 1.5rem 0;
       border-top: 1px solid rgba(255,255,255,0.1);
     }
-    .logout:hover { color: #f64e60 !important; }
+    .logout:hover { 
+      color: white !important; 
+      background: rgba(246, 78, 96, 0.2) !important;
+    }
   `]
 })
-export class AdminSidebarComponent { }
+export class AdminSidebarComponent {
+  private authService = inject(AuthService);
+
+  logout() {
+    this.authService.logout();
+  }
+}

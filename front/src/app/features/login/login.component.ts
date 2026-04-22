@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
@@ -11,6 +11,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class LoginComponent {
   usuari = signal<string>('');
+  password = signal<string>('');
   error = signal<string>('');
 
   constructor(
@@ -18,31 +19,36 @@ export class LoginComponent {
     private authService: AuthService
   ) { }
 
-  loginGoogle() {
-    this.authService.loginWithGoogle();
+  ngOnInit() {
+    const usuari = this.authService.usuarioInfo;
+    if (usuari && usuari.rol) {
+      (this.authService as any).redirectByRole(usuari.rol);
+    }
   }
 
   iniciarSessio() {
     const email = this.usuari().toLowerCase().trim();
+    const password = this.password().trim();
 
-    if (!email.includes('@')) {
-      // Suport temporal per a paraules clau si l'usuari no escriu un email
-      if (email === 'alumne') { this.router.navigate(['/alumnes']); return; }
-      if (email === 'professor') { this.router.navigate(['/professors']); return; }
-      if (email === 'admin') { this.router.navigate(['/administracio']); return; }
-
-      this.error.set("Introdueix un email vàlid de la base de dades.");
+    if (!email || !password) {
+      this.error.set("S'ha d'introduir l'email i la contrasenya.");
       return;
     }
 
-    this.authService.loginTemporal(email).subscribe({
+    if (!email.includes('@')) {
+      this.error.set("Introdueix un email vàlid.");
+      return;
+    }
+
+    this.authService.loginTemporal(email, password).subscribe({
       next: (response: any) => {
         if (response.success) {
           this.authService.guardarSessio(response.data);
         }
       },
       error: (err: any) => {
-        this.error.set("Usuari no trobat a la base de dades.");
+        const msg = err.error?.message || "Error en el login. Verifica les dades.";
+        this.error.set(msg);
       }
     });
   }

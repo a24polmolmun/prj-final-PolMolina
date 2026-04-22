@@ -46,7 +46,7 @@ export class GestioUsuarisComponent implements OnInit {
 
     preparaEdicio(u: Usuari) {
         this.editantId.set(u.id);
-        this.formUsuari = { ...u };
+        this.formUsuari = { ...u, password: '' }; // No mostrar el hash de la contrasenya
     }
 
     async guardarUsuari() {

@@ -84,7 +84,7 @@ class UsuariController extends Controller
 
         $dadesValidades = $peticio->validate([
             'nom' => 'sometimes|required|string|max:255',
-            'cognom' => 'sometimes|required|string|max:255',
+            'cognom' => 'nullable|string|max:255',
             'email' => 'sometimes|required|email|unique:usuaris,email,' . $id,
             'email_pares' => 'nullable|email',
             'rol' => 'sometimes|required|string|in:admin,professor,alumne,pare,Admin,Profe,Alumne',

@@ -22,9 +22,9 @@
                     <input type="email" [(ngModel)]="formUsuari.email" name="email" required
                         placeholder="joan@inspedralbes.cat">
                 </div>
-                <div class="form-group" *ngIf="!editantId()">
-                    <label>Contrasenya</label>
-                    <input type="password" [(ngModel)]="formUsuari.password" name="password" [required]="!editantId()"
+                <div class="form-group">
+                    <label>Contrasenya {{ editantId() ? '(deixa en blanc per no canviar)' : '' }}</label>
+                    <input type="password" [(ngModel)]="formUsuari.password" name="password"
                         placeholder="Mínim 8 caràcters">
                 </div>
                 <div class="form-group">

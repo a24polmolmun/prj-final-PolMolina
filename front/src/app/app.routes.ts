@@ -18,14 +18,34 @@ import { GestioPeriodes } from './features/administracio/gestio-periodes/gestio-
 import { GestioClassesComponent } from './features/administracio/gestio-classes/gestio-classes.component';
 import { GestioAssignaturesComponent } from './features/administracio/gestio-assignatures/gestio-assignatures.component';
 
+import { authGuard } from './guards/auth.guard';
+import { roleGuard } from './guards/role.guard';
+
 export const routes: Routes = [
   { path: '', component: LoginComponent },
-  { path: 'alumnes', component: AlumnesComponent },
-  { path: 'alumnes/horaris', component: Horaris },
-  { path: 'professors', component: ProfessorsComponent },
+  {
+    path: 'alumnes',
+    component: AlumnesComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { expectedRoles: ['Alumne', 'Admin'] }
+  },
+  {
+    path: 'alumnes/horaris',
+    component: Horaris,
+    canActivate: [authGuard, roleGuard],
+    data: { expectedRoles: ['Alumne', 'Admin'] }
+  },
+  {
+    path: 'professors',
+    component: ProfessorsComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { expectedRoles: ['Profe', 'Admin'] }
+  },
   {
     path: 'administracio',
     component: AdminLayoutComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { expectedRoles: ['Admin'] },
     children: [
       { path: '', component: AdministracioComponent },
       { path: 'usuaris', component: GestioUsuarisComponent },
@@ -35,10 +55,35 @@ export const routes: Routes = [
       { path: 'assignatures', component: GestioAssignaturesComponent },
     ]
   },
-  { path: 'llista-classe', component: LlistaClasseComponent },
-  { path: 'llista-assignatures', component: LlistaAssignaturesComponent },
-  { path: 'llista-faltes', component: LlistaFaltesComponent },
-  { path: 'gestio-inscrits', component: GestioInscritsComponent },
-  { path: 'horari-alumnes', component: HorariAlumnesComponent },
+  {
+    path: 'llista-classe',
+    component: LlistaClasseComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { expectedRoles: ['Profe', 'Admin'] }
+  },
+  {
+    path: 'llista-assignatures',
+    component: LlistaAssignaturesComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { expectedRoles: ['Profe', 'Admin'] }
+  },
+  {
+    path: 'llista-faltes',
+    component: LlistaFaltesComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { expectedRoles: ['Profe', 'Admin'] }
+  },
+  {
+    path: 'gestio-inscrits',
+    component: GestioInscritsComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { expectedRoles: ['Profe', 'Admin'] }
+  },
+  {
+    path: 'horari-alumnes',
+    component: HorariAlumnesComponent,
+    canActivate: [authGuard, roleGuard],
+    data: { expectedRoles: ['Profe', 'Admin'] }
+  },
   { path: 'auth/callback', component: AuthCallbackComponent },
 ];
