@@ -12,9 +12,7 @@ class AssignaturesSeeder extends Seeder
      */
     public function run(): void
     {
-        if (DB::table('assignatures')->exists()) {
-            return;
-        }
+        DB::statement('TRUNCATE TABLE assignatures CASCADE');
 
         DB::table('assignatures')->insert([
             [
@@ -103,7 +101,7 @@ class AssignaturesSeeder extends Seeder
             ],
             [
                 'nom' => 'Projecte 1SMIXA1',
-                'id_classe_projecte' => 1,
+                'id_classe_projecte' => null,
                 'interval' => json_encode([['data_ini' => '2026-03-14', 'data_fi' => '2026-06-14']]),
                 'exempcio' => false,
             ],

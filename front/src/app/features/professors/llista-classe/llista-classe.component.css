@@ -17,13 +17,14 @@
 
 .contingut {
     flex-grow: 1;
-    margin-top: 180px;
-    padding: 20px;
+    margin-left: 260px;
+    padding: 2.5rem;
     position: relative;
     z-index: 1;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    /* Aliniat a dalt per evitar que sembli comprimit */
     min-height: 0;
 }
 

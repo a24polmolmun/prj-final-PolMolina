@@ -28,6 +28,8 @@ export class GestioAssignaturesComponent implements OnInit {
     // Estat local formulari
     editantId = signal<number | null>(null);
     formAssignatura: Partial<Assignatura> = this.getEmptyAssignatura();
+    dataInici = signal<string>('');
+    dataFi = signal<string>('');
 
     async ngOnInit() {
         await this.assignaturesService.carregarAssignatures();
@@ -46,6 +48,8 @@ export class GestioAssignaturesComponent implements OnInit {
     preparaNou() {
         this.editantId.set(null);
         this.formAssignatura = this.getEmptyAssignatura();
+        this.dataInici.set('');
+        this.dataFi.set('');
     }
 
     preparaNouAssignatura() {
@@ -55,10 +59,32 @@ export class GestioAssignaturesComponent implements OnInit {
     preparaEdicio(a: Assignatura) {
         this.editantId.set(a.id);
         this.formAssignatura = { ...a };
+
+        // Intentar extreure dates de l'interval
+        if (a.interval) {
+            try {
+                const parsed = JSON.parse(a.interval);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    this.dataInici.set(parsed[0].data_ini || '');
+                    this.dataFi.set(parsed[0].data_fi || parsed[0].data_fii || '');
+                }
+            } catch (e) {
+                this.dataInici.set('');
+                this.dataFi.set('');
+            }
+        }
     }
 
     async guardarAssignatura() {
         try {
+            // Preparar l'interval en format JSON
+            if (this.dataInici() && this.dataFi()) {
+                this.formAssignatura.interval = JSON.stringify([{
+                    data_ini: this.dataInici(),
+                    data_fi: this.dataFi()
+                }]);
+            }
+
             const id = this.editantId();
             if (id) {
                 await this.assignaturesService.actualitzarAssignatura(id, this.formAssignatura);

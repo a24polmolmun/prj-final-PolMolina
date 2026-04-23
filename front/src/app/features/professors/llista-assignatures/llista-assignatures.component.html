@@ -1,9 +1,3 @@
-<!-- 
-    Aquí utilitzem:
-     - *ngIf: Per mostrar l'estat de càrrega o els errors del servei.
-     - @for / @empty: Sintaxi moderna per llistar assignatures o mostrar missatge si no n'hi ha.
-     - ngModel: Per recollir les dades del formulari de creació.
--->
 <div class="disseny-principal">
     <app-sidebar></app-sidebar>
 
@@ -11,8 +5,8 @@
         <div class="targeta-llista">
             <div class="capçalera-llista">
                 <div>
-                    <h1>Gestió d'Assignatures</h1>
-                    <p class="subtitol">Administració de Assignatures i períodes de Projecte.</p>
+                    <h1>Les Meves Assignatures</h1>
+                    <p class="subtitol">Consulta les matèries i períodes lectius assignats.</p>
                 </div>
 
                 <div class="estat-carrega">
@@ -23,43 +17,12 @@
                 </div>
             </div>
 
-            <!-- Formulari de Creació - Estil Premium -->
-            <div class="formulari-creacio">
-                <span class="titol-formulari">Nova Assignatura</span>
-                <div class="grup-inputs">
-                    <!-- Nom de l'Assignatura -->
-                    <div class="input-grup">
-                        <label>Nom del Mòdul / Assignatura</label>
-                        <input type="text" [(ngModel)]="novaAssignaturaNom"
-                            placeholder="Ex: Desenvolupament d'Interfícies" class="input-modern">
-                    </div>
-
-                    <!-- Període Projecte-->
-                    <div class="input-grup">
-                        <label>Període de Projecte (Inici - Fi)</label>
-                        <div class="grup-dates">
-                            <input type="date" [(ngModel)]="novaAssignaturaDataInici" class="input-modern">
-                            <input type="date" [(ngModel)]="novaAssignaturaDataFi" class="input-modern">
-                        </div>
-                    </div>
-
-                    <!-- Opcions i Botó -->
-                    <div class="accions-formulari">
-                        <button class="boto-afegir" (click)="crearAssignatura()">
-                            Afegir Assignatura
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Llistat d'Assignatures -->
             <div class="contenedor-taula">
                 <table class="taula-premium">
                     <thead>
                         <tr>
                             <th>Identificador / Nom</th>
-                            <th>Període Projecte</th>
-                            <th style="text-align: right;">Gestió</th>
+                            <th>Període Lectiu</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -73,17 +36,11 @@
                                     {{ formatarInterval(assignatura.interval) }}
                                 </span>
                             </td>
-                            <td style="text-align: right;">
-                                <button class="boto-esborrar" (click)="eliminarAssignatura(assignatura.id!)">
-                                    Esborrar
-                                </button>
-                            </td>
                         </tr>
                         } @empty {
                         <tr>
-                            <td colspan="3" class="empty-state">
-                                No s'han trobat assignatures configurades. Utilitza el formulari superior per afegir-ne
-                                una.
+                            <td colspan="2" class="empty-state">
+                                No s'han trobat assignatures configurades per a aquest professor.
                             </td>
                         </tr>
                         }

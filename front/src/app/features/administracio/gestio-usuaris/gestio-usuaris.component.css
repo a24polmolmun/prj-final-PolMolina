@@ -1,6 +1,5 @@
 .main-content {
-  margin-left: 260px;
-  padding: 2rem;
+  /* Retirem padding i marges per compatibilitat amb AdminLayout */
   background-color: #f8fafc;
   min-height: 100vh;
 }

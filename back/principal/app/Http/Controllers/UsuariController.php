@@ -34,6 +34,7 @@ class UsuariController extends Controller
             'rol' => 'required|string|in:admin,professor,alumne,pare,Admin,Profe,Alumne',
             'password' => 'required|string|min:8',
             'nfc_id' => 'nullable|string|unique:usuaris,nfc_id',
+            'id_classe' => 'nullable|exists:classes,id',
         ]);
 
         $dadesValidades['password'] = bcrypt($dadesValidades['password']);

@@ -4,24 +4,26 @@ namespace Database\Seeders;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class UsuarisSeeder extends Seeder
 {
     public function run(): void
     {
-        if (DB::table('usuaris')->exists()) {
-            return;
-        }
+        // Netegem per forçar la càrrega de dades de prova
+        DB::table('usuaris')->delete();
+
+        $password = Hash::make('12345678');
 
         DB::table('usuaris')->insert([
             [
                 'id' => 1,
-                'nom' => 'Susana Bajo',
-                'cognom' => null,
+                'nom' => 'Susana',
+                'cognom' => 'Bajo',
                 'rol' => 'Profe',
                 'email' => 'sbajo.pruebas@inspedralbes.cat',
                 'email_pares' => null,
-                'password' => null,
+                'password' => $password,
                 'token' => null,
                 'nfc_id' => null,
                 'id_classe' => null,
@@ -29,12 +31,12 @@ class UsuarisSeeder extends Seeder
             ],
             [
                 'id' => 2,
-                'nom' => 'Victoria Rey',
-                'cognom' => null,
+                'nom' => 'Professor',
+                'cognom' => 'Proves',
                 'rol' => 'Profe',
-                'email' => 'vrey.pruebas@inspedralbes.cat',
+                'email' => 'professor@inspedralbes.cat',
                 'email_pares' => null,
-                'password' => null,
+                'password' => $password,
                 'token' => null,
                 'nfc_id' => null,
                 'id_classe' => null,
@@ -42,38 +44,38 @@ class UsuarisSeeder extends Seeder
             ],
             [
                 'id' => 3,
-                'nom' => 'Marcos López',
-                'cognom' => null,
+                'nom' => 'Marcos',
+                'cognom' => 'López',
                 'rol' => 'Alumne',
                 'email' => 'mlopez.pruebas@inspedralbes.cat',
                 'email_pares' => null,
-                'password' => null,
+                'password' => $password,
                 'token' => null,
                 'nfc_id' => null,
-                'id_classe' => 1, // 1SMIXA1
+                'id_classe' => 1,
                 'horari_guardies' => null
             ],
             [
                 'id' => 4,
-                'nom' => 'Noelia García',
-                'cognom' => null,
+                'nom' => 'Pol',
+                'cognom' => 'Molina',
                 'rol' => 'Alumne',
-                'email' => 'ngarcia.pruebas@inspedralbes.cat',
+                'email' => 'a24polmolmun@inspedralbes.cat',
                 'email_pares' => null,
-                'password' => null,
+                'password' => $password,
                 'token' => null,
                 'nfc_id' => null,
-                'id_classe' => 1, // 1SMIXA1
+                'id_classe' => 1,
                 'horari_guardies' => null
             ],
             [
                 'id' => 5,
-                'nom' => 'Admin Proves',
-                'cognom' => null,
+                'nom' => 'Admin',
+                'cognom' => 'Proves',
                 'rol' => 'Admin',
-                'email' => 'a23cliferand@inspedralbes.cat',
+                'email' => 'admin@inspedralbes.cat',
                 'email_pares' => null,
-                'password' => null,
+                'password' => $password,
                 'token' => null,
                 'nfc_id' => null,
                 'id_classe' => null,
@@ -81,15 +83,15 @@ class UsuarisSeeder extends Seeder
             ],
             [
                 'id' => 6,
-                'nom' => 'Alumne Proves',
-                'cognom' => null,
+                'nom' => 'Alumne',
+                'cognom' => 'Proves',
                 'rol' => 'Alumne',
                 'email' => 'a24alumne@inspedralbes.cat',
                 'email_pares' => null,
-                'password' => null,
+                'password' => $password,
                 'token' => null,
                 'nfc_id' => null,
-                'id_classe' => 2, // 1DAWA
+                'id_classe' => 2,
                 'horari_guardies' => null
             ]
         ]);

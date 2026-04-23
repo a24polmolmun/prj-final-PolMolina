@@ -40,6 +40,16 @@
                     <input type="email" [(ngModel)]="formUsuari.email_pares" name="email_pares">
                 </div>
 
+                <div class="form-group" *ngIf="formUsuari.rol === 'Alumne'">
+                    <label for="classe">Classe</label>
+                    <select id="classe" name="id_classe" [(ngModel)]="formUsuari.id_classe">
+                        <option [ngValue]="null">Sense assignació</option>
+                        @for (c of classes(); track c.id) {
+                        <option [ngValue]="c.id">{{ c.nom }}</option>
+                        }
+                    </select>
+                </div>
+
                 <div class="form-actions">
                     <button type="submit" class="btn-primary" [disabled]="isLoading()">
                         {{ editantId() ? 'Actualitzar Usuari' : 'Crear Usuari' }}
@@ -62,6 +72,7 @@
                         <th>Nom</th>
                         <th>Email</th>
                         <th>Rol</th>
+                        <th>Classe</th>
                         <th>Accions</th>
                     </tr>
                 </thead>
@@ -71,6 +82,9 @@
                         <td>{{ u.email }}</td>
                         <td>
                             <span class="badge" [ngClass]="u.rol.toLowerCase()">{{ u.rol }}</span>
+                        </td>
+                        <td>
+                            {{ u.id_classe ? 'Assignat' : '-' }}
                         </td>
                         <td class="actions">
                             <button class="btn-edit" (click)="preparaEdicio(u)">Editar</button>

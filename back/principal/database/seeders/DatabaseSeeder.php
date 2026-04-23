@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             $this->call(CursSeeder::class);
             $this->call(ClassesSeeder::class);
             $this->call(AssignaturesSeeder::class);
-        // $this->call(HorarisSeeder::class);
+            $this->call(HorarisSeeder::class);
         }
         finally {
             // Re-habilitar FK siempre

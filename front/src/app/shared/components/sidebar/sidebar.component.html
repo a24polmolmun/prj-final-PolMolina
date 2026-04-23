@@ -1,81 +1,59 @@
-<nav class="barra-superior">
-  <div class="contenedor-navegacio-centrat">
-
-    <!-- 0. ADMIN: Gestió d'Usuaris (Només Admin) -->
-    @if (rol() === 'admin') {
-    <a routerLink="/administracio" routerLinkActive="actiu" class="element-navegacio">
-      <div class="caixa-icona">
-        <img src="/img/menu/iconos/usuari-icona.png" alt="Admin" style="filter: hue-rotate(280deg);" />
-      </div>
-    </a>
-    }
-
-    <!-- 1. Llista d'Assignatures (Profe o Admin) -->
-    @if (rol() === 'profe' || rol() === 'admin') {
-    <a routerLink="/llista-assignatures" routerLinkActive="actiu" class="element-navegacio">
-      <div class="caixa-icona">
-        <img src="/img/menu/iconos/assignatures-icona.png" alt="Assignatures" />
-      </div>
-    </a>
-    }
-
-    <!-- 2. Gestió Inscrits (Tutor/Profe/Admin) -->
-    @if (esTutor()) {
-    <a routerLink="/gestio-inscrits" routerLinkActive="actiu" class="element-navegacio">
-      <div class="caixa-icona">
-        <img src="/img/menu/iconos/justif-icona.png" alt="Gestió Inscrits" />
-      </div>
-    </a>
-    }
-
-    <!-- 3. Llista Classe -->
-    @if (rol() === 'profe' || rol() === 'admin') {
-    <a routerLink="/llista-classe" routerLinkActive="actiu" class="element-navegacio">
-      <div class="caixa-icona">
-        <img src="/img/menu/iconos/llista-icona.png" alt="Llista" />
-      </div>
-    </a>
-    }
-
-    <!-- 4. CENTRE: Inici (Depèn del rol) -->
-    <a [routerLink]="rol() === 'admin' ? '/administracio' : (rol() === 'profe' ? '/professors' : '/alumnes')"
-      routerLinkActive="actiu" [routerLinkActiveOptions]="{ exact: true }" class="element-navegacio">
-      <div class="caixa-icona">
-        <img src="/img/menu/iconos/inici-icona.png" alt="Inici" />
-      </div>
-    </a>
-
-    <!-- 5. Llista Faltes -->
-    @if (rol() === 'profe' || rol() === 'admin') {
-    <a routerLink="/llista-faltes" routerLinkActive="actiu" class="element-navegacio">
-      <div class="caixa-icona">
-        <img src="/img/menu/iconos/rellotge-icona.png" alt="Faltes" />
-      </div>
-    </a>
-    }
-
-    <!-- 6. Horari Alumnes (Tutor) -->
-    @if (esTutor() && rol() !== 'admin') {
-    <a routerLink="/horari-alumnes" routerLinkActive="actiu" class="element-navegacio">
-      <div class="caixa-icona">
-        <img src="/img/menu/iconos/calendari-icona.png" alt="Horari Alumnes" />
-      </div>
-    </a>
-    }
-
-    <!-- 7. Icona Perfil -->
-    <a routerLink="/profile" routerLinkActive="actiu" class="element-navegacio">
-      <div class="caixa-icona perfil">
-        <img src="/img/menu/iconos/usuari-icona.png" alt="Perfil" />
-      </div>
-    </a>
-
-    <!-- 8. Icona Sortir -->
-    <a (click)="logout()" class="element-navegacio logout-btn">
-      <div class="caixa-icona">
-        <img src="/img/menu/iconos/rellotge-icona.png" alt="Sortir"
-          style="filter: grayscale(1) invert(0.5) sepia(1) hue-rotate(320deg) saturate(5);" />
-      </div>
-    </a>
+<div class="sidebar-v2">
+  <div class="sidebar-header">
+    <img src="/img/logo.png" alt="Logo" class="sidebar-logo" />
+    <span class="sidebar-titol">CENTRE D'ESTUDIS</span>
   </div>
-</nav>
+
+  <nav class="sidebar-menu">
+    <!-- Inici depenent del rol -->
+    <a [routerLink]="rol() === 'admin' ? '/administracio' : (rol() === 'profe' ? '/professors' : '/alumnes')"
+      routerLinkActive="activa" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
+      <span class="material-icons">dashboard</span>
+      <span class="link-text">Inici</span>
+    </a>
+
+    @if (rol() === 'profe' || rol() === 'admin') {
+    <a routerLink="/llista-assignatures" routerLinkActive="activa" class="sidebar-link">
+      <span class="material-icons">auto_stories</span>
+      <span class="link-text">Assignatures</span>
+    </a>
+    }
+
+    @if (esTutor()) {
+    <a routerLink="/gestio-inscrits" routerLinkActive="activa" class="sidebar-link">
+      <span class="material-icons">assignment_ind</span>
+      <span class="link-text">Gestió Inscrits</span>
+    </a>
+    }
+
+    @if (rol() === 'profe' || rol() === 'admin') {
+    <a routerLink="/llista-classe" routerLinkActive="activa" class="sidebar-link">
+      <span class="material-icons">groups</span>
+      <span class="link-text">Llista Classe</span>
+    </a>
+
+    <a routerLink="/llista-faltes" routerLinkActive="activa" class="sidebar-link">
+      <span class="material-icons">history_toggle_off</span>
+      <span class="link-text">Gestió Faltes</span>
+    </a>
+    }
+
+    @if (esTutor() && rol() !== 'admin') {
+    <a routerLink="/horari-alumnes" routerLinkActive="activa" class="sidebar-link">
+      <span class="material-icons">calendar_month</span>
+      <span class="link-text">Horari Alumnes</span>
+    </a>
+    }
+  </nav>
+
+  <div class="sidebar-footer">
+    <a routerLink="/profile" routerLinkActive="activa" class="sidebar-link profile-link">
+      <span class="material-icons">account_circle</span>
+      <span class="link-text">El Meu Perfil</span>
+    </a>
+    <button (click)="logout()" class="sidebar-link logout-btn">
+      <span class="material-icons">logout</span>
+      <span class="link-text">Sortir</span>
+    </button>
+  </div>
+</div>

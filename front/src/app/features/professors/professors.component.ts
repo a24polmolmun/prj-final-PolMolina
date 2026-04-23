@@ -4,6 +4,7 @@ import { SidebarComponent } from '../../shared/components/sidebar/sidebar.compon
 import { AssignaturesManagerService } from '../../shared/services/assignatures/assignatures-manager.service';
 import { HorarisManagerService } from '../../shared/services/horaris/horaris-manager.service';
 import { ImparteixManagerService } from '../../shared/services/imparteix/imparteix-manager.service';
+import { UsuarisManagerService } from '../../shared/services/usuaris/usuaris-manager.service';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -16,66 +17,118 @@ export class ProfessorsComponent implements OnInit {
   private assignaturesManager = inject(AssignaturesManagerService);
   private horarisManager = inject(HorarisManagerService);
   private imparteixManager = inject(ImparteixManagerService);
+  private usuarisManager = inject(UsuarisManagerService);
   private authService = inject(AuthService);
+
+  // Informació de l'usuari loguejat
+  usuariInfo = computed(() => this.authService.userData()?.user);
+  nomProfessor = computed(() => this.usuariInfo()?.nom || 'Professor');
+
+  // Estadístiques per al dashboard
+  stats = computed(() => {
+    const totsHoraris = this.horarisManager.horaris();
+    const totsUsuaris = this.usuarisManager.usuaris();
+    const usuariLoguejat = this.authService.userData()?.user;
+    const idProfe = usuariLoguejat?.id;
+
+    if (!idProfe) return [
+      { titol: 'Classes Setmanals', valor: 0, icona: 'library_books', color: 'blau' },
+      { titol: 'Alumnes Totals', valor: 0, icona: 'group', color: 'verd' },
+      { titol: 'Faltes Pendents', valor: 0, icona: 'warning', color: 'taronja' }
+    ];
+
+    // 1. Classes setmanals (hores reals assignades)
+    const lesMevesHores = totsHoraris.filter(h => h.id_professor === idProfe);
+    const totalHores = lesMevesHores.length;
+
+    // 2. Alumnes totals (alumnes en les classes que imparteix el profe)
+    const idClassesImpartides = [...new Set(lesMevesHores.map(h => h.id_classe))].filter(id => id !== null) as number[];
+    const alumnesEnClasses = totsUsuaris.filter(u => u.rol === 'Alumne' && u.id_classe !== null && idClassesImpartides.includes(u.id_classe as number));
+    const totalAlumnes = alumnesEnClasses.length;
+
+    return [
+      { titol: 'Classes Setmanals', valor: totalHores, icona: 'library_books', color: 'blau' },
+      { titol: 'Alumnes Totals', valor: totalAlumnes, icona: 'group', color: 'verd' },
+      { titol: 'Faltes Pendents', valor: 0, icona: 'warning', color: 'taronja' }
+    ];
+  });
 
   // Dades de la classe actual conectada a la Base de Datos per a la targeta
   classeActual = computed(() => {
-    // Això llegeix constantment l'array d'assignatures del Manager
-    const llistaDeLaravel = this.assignaturesManager.assignatures();
+    const ara = new Date();
+    const dia = ara.getDay(); // 0 (dg) - 6 (ds)
+    if (dia === 0 || dia === 6) return this.noHiHaClasse('Cap de setmana');
 
-    // Com que la teva base de dades està buida de moment, li diem què mostrar si no hi ha res:
-    if (llistaDeLaravel.length === 0) {
-      return {
-        nom: 'Cap assignatura trobada',
-        estat: 'ESPERANT DADES...',
-        horaInici: '--:--',
-        horaFi: '--:--',
-        aula: 'TBD',
-      };
-    }
-    // Si tenim dades a Laravel, agafem la primera assignatura (només per començar)
-    // (Més endavant ho creuarem amb Horaris i Aules de debò)
-    const primera = llistaDeLaravel[0];
+    const hores = ara.getHours();
+    const minuts = ara.getMinutes();
+    const tempsActual = hores * 60 + minuts;
+
+    // Lletra del dia
+    const lletres = ['', 'L', 'M', 'X', 'J', 'V'];
+    const lletraDia = lletres[dia];
+
+    // Mapeig de hores a codi_hora (Simplificació)
+    let numHora = -1;
+    let rang = { inici: '', fi: '' };
+
+    // Definim els rangs
+    const franges = [
+      { id: 1, s: '08:00', e: '09:00', start: 8 * 60, end: 9 * 60 },
+      { id: 2, s: '09:00', e: '10:00', start: 9 * 60, end: 10 * 60 },
+      { id: 3, s: '10:00', e: '11:00', start: 10 * 60, end: 11 * 60 },
+      { id: 4, s: '11:30', e: '12:30', start: 11 * 60 + 30, end: 12 * 60 + 30 },
+      { id: 5, s: '12:30', e: '13:30', start: 12 * 60 + 30, end: 13 * 60 + 30 },
+      { id: 6, s: '13:30', e: '14:30', start: 13 * 60 + 30, end: 14 * 60 + 30 },
+      { id: 7, s: '15:00', e: '16:00', start: 15 * 60, end: 16 * 60 },
+      { id: 8, s: '16:00', e: '17:00', start: 16 * 60, end: 17 * 60 },
+      { id: 9, s: '17:00', e: '18:00', start: 17 * 60, end: 18 * 60 },
+      { id: 10, s: '18:30', e: '19:30', start: 18 * 60 + 30, end: 19 * 60 + 30 },
+      { id: 11, s: '19:30', e: '20:30', start: 19 * 60 + 30, end: 20 * 60 + 30 }
+    ];
+
+    const actual = franges.find(f => tempsActual >= f.start && tempsActual < f.end);
+    if (!actual) return this.noHiHaClasse('Fora d\'horari lectiu');
+
+    const codiCerca = lletraDia + actual.id;
+    const idProfe = this.authService.userData()?.user?.id;
+    const horari = this.horarisManager.horaris().find(h => h.codi_hora === codiCerca && h.id_professor == idProfe);
+
+    if (!horari) return this.noHiHaClasse('Lliure ara mateix');
 
     return {
-      nom: primera.nom,
+      nom: horari.assignatura?.nom || 'Sense nom',
       estat: 'EN CURS ARA',
-      horaInici: '08:00',
-      horaFi: '09:00',
-      aula: 'A201',
+      horaInici: actual.s,
+      horaFi: actual.e,
+      aula: horari.aula?.nom || 'Sense aula',
+      hiHaClasse: true
     };
   });
 
-  franjaHoraria = signal<'AM' | 'PM'>('AM');
+  private noHiHaClasse(motiu: string) {
+    return {
+      nom: motiu,
+      estat: 'REMA LLIURE',
+      horaInici: '--:--',
+      horaFi: '--:--',
+      aula: '-',
+      hiHaClasse: false
+    };
+  }
 
+  franjaHoraria = signal<'AM' | 'PM'>('AM');
   diesSetmana = ['Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres'];
 
   // Retorna l'horari segons la franja seleccionada
   horariActual = computed(() => {
-    // 1. Obtenim totes les dades que hem inyectat al ngOnInit
-    const totesImparticions = this.imparteixManager.imparticions();
     const totsHoraris = this.horarisManager.horaris();
-
-    // 2. Definim quin profe som per poder filtrar què ens toca donar
-    const usuariLoguejat = this.authService.usuarioInfo;
+    const usuariLoguejat = this.authService.userData()?.user;
     if (!usuariLoguejat || !usuariLoguejat.id) return [];
 
     const idProfeLoguejat = usuariLoguejat.id;
+    const elsMeusHoraris = totsHoraris.filter(h => h.id_professor == idProfeLoguejat);
 
-    // 3. Busquem els horaris on JO sóc el professor assignat
-    const elsMeusHoraris: any[] = [];
-    if (totsHoraris && Array.isArray(totsHoraris)) {
-      for (let j = 0; j < totsHoraris.length; j++) {
-        const horariActualAux = totsHoraris[j];
-        if (horariActualAux.id_professor === idProfeLoguejat) {
-          elsMeusHoraris.push(horariActualAux);
-        }
-      }
-    }
-
-    // 5. Construïm la plantilla buida de la teva UI
     let graella: any[];
-
     const esMati = this.franjaHoraria() === 'AM';
     if (esMati) {
       graella = [
@@ -98,82 +151,29 @@ export class ProfessorsComponent implements OnInit {
       ];
     }
 
-    // 6. Agafem els meus horaris i els col·loquem a la casella de la graella corresponent
-    for (let iterador = 0; iterador < elsMeusHoraris.length; iterador++) {
-      const horariAquest = elsMeusHoraris[iterador];
-      // Si hi ha codi_hora (ex: "X3") el desgranem
-      if (horariAquest.codi_hora) {
-        const lletraDia = horariAquest.codi_hora.charAt(0); // Primera lletra: 'L', 'M', 'X'...
-        const numeroHoraText = horariAquest.codi_hora.substring(1); // La resta: '1', '2', '3'...
-        const numeroHora = parseInt(numeroHoraText);
-        // --- CALCULEM LA COLUMNA (El dia de la setmana) ---
-        let indexColumna = -1;
-        if (lletraDia === 'L') {
-          indexColumna = 0;
-        } else if (lletraDia === 'M') {
-          indexColumna = 1;
-        } else if (lletraDia === 'X') {
-          indexColumna = 2;
-        } else if (lletraDia === 'J') {
-          indexColumna = 3;
-        } else if (lletraDia === 'V') {
-          indexColumna = 4;
-        }
+    elsMeusHoraris.forEach(horari => {
+      if (horari.codi_hora) {
+        const lletraDia = horari.codi_hora.charAt(0);
+        const numeroHora = parseInt(horari.codi_hora.substring(1));
 
-        // --- CALCULEM LA FILA (L'hora del dia) ---
-        if (indexColumna !== -1) {
+        let indexCol = ['L', 'M', 'X', 'J', 'V'].indexOf(lletraDia);
+        if (indexCol !== -1) {
           let indexFila = -1;
-
-          // Lògica per als matins (hores 1 a 6)
           if (esMati && numeroHora <= 6) {
-            if (numeroHora <= 3) {
-              indexFila = numeroHora - 1; // 1ra hora -> Fila 0
-            } else {
-              indexFila = numeroHora; // 4ta hora -> Fila 4 (salta l'esbarjo, fila 3)
-            }
+            indexFila = (numeroHora <= 3) ? numeroHora - 1 : numeroHora;
+          } else if (!esMati && numeroHora >= 7) {
+            const hT = numeroHora - 6;
+            indexFila = (hT <= 3) ? hT - 1 : hT;
           }
-          // Lògica per a les tardes (hores 7 a 12)
-          else if (!esMati && numeroHora >= 7) {
-            const horaTarda = numeroHora - 6; // Convertim "hora 7" en "1ra de la tarda"
-            if (horaTarda <= 3) {
-              indexFila = horaTarda - 1;
-            } else {
-              indexFila = horaTarda;
-            }
-          }
-          // --- INSERIM A LA GRAELLA SI LA CASELLA ESTÀ BUIDA ---
-          if (
-            indexFila !== -1 &&
-            graella[indexFila] &&
-            graella[indexFila].assignatures[indexColumna] === ''
-          ) {
-            // Extraiem els noms protegint-nos de si vénen buits del Back
-            let nomAssignatura = 'Sense Nom';
-            if (horariAquest.assignatura && horariAquest.assignatura.nom) {
-              nomAssignatura = horariAquest.assignatura.nom;
-            }
-            let nomClasse = '';
-            if (horariAquest.classe && horariAquest.classe.nom) {
-              nomClasse = horariAquest.classe.nom;
-            }
-            // Ho juntem a l'estil: "Programació\n(DAW2)"
-            graella[indexFila].assignatures[indexColumna] =
-              nomAssignatura + '\n(' + nomClasse + ')';
+
+          if (indexFila !== -1 && graella[indexFila] && graella[indexFila].assignatures[indexCol] === '') {
+            const nomAssig = horari.assignatura?.nom || 'Sense Nom';
+            const nomClas = horari.classe?.nom || '';
+            graella[indexFila].assignatures[indexCol] = nomAssig + '\n(' + nomClas + ')';
           }
         }
       }
-    }
-    // 7. Retallem les files buides al final per evitar espai blanc innecessari a la UI
-    while (graella.length > 0) {
-      const ultimaFila = graella[graella.length - 1];
-      const teContingut = ultimaFila.assignatures.some((a: string) => a !== '' && a !== 'ESBARJO');
-      // Si la fila és buida i no és una franja especial (com l'esbarjo si és l'última), la treiem
-      if (!teContingut) {
-        graella.pop();
-      } else {
-        break;
-      }
-    }
+    });
 
     return graella;
   });
@@ -182,10 +182,10 @@ export class ProfessorsComponent implements OnInit {
     this.franjaHoraria.update((valor) => (valor === 'AM' ? 'PM' : 'AM'));
   }
 
-  // Implementación del método ngOnInit, esto pide a Laravel todas las asignaturas cuando el profe entra a su pantalla
   ngOnInit() {
     this.assignaturesManager.carregarAssignatures();
     this.horarisManager.carregarHoraris();
     this.imparteixManager.carregarImparticions();
+    this.usuarisManager.carregarUsuaris();
   }
 }

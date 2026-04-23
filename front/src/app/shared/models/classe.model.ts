@@ -5,9 +5,9 @@ export interface Classe {
     id: number;
     id_curs: number;
     nom: string;
-    id_tutor: number;
-    created_at: string;
-    updated_at: string;
+    id_tutor: number | null;
+    created_at?: string;
+    updated_at?: string;
 
     // Relacions opcionals (venen de l'Eager Loading de Laravel)
     curs?: Curs;

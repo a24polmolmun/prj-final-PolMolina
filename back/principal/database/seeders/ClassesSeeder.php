@@ -9,15 +9,13 @@ class ClassesSeeder extends Seeder
 {
     public function run(): void
     {
-        if (DB::table('classes')->exists()) {
-            return;
-        }
+        DB::statement('TRUNCATE TABLE classes CASCADE');
 
         DB::table('classes')->insert([
             [
                 'id_curs' => 1,
                 'nom' => '1SMIXA1',
-                'id_tutor' => 1,
+                'id_tutor' => 2,
                 'id_aula' => 1
             ],
             [

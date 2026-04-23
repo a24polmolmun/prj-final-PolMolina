@@ -7,71 +7,80 @@
 <div class="disseny-principal">
     <app-sidebar></app-sidebar>
 
-
     <div class="contingut">
+        <!-- SECCIÓ DE BENVINGUDA -->
+        <div class="seccio-benvinguda">
+            <div class="salutacio">
+                <h1>Bon dia, <span class="nom-destacat">{{ nomProfessor() }}</span>!</h1>
+                <p>Benvingut de nou. Aquí tens el resum del teu dia.</p>
+            </div>
 
-        <!-- Contenidor principal -->
+            <div class="targetes-stats">
+                @for (stat of stats(); track stat.titol) {
+                <div class="targeta-stat" [class]="stat.color">
+                    <div class="icona-stat">
+                        <span class="material-icons">{{ stat.icona }}</span>
+                    </div>
+                    <div class="info-stat">
+                        <span class="etiqueta-stat">{{ stat.titol }}</span>
+                        <span class="valor-stat">{{ stat.valor }}</span>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+
         <div class="graella-tauler">
-
             <!-- Targeta de la classe que toca ara mateix -->
             <div class="targeta-classe-actual">
                 <div class="contingut-targeta">
-                    <!-- El puntet de color i si la classe està activa o no -->
                     <div class="insignia-estat">
                         <span class="punt"></span> {{ classeActual().estat }}
-
                     </div>
-
-                    <!-- El nom de l'assignatura o el curs en gran -->
                     <h1>{{ classeActual().nom }}</h1>
-
-                    <!-- El botó per anar directe a passar llista -->
+                    @if (classeActual().hiHaClasse) {
                     <div class="accions">
-                        <button class="boto-accio">
+                        <button class="boto-accio" routerLink="/llista-classe">
                             Passar llista ara
-                            <span class="icona-fletxa">→</span>
+                            <span class="material-icons icona-fletxa">chevron_right</span>
                         </button>
                     </div>
+                    }
                 </div>
-
-
             </div>
 
-            <!-- Aquí tenim l'horari de tota la setmana -->
+            <!-- Horari Personal -->
             <div class="contenidor-horari">
                 <div class="capçalera-horari">
-                    <h2>Horari Setmanal</h2>
+                    <div class="titol-amb-icona">
+                        <span class="material-icons icona-seccio">calendar_today</span>
+                        <h2>El Teu Horari Personal</h2>
+                    </div>
                     <div class="controls-horari">
-                        <!-- Botó per canviar entre el que fas tu i el que fan els altres (franja) -->
-                        <button class="insignia-hora punter" (click)="commutarFranja()" title="Canviar Franja Horària">
-                            {{ franjaHoraria() }}
-                            <span class="icona-commutador">⇅</span>
+                        <button class="boto-franja" (click)="commutarFranja()">
+                            Franja: <strong>{{ franjaHoraria() }}</strong>
+                            <span class="material-icons icona-commutador">swap_vert</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- La graella on es veuen els dies i les hores -->
                 <div class="graella-horari">
-                    <!-- Els noms de la setmana (Dilluns, Dimarts...) -->
                     <div class="cel-la-capçalera buida"></div>
                     @for (dia of diesSetmana; track dia) {
                     <div class="cel-la-capçalera">{{ dia }}</div>
                     }
 
-                    <!-- Aquí és on es pinten les hores i el que toca a cada hora -->
                     @for (franja of horariActual(); track franja.hora) {
                     <div class="cel-la-hora">{{ franja.hora }}</div>
                     @for (assignatura of franja.assignatures; track $index) {
-                    <!-- Si és l'esbarjo, li posem un color diferent -->
-                    <div class="cel-la-assignatura" [class.esbarjo]="assignatura === 'ESBARJO'">
+                    <div class="cel-la-assignatura" [class.esbarjo]="assignatura === 'ESBARJO'"
+                        [class.amb-classe]="assignatura && assignatura !== '' && assignatura !== 'ESBARJO'">
                         <span class="text-assignatura">{{ assignatura }}</span>
                     </div>
                     }
                     }
                 </div>
             </div>
-
         </div>
-
     </div>
 </div>

@@ -15,8 +15,9 @@
 
 .contingut {
     flex-grow: 1;
-    margin-top: 180px;
-    padding: 20px;
+    margin-left: 260px;
+    /* Separació del menú lateral */
+    padding: 100px 30px 30px;
     position: relative;
     z-index: 1;
     display: flex;

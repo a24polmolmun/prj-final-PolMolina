@@ -33,7 +33,7 @@ export class LlistaClasseComponent implements OnInit {
     // Bucle per trobar només les sessions d'aquest professor
     for (let i = 0; i < totsElsHoraris.length; i++) {
       const h = totsElsHoraris[i];
-      if (h.id_professor === usuariLoguejat.id) {
+      if (h.id_professor == usuariLoguejat.id) {
         llistaFiltrada.push(h);
       }
     }
@@ -106,7 +106,7 @@ export class LlistaClasseComponent implements OnInit {
     for (let i = 0; i < totsElsInscrits.length; i++) {
       const inscripcio = totsElsInscrits[i];
 
-      if (inscripcio.id_horari === idSessio) {
+      if (inscripcio.id_horari == idSessio) {
         const assistenciaSetmanal: any = {};
 
         // 2. Per a cada alumne trobat, mirem la seva falta per a cada dia de la setmana (Dilluns a Divendres)

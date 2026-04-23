@@ -15,20 +15,18 @@
             </div>
 
             <div class="form-group">
-                <label>Curs Acadèmic (Interval)</label>
-                <select [(ngModel)]="formAssignatura.interval">
-                    <option [ngValue]="null">Selecciona un Curs...</option>
-                    @for (p of periodes(); track p.id) {
-                    <option [value]="p.anual">{{ p.anual }}</option>
-                    }
-                </select>
+                <label>Període de l'Assignatura (Inici - Fi)</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="date" [(ngModel)]="dataInici" style="flex: 1;" />
+                    <input type="date" [(ngModel)]="dataFi" style="flex: 1;" />
+                </div>
                 <small style="color: #64748b; font-size: 0.8rem; display: block; margin-top: 5px;">
-                    Indica en quin curs s'imparteix (ex: 2025-2026).
+                    Indica la durada real de la matèria o del projecte.
                 </small>
             </div>
 
             <div class="form-group">
-                <label>Vincular a Clase (Projecte)</label>
+                <label>Vincular a Classe (Projecte)</label>
                 <select [(ngModel)]="formAssignatura.id_classe_projecte">
                     <option [ngValue]="null">Cap (Assignatura Estàndard)</option>
                     @for (c of classes(); track c.id) {

@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../../services/auth.service';
@@ -23,12 +23,19 @@ export class GestioInscritsComponent implements OnInit {
   public serveiUsuaris = inject(UsuarisManagerService);
 
   // Variables per guardar la informació que pintarem
+  public rolUser = computed(() => this.serveiAuth.userData()?.user.rol?.toLowerCase() || '');
   classeTrobada = signal<Classe | null>(null);
   alumnesDeLaClasse = signal<Usuari[]>([]); // Els que ja estan dins
   alumnesDisponibles = signal<Usuari[]>([]); // Tots els alumnes del sistema
+  classesSistema = signal<Classe[]>([]); // Totes les classes per a l'admin
   cercaAlumne: string = '';
 
   async ngOnInit() {
+    // Si és admin, carreguem totes les classes
+    if (this.rolUser() === 'admin') {
+      await this.serveiClasses.carregarClasses();
+      this.classesSistema.set(this.serveiClasses.classes());
+    }
     await this.carregarDades();
   }
 
@@ -37,9 +44,14 @@ export class GestioInscritsComponent implements OnInit {
     const usuari = this.serveiAuth.usuarioInfo;
 
     if (usuari && usuari.id) {
-      // 2. Preguntem al servei per la classe on és tutor
-      const classe = await this.serveiClasses.obtenirClasseTutor(usuari.id);
-      this.classeTrobada.set(classe);
+      try {
+        // 2. Preguntem al servei per la classe on és tutor
+        const classe = await this.serveiClasses.obtenirClasseTutor(usuari.id);
+        this.classeTrobada.set(classe);
+      } catch (e) {
+        console.warn('Usuari no és tutor o error obtenint la classe:', e);
+        this.classeTrobada.set(null);
+      }
 
       // 3. Carreguem tots els usuaris
       await this.serveiUsuaris.carregarUsuaris();
@@ -56,14 +68,17 @@ export class GestioInscritsComponent implements OnInit {
       this.alumnesDisponibles.set(nomésAlumnes);
 
       // Filtrem només els que pertanyen a AQUESTA classe (Llista Mestra)
-      if (classe) {
+      if (this.classeTrobada()) {
+        const classe = this.classeTrobada()!;
         const elsMeusAlumnes: Usuari[] = [];
         for (let j = 0; j < nomésAlumnes.length; j++) {
-          if (nomésAlumnes[j].id_classe === classe.id) {
-            elsMeusAlumnes.push(nomésAlumnes[j]);
+          if (nomésAlumnes[j].id_classe == classe.id) {
+            elsMeusAlumnes.push(tots[j] || nomésAlumnes[j]); // Use original to avoid reference issues
           }
         }
         this.alumnesDeLaClasse.set(elsMeusAlumnes);
+      } else {
+        this.alumnesDeLaClasse.set([]);
       }
     }
   }
@@ -100,5 +115,38 @@ export class GestioInscritsComponent implements OnInit {
       }
     }
     return false;
+  }
+
+  /**
+   * Permet a l'admin canviar de classe a gestionar
+   */
+  async seleccioClasseAdmin(event: any) {
+    const id = event.target.value;
+    if (!id) {
+      this.classeTrobada.set(null);
+      this.alumnesDeLaClasse.set([]);
+      return;
+    }
+
+    const classe = this.classesSistema().find(c => c.id == id);
+    if (classe) {
+      this.classeTrobada.set(classe);
+      // Recarreguem els alumnes d'aquella classe
+      const tots = this.serveiUsuaris.usuaris();
+      const elsMeusAlumnes = tots.filter(u => u.rol === 'Alumne' && u.id_classe == id);
+      this.alumnesDeLaClasse.set(elsMeusAlumnes);
+    }
+  }
+
+  /**
+   * Genera les inicials de l'alumne per a l'avatar
+   */
+  obtenirInicialsAlumne(alumne: Usuari): string {
+    if (!alumne || !alumne.nom) return '?';
+    const parts = alumne.nom.split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + (parts[1][0] || '')).toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
   }
 }

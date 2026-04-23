@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { UsuarisManagerService } from '../../../shared/services/usuaris/usuaris-manager.service';
+import { ClassesManagerService } from '../../../shared/services/classes/classes-manager.service';
 import { Usuari } from '../../../shared/models/usuaris.model';
 
 @Component({
@@ -14,9 +15,11 @@ import { Usuari } from '../../../shared/models/usuaris.model';
 })
 export class GestioUsuarisComponent implements OnInit {
     private usuarisService = inject(UsuarisManagerService);
+    private classesService = inject(ClassesManagerService);
 
     // Signals del servei per a reactivitat directa
     usuaris = this.usuarisService.usuaris;
+    classes = this.classesService.classes;
     isLoading = this.usuarisService.isLoading;
     error = this.usuarisService.error;
 
@@ -25,7 +28,10 @@ export class GestioUsuarisComponent implements OnInit {
     formUsuari: Partial<Usuari> = this.getEmptyUser();
 
     async ngOnInit() {
-        await this.usuarisService.carregarUsuaris();
+        await Promise.all([
+            this.usuarisService.carregarUsuaris(),
+            this.classesService.carregarClasses()
+        ]);
     }
 
     private getEmptyUser(): Partial<Usuari> {
@@ -35,7 +41,8 @@ export class GestioUsuarisComponent implements OnInit {
             email: '',
             password: '',
             rol: 'Alumne',
-            email_pares: ''
+            email_pares: '',
+            id_classe: null
         };
     }
 
