@@ -12,8 +12,6 @@ class AssignaturesSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::statement('TRUNCATE TABLE assignatures CASCADE');
-
         DB::table('assignatures')->insert([
             [
                 'nom' => 'Programacio',

@@ -12,10 +12,8 @@ class HorarisSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('horaris')->delete();
-
-        $c1 = DB::table('classes')->where('nom', '1SMIXA1')->value('id') ?? 1;
-        $c6 = DB::table('classes')->where('nom', '2SMIXA2')->value('id') ?? 6;
+        $c1 = DB::table('classes')->where('nom', '1SMIX')->value('id') ?? 1;
+        $c6 = DB::table('classes')->where('nom', '2DAW')->value('id') ?? 6;
 
         $idP = DB::table('usuaris')->where('email', 'professor@inspedralbes.cat')->value('id') ?? 2;
         $idOther = DB::table('usuaris')->where('rol', 'Profe')->where('id', '!=', $idP)->value('id') ?? $idP;

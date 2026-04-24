@@ -1,52 +1,46 @@
-<div class="disseny-principal">
+<div class="gestio-wrapper">
     <app-sidebar></app-sidebar>
 
-    <div class="contingut">
-        <div class="targeta-llista">
-            <div class="capçalera-llista">
-                <div>
-                    <h1>Les Meves Assignatures</h1>
-                    <p class="subtitol">Consulta les matèries i períodes lectius assignats.</p>
-                </div>
+    <div class="contingut-principal">
+        <header class="header-base">
+            <h2>Les Meves Assignatures</h2>
+            <p>Consulta les matèries i períodes lectius que tens assignats.</p>
+        </header>
 
-                <div class="estat-carrega">
-                    <span *ngIf="isLoading" class="info-badge">Carregant dades...</span>
-                    <span *ngIf="error" style="color: var(--accent-red); font-weight: 800;">
-                        {{ error }}
-                    </span>
-                </div>
-            </div>
-
-            <div class="contenedor-taula">
-                <table class="taula-premium">
+        <div class="crud-container">
+            <!-- Llista d'Assignatures -->
+            <section class="list-card full-width">
+                @if (isLoading) {
+                <div class="loading">Carregant dades...</div>
+                } @else {
+                <table>
                     <thead>
                         <tr>
-                            <th>Identificador / Nom</th>
+                            <th>Nom de l'Assignatura</th>
                             <th>Període Lectiu</th>
                         </tr>
                     </thead>
                     <tbody>
                         @for (assignatura of assignaturesLlista(); track assignatura.id) {
                         <tr>
+                            <td><strong>{{ assignatura.nom }}</strong></td>
                             <td>
-                                <div class="nom-assignatura">{{ assignatura.nom }}</div>
-                            </td>
-                            <td>
-                                <span class="info-badge">
+                                <span class="badge">
                                     {{ formatarInterval(assignatura.interval) }}
                                 </span>
                             </td>
                         </tr>
                         } @empty {
                         <tr>
-                            <td colspan="2" class="empty-state">
+                            <td colspan="2" class="no-data">
                                 No s'han trobat assignatures configurades per a aquest professor.
                             </td>
                         </tr>
                         }
                     </tbody>
                 </table>
-            </div>
+                }
+            </section>
         </div>
     </div>
 </div>
