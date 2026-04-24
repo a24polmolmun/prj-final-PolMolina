@@ -1,7 +1,5 @@
 .gestio-wrapper {
-    padding: 2rem;
-    background-color: #f8fafc;
-    min-height: 100vh;
+    /* Padding gestionat per AdminLayout */
 }
 
 .header-base h2 {

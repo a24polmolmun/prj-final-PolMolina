@@ -79,12 +79,12 @@
                 <tbody>
                     <tr *ngFor="let u of usuaris()">
                         <td>{{ u.nom }} {{ u.cognom }}</td>
-                        <td>{{ u.email }}</td>
+                        <td class="email-col">{{ u.email }}</td>
                         <td>
                             <span class="badge" [ngClass]="u.rol.toLowerCase()">{{ u.rol }}</span>
                         </td>
                         <td>
-                            {{ u.id_classe ? 'Assignat' : '-' }}
+                            {{ obtenirNomClasse(u.id_classe) }}
                         </td>
                         <td class="actions">
                             <button class="btn-edit" (click)="preparaEdicio(u)">Editar</button>

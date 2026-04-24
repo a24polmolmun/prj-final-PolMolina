@@ -86,4 +86,10 @@ export class GestioUsuarisComponent implements OnInit {
     cancelar() {
         this.preparaNouUsuari();
     }
+
+    obtenirNomClasse(id: number | null): string {
+        if (!id) return '-';
+        const c = this.classes().find(cls => cls.id == id);
+        return c ? c.nom : 'Desconeguda';
+    }
 }
