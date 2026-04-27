@@ -6,8 +6,8 @@
 
   <nav class="sidebar-menu">
     <!-- Inici depenent del rol -->
-    <a [routerLink]="rol() === 'admin' ? '/administracio' : (rol() === 'profe' ? '/professors' : '/alumnes')"
-      routerLinkActive="activa" [routerLinkActiveOptions]="{ exact: false }" class="sidebar-link">
+    <a [routerLink]="homeLink()" routerLinkActive="activa" [routerLinkActiveOptions]="{ exact: false }"
+      class="sidebar-link">
       <span class="material-icons">dashboard</span>
       <span class="link-text">Inici</span>
     </a>
