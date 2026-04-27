@@ -78,8 +78,11 @@ export class GestioUsuarisComponent implements OnInit {
     }
 
     async esborrarUsuari(id: number) {
-        if (confirm('Estàs segur que vols eliminar aquest usuari?')) {
+        // Fem l'esborrat directe per agilitat, com ha demanat l'usuari
+        try {
             await this.usuarisService.esborrarUsuari(id);
+        } catch (err) {
+            alert('No es pot esborrar l\'usuari. Verifiqueu si té dependències (és tutor, té faltes, etc.)');
         }
     }
 

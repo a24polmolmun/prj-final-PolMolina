@@ -5,135 +5,111 @@
      - ng-container: Un contenidor que no surt al DOM (al F12), ideal per niar coses.
 -->
 
-<div class="disseny-principal">
+<div class="gestio-wrapper">
     <app-sidebar></app-sidebar>
 
-    <div class="contingut">
-        <div class="header-modern">
-            <div class="salutacio">
-                <h1>Gestió de <span class="destacat">Classe</span></h1>
-                <p>Administra els alumnes i les seves inscripcions.</p>
-            </div>
+    <div class="contingut-principal">
+        <header class="header-base">
+            <h2>Gestió de Classe</h2>
+            <p>Administra els alumnes de la teva classe ({{ classeTrobada()?.nom || 'Sense classe' }}).</p>
 
-            <div class="opcions-header">
-                <!-- Selector per a Administradors -->
-                <div *ngIf="rolUser() === 'admin'" class="admin-selector">
-                    <label>Gestionar Classe:</label>
-                    <select (change)="seleccioClasseAdmin($event)" class="select-modern">
-                        <option value="">Selecciona una classe...</option>
-                        @for (c of classesSistema(); track c.id) {
-                        <option [value]="c.id">{{ c.nom }}</option>
-                        }
-                    </select>
-                </div>
-
-                <div *ngIf="classeTrobada()" class="badge-classe">
-                    <span class="material-icons">school</span>
-                    {{ classeTrobada()?.nom }} | {{ classeTrobada()?.aula?.nom || 'Sense Aula' }}
-                </div>
+            <!-- Selector només per a Administradors -->
+            <div *ngIf="rolUser() === 'admin'" class="admin-selector-top">
+                <select (change)="seleccioClasseAdmin($event)" class="select-compact">
+                    <option value="">Canviar classe a gestionar...</option>
+                    @for (c of classesSistema(); track c.id) {
+                    <option [value]="c.id">{{ c.nom }}</option>
+                    }
+                </select>
             </div>
-        </div>
+        </header>
 
         @if (serveiClasses.isLoading()) {
-        <div class="loading-state">
-            <div class="spinner"></div>
-            <p>Carregant dades de la classe...</p>
-        </div>
+        <div class="loading-overlay">Carregant dades...</div>
         } @else {
-        @if (classeTrobada()) {
-        <div class="graella-gestio">
-            <!-- Targeta Alumnes Actuals -->
-            <div class="targeta-moderna">
-                <div class="targeta-header">
-                    <span class="material-icons">groups</span>
-                    <h3>Alumnes de la classe</h3>
-                </div>
-
-                <div class="taula-wrapper">
-                    <table class="taula-moderna">
-                        <thead>
-                            <tr>
-                                <th>Alumne</th>
-                                <th>Configuració</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for (alumne of alumnesDeLaClasse(); track alumne.id) {
-                            <tr>
-                                <td>
-                                    <div class="info-alumne">
-                                        <div class="avatar-alumne">{{ obtenirInicialsAlumne(alumne) }}</div>
-                                        <div class="detalls-text">
-                                            <span class="nom">{{ alumne.nom }} {{ alumne.cognom }}</span>
-                                            <span class="email">{{ alumne.email }}</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="accions">
-                                    <button class="boto-icona delete" (click)="treureAlumneDeClasse(alumne)"
-                                        title="Treure de la classe">
-                                        <span class="material-icons">person_remove</span>
-                                    </button>
-                                </td>
-                            </tr>
-                            } @empty {
-                            <tr>
-                                <td colspan="2" class="buit">No hi ha alumnes assignats encara.</td>
-                            </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Targeta Cercador / Afegir -->
-            <div class="targeta-moderna cercador-card">
-                <div class="targeta-header">
-                    <span class="material-icons">person_add</span>
-                    <h3>Inscriure nous alumnes</h3>
-                </div>
-
-                <div class="cerca-box">
+        <div class="crud-container">
+            @if (classeTrobada()) {
+            <!-- Columna Esquerra: Cercador per Afegir -->
+            <section class="form-card">
+                <h3>Inscriure Alumnes</h3>
+                <div class="search-field">
                     <span class="material-icons">search</span>
-                    <input type="text" placeholder="Cerca per nom o correu..." [(ngModel)]="cercaAlumne">
+                    <input type="text" placeholder="Cerca per nom o correu..." [ngModel]="cercaAlumne()"
+                        (ngModelChange)="cercaAlumne.set($event)">
                 </div>
 
-                <div class="resultats-cerca" *ngIf="cercaAlumne.length > 1">
-                    <div class="llista-resultats">
-                        @for (alumne of alumnesDisponibles(); track alumne.id) {
-                        @if (alumne.nom.toLowerCase().includes(cercaAlumne.toLowerCase()) ||
-                        alumne.email.toLowerCase().includes(cercaAlumne.toLowerCase())) {
-                        <div class="item-resultat">
-                            <div class="info">
-                                <span class="nom">{{ alumne.nom }} {{ alumne.cognom }}</span>
-                                <span class="sub" [class.danger]="alumne.id_classe">
-                                    {{ alumne.id_classe ? 'Ja té classe assignada' : 'Disponible per assignar' }}
-                                </span>
-                            </div>
-                            <button class="boto-afegir" *ngIf="alumne.id_classe !== classeTrobada()?.id"
-                                (click)="afegirAlumneAClasse(alumne.email)">
-                                <span class="material-icons">add</span>
-                            </button>
+                <div class="search-results" *ngIf="cercaAlumne().length > 1">
+                    @for (alumne of resultatsCerca(); track alumne.id) {
+                    <div class="result-item">
+                        <div class="user-minidetail">
+                            <span class="name">{{ alumne.nom }} {{ alumne.cognom }}</span>
+                            <span class="status" [class.assigned]="alumne.id_classe">
+                                {{ alumne.id_classe ? 'Ja té classe' : 'Disponible' }}
+                            </span>
                         </div>
-                        }
-                        } @empty {
-                        <p class="buit">No s'han trobat alumnes amb aquest nom.</p>
-                        }
+                        <button class="btn-add" *ngIf="alumne.id_classe !== classeTrobada()?.id"
+                            (click)="afegirAlumneAClasse(alumne.email)">
+                            <span class="material-icons">add</span>
+                        </button>
                     </div>
+                    } @empty {
+                    <p class="no-results">No s'han trobat alumnes.</p>
+                    }
                 </div>
-                <div class="indicacio-cerca" *ngIf="cercaAlumne.length <= 1">
-                    <p>Escriu el nom d'un alumne per cercar-lo i afegir-lo a la teva classe.</p>
+                <p class="hint" *ngIf="cercaAlumne().length <= 1">
+                    Cerca alumnes per afegir-los a la classe <strong>{{ classeTrobada()?.nom }}</strong>.
+                </p>
+            </section>
+
+            <!-- Columna Dreta: Llista Actual -->
+            <section class="list-card">
+                <div class="list-header">
+                    <h3>Alumnes Actuals</h3>
+                    <span class="count-badge">{{ alumnesDeLaClasse().length }} alumnes</span>
                 </div>
-            </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Alumne</th>
+                            <th class="actions-col">Accions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @for (alumne of alumnesDeLaClasse(); track alumne.id) {
+                        <tr>
+                            <td>
+                                <div class="student-row">
+                                    <div class="avatar">{{ obtenirInicialsAlumne(alumne) }}</div>
+                                    <div class="desc">
+                                        <div class="full-name">{{ alumne.nom }} {{ alumne.cognom }}</div>
+                                        <div class="email-sub">{{ alumne.email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="actions-cell">
+                                <button class="btn-remove" (click)="treureAlumneDeClasse(alumne)"
+                                    title="Treure de la classe">
+                                    <span class="material-icons">person_remove</span>
+                                </button>
+                            </td>
+                        </tr>
+                        } @empty {
+                        <tr>
+                            <td colspan="2" class="no-data">La classe encara no té alumnes assignats.</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </section>
+            } @else {
+            <section class="error-panel full-width">
+                <span class="material-icons">info</span>
+                <h2>No ets tutor de cap classe</h2>
+                <p>No s'ha trobat cap classe associada al teu perfil de tutor.</p>
+            </section>
+            }
         </div>
-        } @else {
-        <div class="targeta-moderna error-card">
-            <span class="material-icons gran">info</span>
-            <h2>No ets tutor de cap classe</h2>
-            <p>Sembla que encara no tens una classe assignada com a tutor. Contacta amb l'administració si creus que és
-                un error.</p>
-        </div>
-        }
         }
     </div>
 </div>

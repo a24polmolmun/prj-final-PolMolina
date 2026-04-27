@@ -22,99 +22,80 @@ export class GestioInscritsComponent implements OnInit {
   public serveiClasses = inject(ClassesManagerService);
   public serveiUsuaris = inject(UsuarisManagerService);
 
-  // Variables per guardar la informació que pintarem
-  public rolUser = computed(() => this.serveiAuth.userData()?.user.rol?.toLowerCase() || '');
+  // Signals locals i de serveis
+  rolUser = computed(() => this.serveiAuth.userData()?.user.rol?.toLowerCase() || '');
   classeTrobada = signal<Classe | null>(null);
-  alumnesDeLaClasse = signal<Usuari[]>([]); // Els que ja estan dins
-  alumnesDisponibles = signal<Usuari[]>([]); // Tots els alumnes del sistema
-  classesSistema = signal<Classe[]>([]); // Totes les classes per a l'admin
-  cercaAlumne: string = '';
+  cercaAlumne = signal<string>('');
+
+  // LLISTES REACTIVES (Sempre al dia amb el que digui el servei)
+
+  // Tots els alumnes del sistema (per al cercador)
+  alumnesDisponibles = computed(() => {
+    return this.serveiUsuaris.usuaris().filter(u => u.rol === 'Alumne');
+  });
+
+  // Alumnes que pertanyen a la classe que estem gestionant ara
+  alumnesDeLaClasse = computed(() => {
+    const classe = this.classeTrobada();
+    if (!classe) return [];
+    return this.alumnesDisponibles().filter(a => a.id_classe == classe.id);
+  });
+
+  // Resultats de cerca filtrats
+  resultatsCerca = computed(() => {
+    const cerca = this.cercaAlumne().toLowerCase();
+    if (cerca.length <= 1) return [];
+    return this.alumnesDisponibles().filter(u =>
+      u.nom.toLowerCase().includes(cerca) ||
+      u.email.toLowerCase().includes(cerca)
+    );
+  });
+
+  // Totes les classes del sistema (només per a l'admin selector)
+  classesSistema = computed(() => this.serveiClasses.classes());
 
   async ngOnInit() {
-    // Si és admin, carreguem totes les classes
-    if (this.rolUser() === 'admin') {
-      await this.serveiClasses.carregarClasses();
-      this.classesSistema.set(this.serveiClasses.classes());
-    }
-    await this.carregarDades();
-  }
+    // 1. Carreguem dades base si no hi són
+    await Promise.all([
+      this.serveiClasses.carregarClasses(),
+      this.serveiUsuaris.carregarUsuaris()
+    ]);
 
-  async carregarDades() {
-    // 1. Obtenim l'ID del professor loguejat
-    const usuari = this.serveiAuth.usuarioInfo;
-
-    if (usuari && usuari.id) {
+    // 2. Si l'usuari és professor, busquem quina classe té assignada com a tutor
+    const usuariLoguejat = this.serveiAuth.userData()?.user;
+    if (this.rolUser() !== 'admin' && usuariLoguejat) {
       try {
-        // 2. Preguntem al servei per la classe on és tutor
-        const classe = await this.serveiClasses.obtenirClasseTutor(usuari.id);
+        const classe = await this.serveiClasses.obtenirClasseTutor(usuariLoguejat.id);
         this.classeTrobada.set(classe);
       } catch (e) {
-        console.warn('Usuari no és tutor o error obtenint la classe:', e);
-        this.classeTrobada.set(null);
-      }
-
-      // 3. Carreguem tots els usuaris
-      await this.serveiUsuaris.carregarUsuaris();
-      const tots = this.serveiUsuaris.usuaris();
-
-      const nomésAlumnes: Usuari[] = [];
-      if (tots && Array.isArray(tots)) {
-        for (let i = 0; i < tots.length; i++) {
-          if (tots[i].rol === 'Alumne') {
-            nomésAlumnes.push(tots[i]);
-          }
-        }
-      }
-      this.alumnesDisponibles.set(nomésAlumnes);
-
-      // Filtrem només els que pertanyen a AQUESTA classe (Llista Mestra)
-      if (this.classeTrobada()) {
-        const classe = this.classeTrobada()!;
-        const elsMeusAlumnes: Usuari[] = [];
-        for (let j = 0; j < nomésAlumnes.length; j++) {
-          if (nomésAlumnes[j].id_classe == classe.id) {
-            elsMeusAlumnes.push(tots[j] || nomésAlumnes[j]); // Use original to avoid reference issues
-          }
-        }
-        this.alumnesDeLaClasse.set(elsMeusAlumnes);
-      } else {
-        this.alumnesDeLaClasse.set([]);
+        console.warn('No és tutor:', e);
       }
     }
   }
+
+
 
   async afegirAlumneAClasse(email: string) {
     const classe = this.classeTrobada();
     if (classe) {
       await this.serveiClasses.assignarAlumnes(classe.id, [email]);
-      alert('Alumne afegit correctament a la llista.');
-      await this.carregarDades(); // Actualitzem la vista
+      // Refresquem dades globals per activar la reactivitat dels signals computed
+      await this.serveiUsuaris.carregarUsuaris();
+      this.cercaAlumne.set(''); // Netejar cerca
     }
   }
 
   async treureAlumneDeClasse(alumne: Usuari) {
     const classe = this.classeTrobada();
-    if (confirm(`Estàs segur de treure a ${alumne.nom} de la classe?`)) {
-      await this.serveiClasses.treureAlumne(classe!.id, alumne.id);
-      alert('Alumne tret de la classe.');
-      await this.carregarDades(); // Actualitzem la vista
+    if (classe) {
+      await this.serveiClasses.treureAlumne(classe.id, alumne.id);
+      // Refresquem dades globals
+      await this.serveiUsuaris.carregarUsuaris();
     }
   }
 
   hiHaResultats(): boolean {
-    const llista = this.alumnesDisponibles();
-    const cerca = this.cercaAlumne.toLowerCase();
-
-    if (!llista || !Array.isArray(llista)) return false;
-
-    for (let i = 0; i < llista.length; i++) {
-      const nom = llista[i].nom.toLowerCase();
-      const email = llista[i].email.toLowerCase();
-      if (nom.includes(cerca) || email.includes(cerca)) {
-        return true;
-      }
-    }
-    return false;
+    return this.resultatsCerca().length > 0;
   }
 
   /**
@@ -124,17 +105,12 @@ export class GestioInscritsComponent implements OnInit {
     const id = event.target.value;
     if (!id) {
       this.classeTrobada.set(null);
-      this.alumnesDeLaClasse.set([]);
       return;
     }
 
     const classe = this.classesSistema().find(c => c.id == id);
     if (classe) {
       this.classeTrobada.set(classe);
-      // Recarreguem els alumnes d'aquella classe
-      const tots = this.serveiUsuaris.usuaris();
-      const elsMeusAlumnes = tots.filter(u => u.rol === 'Alumne' && u.id_classe == id);
-      this.alumnesDeLaClasse.set(elsMeusAlumnes);
     }
   }
 
@@ -143,7 +119,7 @@ export class GestioInscritsComponent implements OnInit {
    */
   obtenirInicialsAlumne(alumne: Usuari): string {
     if (!alumne || !alumne.nom) return '?';
-    const parts = alumne.nom.split(' ');
+    const parts = alumne.nom.trim().split(' ');
     if (parts.length >= 2) {
       return (parts[0][0] + (parts[1][0] || '')).toUpperCase();
     }
