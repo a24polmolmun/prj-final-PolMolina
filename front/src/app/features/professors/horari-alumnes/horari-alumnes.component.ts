@@ -88,17 +88,19 @@ export class HorariAlumnesComponent implements OnInit {
     return result;
   });
 
-  // Filtrem els horaris que pertanyen a aquesta classe
+  // Filtrem els horaris del professor loguejat (totes les classes que imparteix)
   horariDelaClasse = computed(() => {
-    const classe = this.laMevaClasse();
-    if (!classe) return [];
+    const usuariLoguejat = this.serveiAuth.usuarioInfo;
+    if (!usuariLoguejat) return [];
 
     const totsHoraris = this.serveiHoraris.horaris() as Horari[];
     const result: Horari[] = [];
     if (totsHoraris && Array.isArray(totsHoraris)) {
       for (let i = 0; i < totsHoraris.length; i++) {
-        if (totsHoraris[i].id_classe === classe.id) {
-          result.push(totsHoraris[i]);
+        const h = totsHoraris[i];
+        // Mostrem totes les sessions on som el professor assignat, sense importar la classe
+        if (Number(h.id_professor) === Number(usuariLoguejat.id)) {
+          result.push(h);
         }
       }
     }

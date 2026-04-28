@@ -1,102 +1,98 @@
-<!-- 
-    Aquí hi ha una mica de tot:
-     - @for i @if: Per fer bucles i condicions amb la sintaxi nova, molt més neta.
-     - ngModel: Per fer el "v-model", així ho que poses a l'input va directe al codi.
-     - (blur) i (keydown.enter): Per guardar quan surts de l'input o prems l'Enter.
--->
-<div class="disseny-principal">
+<div class="gestio-wrapper">
   <app-sidebar></app-sidebar>
 
+  <div class="contingut-principal">
+    <header class="header-base">
+      <h2>Llista de Classe</h2>
+      <p>Passa llista de les teves sessions d'avui.</p>
+    </header>
 
-  <div class="contingut">
-    <div class="targeta-llista">
-      <div class="capçalera-llista">
-        <div class="titol-seccio">
-          <h1>Passar Llista</h1>
-          <p class="setmana-info">Registre d'assistència granular</p>
-        </div>
-
-        <!-- El selector per triar quina classe o hora vols passar llista ara mateix -->
-        <div class="selector-sessio-container">
-          <label for="sessioSelect">Sessió:</label>
-          <select id="sessioSelect" class="select-modern" (change)="canviarSessio($event)"
-            [value]="sessioSeleccionadaId()">
-            @for (sessio of sessionsProfessor(); track sessio.id) {
-            <option [value]="sessio.id">
-              {{ sessio.codi_hora }} - {{ sessio.assignatura?.nom }} ({{ sessio.aula?.nom }})
-            </option>
-            }
-            @if (sessionsProfessor().length === 0) {
-            <option value="">No tens sessions configurades</option>
-            }
-          </select>
-        </div>
+    <div class="atencio-avui">
+      <div class="data-info">
+        <span class="material-icons">event</span>
+        <span>{{ dataAvui | date:'fullDate':'':'ca' }}</span>
       </div>
+      <div class="sessio-select-capsule" *ngIf="sessioActiva()">
+        <span class="status-badge">Sessió Activa: <strong>{{ getNomSessio(sessioActiva()!) }}</strong></span>
+      </div>
+    </div>
 
-      <!-- La taula amb tots els alumnes i els dies de la setmana -->
-      <div class="contenedor-taula">
-        <table class="taula-assistencia">
-          <thead>
-            <tr>
-              <th class="col-nom">Alumne</th>
-              <!-- Pintem els noms dels dies i les dates de la setmana dalt de tot -->
-              @for (dia of diesSetmana; track dia; let i = $index) {
-              <th class="col-dia">
-                <span class="nom-dia">{{ dia }}</span>
-                <br>
-                <span class="data-dia">{{ datesSetmana[i] }}</span>
-              </th>
-              }
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Aquí posem una fila per cada alumne que té la classe -->
-            @for (alumne of alumnesFiltrats(); track alumne.id; let filaIndex = $index) {
-            <tr>
-              <td class="nom-alumne">
-                <div class="alumne-info-cell">
-                  <!-- Un petit cercle amb les inicials de l'alumne i un color aleatori, aquí anira la imatge de perfil -->
-                  <div class="alumne-avatar" [style.background-color]="'hsl(' + (filaIndex * 45) + ', 70%, 80%)'">
-                    {{ alumne.avatar }}
+    <div class="layout-assistencia">
+      <!-- Columna Sessions d'avui -->
+      <aside class="sessions-card">
+        <h3>Les meves sessions d'avui</h3>
+        <div class="sessions-list">
+          @for (s of sessionsAvui(); track s.id) {
+          <div class="sessio-item" [class.activa]="sessioSeleccionadaId() === s.id" (click)="seleccionarSessio(s.id!)">
+            <span class="nom">{{ getNomSessio(s) }}</span>
+            <span class="hora">{{ getHoraSessio(s) }}</span>
+            <span class="classe">{{ s.classe?.nom }}</span>
+          </div>
+          } @empty {
+          <div class="no-sessions">
+            <p>No tens sessions programades per avui.</p>
+          </div>
+          }
+        </div>
+      </aside>
+
+      <!-- Segona Columna: Llista d'alumnes -->
+      <main class="alumnes-card">
+        <div *ngIf="sessioActiva(); else noSessio">
+          <h3>Alumnes ({{ sessioActiva()?.classe?.nom }})</h3>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Alumne</th>
+                <th style="text-align: right;">Passar Llista</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (alumne of alumnesSessio(); track alumne.inscripcioId) {
+              <tr>
+                <td>
+                  <div class="student-info">
+                    <div class="avatar">{{ alumne.avatar }}</div>
+                    <div class="name-box">
+                      <div class="full-name">{{ alumne.nom }}</div>
+                      <div class="email">{{ alumne.email }}</div>
+                    </div>
                   </div>
-                  <span class="nom-text">{{ alumne.nom }}</span>
-                </div>
-              </td>
+                </td>
+                <td class="actions-cell">
+                  <div class="controls">
+                    <!-- Present (.) -->
+                    <button class="btn-status" [class.active]="alumne.estat === 'Assistit'"
+                      (click)="marcarAssistencia(alumne, 'Assistit')" data-type="present" title="Present">.</button>
 
-              <!-- Cada cel·la és un input on escrius la falta (F, R, etc.) -->
-              @for (diaVisible of datesSetmana; track diaVisible; let colIndex = $index) {
-              <td class="celda-assistencia" [class.dia-inactiu]="diaActivIndex() !== colIndex">
-                <div class="input-container-modern">
-                  <input type="text" [id]="'input-' + filaIndex + '-' + colIndex" class="estat-input"
-                    [attr.data-estat]="alumne.assistencia[diaVisible]" [(ngModel)]="alumne.assistencia[diaVisible]"
-                    (blur)="guardarAssistencia(alumne, diaVisible, alumne.assistencia[diaVisible])"
-                    (keydown.enter)="moureFocus(filaIndex, colIndex)" maxlength="2" placeholder="." autocomplete="off"
-                    [disabled]="diaActivIndex() !== colIndex">
-                </div>
-              </td>
+                    <!-- Falta (F) -->
+                    <button class="btn-status" [class.active]="alumne.estat === 'Falta' && !alumne.justificat"
+                      (click)="marcarAssistencia(alumne, 'Falta', false)" data-type="falta" title="Falta">F</button>
+
+                    <!-- Retard (R) -->
+                    <button class="btn-status" [class.active]="alumne.estat === 'Retard'"
+                      (click)="marcarAssistencia(alumne, 'Retard')" data-type="retard" title="Retard">R</button>
+
+                    <!-- Falta Justificada (FJ) -->
+                    <button class="btn-status" [class.active]="alumne.estat === 'Falta' && alumne.justificat"
+                      (click)="marcarAssistencia(alumne, 'Falta', true)" data-type="justificada"
+                      title="Falta Justificada">FJ</button>
+                  </div>
+                </td>
+              </tr>
               }
-            </tr>
-            }
-            <!-- Si no hi ha ningú a la llista, posem aquest missatge -->
-            @if (alumnesFiltrats().length === 0 && sessioSeleccionadaId()) {
-            <tr>
-              <td colspan="6" class="empty-state">
-                No hi ha alumnes convocats per a aquesta sessió.
-              </td>
-            </tr>
-            }
-          </tbody>
-        </table>
-      </div>
+            </tbody>
+          </table>
+        </div>
 
-      <!-- La llegenda per a que tothom sàpiga què volen dir les lletres -->
-      <div class="llegenda">
-        <div class="item-llegenda"><span class="punt p-0"></span> Pendent</div>
-        <div class="item-llegenda"><span class="punt p-1"></span> . Assistit</div>
-        <div class="item-llegenda"><span class="punt p-2"></span> F Falta</div>
-        <div class="item-llegenda"><span class="punt p-3"></span> FJ Justificada</div>
-        <div class="item-llegenda"><span class="punt p-4"></span> R Retràs</div>
-      </div>
+        <ng-template #noSessio>
+          <div class="empty-state">
+            <span class="material-icons">touch_app</span>
+            <p>Selecciona una sessió de la llista per passar llista.</p>
+          </div>
+        </ng-template>
+      </main>
     </div>
   </div>
 </div>

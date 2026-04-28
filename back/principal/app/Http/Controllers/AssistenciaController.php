@@ -30,8 +30,9 @@ class AssistenciaController extends Controller
         $validated = $request->validate([
             'id_inscripcio' => 'required|exists:inscrits,id',
             'data' => 'required|date',
-            'estat' => 'required|string|in:Assistit,Falta,Retart',
+            'estat' => 'required|string|in:Assistit,Falta,Retard',
             'id_profe' => 'nullable|exists:usuaris,id',
+            'justificat' => 'nullable|boolean',
         ]);
 
         $assistencia = Assistencia::create($validated);
@@ -75,8 +76,9 @@ class AssistenciaController extends Controller
         $validated = $request->validate([
             'id_inscripcio' => 'sometimes|required|exists:inscrits,id',
             'data' => 'sometimes|required|date',
-            'estat' => 'sometimes|required|string|in:Assistit,Falta,Retart',
+            'estat' => 'sometimes|required|string|in:Assistit,Falta,Retard',
             'id_profe' => 'sometimes|required|exists:usuaris,id',
+            'justificat' => 'sometimes|required|boolean',
         ]);
 
         $assistencia->update($validated);
@@ -165,8 +167,8 @@ class AssistenciaController extends Controller
                         ->with('assignatura')
                         ->get()
                         ->filter(function ($h) use ($letraDia) {
-                            return str_starts_with($h->codi_hora, $letraDia);
-                        });
+                        return str_starts_with($h->codi_hora, $letraDia);
+                    });
 
                     // Per a cada horari
                     foreach ($horarisDia as $horari) {
@@ -200,16 +202,18 @@ class AssistenciaController extends Controller
                 'message' => 'Assistències generades correctament',
             ], Response::HTTP_CREATED);
 
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Error: ' . $e->getMessage(),
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
-    public function perAssignatura($id){
-        $dades = Assistencia::whereHas('inscripcio', 
-        function($query) use ($id){
+    public function perAssignatura($id)
+    {
+        $dades = Assistencia::whereHas('inscripcio',
+            function ($query) use ($id) {
             $query->where('id_assignatura', $id);
         })->get();
 
@@ -219,7 +223,8 @@ class AssistenciaController extends Controller
             'message' => 'Dades obtingudes correctament'
         ], Response::HTTP_OK);
     }
-    public function assistenciaPerAlumne($alumneId){
+    public function assistenciaPerAlumne($alumneId)
+    {
         $resultat = [];
 
         // Get all inscripcions for the student, grouped by assignatura
@@ -270,7 +275,8 @@ class AssistenciaController extends Controller
                         if ($findJustificacio !== null) {
                             $justificades++;
                             $justificades_total++;
-                        } else {
+                        }
+                        else {
                             $faltes++;
                             $faltes_total++;
                         }
@@ -278,23 +284,22 @@ class AssistenciaController extends Controller
                 }
             }
 
-            $entry = (object) [
+            $entry = (object)[
                 'nom_assignatura' => $nomAssignatura,
-                'retards'         => $retard,
-                'faltes'          => $faltes,
-                'justificades'    => $justificades,
+                'retards' => $retard,
+                'faltes' => $faltes,
+                'justificades' => $justificades,
             ];
             $resultat[] = $entry;
         }
 
-        $entry_total = (object) [
-            'nom_assignatura' => [ (object) ['nom' => 'Total'] ],
-            'retards'         => $retard_total,
-            'faltes'          => $faltes_total,
-            'justificades'    => $justificades_total,
+        $entry_total = (object)[
+            'nom_assignatura' => [(object)['nom' => 'Total']],
+            'retards' => $retard_total,
+            'faltes' => $faltes_total,
+            'justificades' => $justificades_total,
         ];
         array_unshift($resultat, $entry_total);
         return $resultat;
     }
 }
-

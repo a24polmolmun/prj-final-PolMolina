@@ -5,8 +5,9 @@ import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.com
 import { InscritsManagerService } from '../../../shared/services/inscrits/inscrits-manager.service';
 import { AssistenciesManagerService } from '../../../shared/services/assistencies/assistencies-manager.service';
 import { HorarisManagerService } from '../../../shared/services/horaris/horaris-manager.service';
-import { getSimbolAssistencia } from '../../../shared/utils/assistencia-utils';
+import { AuthService } from '../../../../app/services/auth.service';
 import { Horari } from '../../../shared/models/horaris.model';
+import { Assistencia } from '../../../shared/models/assistencies.model';
 
 @Component({
   selector: 'app-llista-classe',
@@ -19,191 +20,117 @@ export class LlistaClasseComponent implements OnInit {
   private inscritsManager = inject(InscritsManagerService);
   private assistenciesManager = inject(AssistenciesManagerService);
   private horarisManager = inject(HorarisManagerService);
+  private authService = inject(AuthService);
 
-  diesSetmana = ['Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres'];
-  datesSetmana: string[] = []; // Formatat per mostrar (DD/MM)
-  datesRealsLaravel: string[] = []; // Formatat per a la BD (YYYY-MM-DD)
+  // Estat de la UI
+  sessioSeleccionadaId = signal<number | null>(null);
+  dataAvui = new Date();
+  dataAvuiStr = this.dataAvui.toISOString().split('T')[0];
 
-  // Sessions del professor: filtrem els horaris per l'usuari loguejat
-  sessionsProfessor = computed(() => {
-    const totsElsHoraris = this.horarisManager.horaris();
-    const usuariLoguejat = JSON.parse(localStorage.getItem('usuari') || '{}');
-    const llistaFiltrada: Horari[] = [];
-
-    // Bucle per trobar només les sessions d'aquest professor
-    for (let i = 0; i < totsElsHoraris.length; i++) {
-      const h = totsElsHoraris[i];
-      if (h.id_professor == usuariLoguejat.id) {
-        llistaFiltrada.push(h);
-      }
-    }
-
-    // Ordenem per hora (exemple: L1, L2, L3...)
-    llistaFiltrada.sort((a: Horari, b: Horari) => a.codi_hora.localeCompare(b.codi_hora));
-
-    return llistaFiltrada;
+  // Mapatge del dia de la setmana a la lletra de l'horari
+  diaLletra = computed(() => {
+    const day = this.dataAvui.getDay();
+    const map: { [key: number]: string } = { 1: 'L', 2: 'M', 3: 'X', 4: 'J', 5: 'V' };
+    return map[day] || 'L'; // Per defecte Dilluns si és cap de setmana (per fer proves)
   });
 
-  sessioSeleccionadaId = signal<number | null>(null);
+  // Sessions que té el professor AVUI
+  sessionsAvui = computed(() => {
+    const lletra = this.diaLletra();
+    const usuariId = (this.authService.usuarioInfo as any)?.id;
+    if (!usuariId) return [];
 
-  // Índex de la columna (0=Dilluns ... 4=Divendres) que correspon a la sessió activa
-  diaActivIndex = computed(() => {
-    const idSessio = this.sessioSeleccionadaId();
-    if (!idSessio) return -1;
-    const sessio = this.sessionsProfessor().find(s => s.id === idSessio);
-    if (!sessio) return -1;
-    const lletraMap: { [key: string]: number } = { 'L': 0, 'M': 1, 'X': 2, 'J': 3, 'V': 4 };
-    return lletraMap[sessio.codi_hora.charAt(0).toUpperCase()] ?? -1;
+    return this.horarisManager.horaris().filter(h =>
+      h.id_professor === usuariId &&
+      h.codi_hora.startsWith(lletra)
+    ).sort((a, b) => a.codi_hora.localeCompare(b.codi_hora));
+  });
+
+  // Sessió activa seleccionada
+  sessioActiva = computed(() => {
+    const id = this.sessioSeleccionadaId();
+    return this.sessionsAvui().find(s => s.id === id) || null;
+  });
+
+  // Alumnes de la sessió seleccionada amb el seu estat d'avui
+  alumnesSessio = computed(() => {
+    const sessio = this.sessioActiva();
+    if (!sessio) return [];
+
+    const inscrits = this.inscritsManager.inscrits().filter(i => i.id_horari === sessio.id);
+    const assistencies = this.assistenciesManager.assistencies().filter(a => a.data.includes(this.dataAvuiStr));
+
+    return inscrits.map(i => {
+      const asis = assistencies.find(a => a.id_inscripcio === i.id);
+      return {
+        inscripcioId: i.id,
+        nom: (i.alumne?.nom || '') + ' ' + (i.alumne?.cognom || ''),
+        email: i.alumne?.email || '',
+        avatar: this.obtenirInicials(i.alumne?.nom || '', i.alumne?.cognom || ''),
+        estat: asis ? asis.estat : 'Assistit',
+        justificat: asis ? asis.justificat : false,
+        assistenciaId: asis ? asis.id : null
+      };
+    });
   });
 
   async ngOnInit() {
-    this.inscritsManager.carregarInscrits();
-    this.assistenciesManager.carregarAssistencies();
-    await this.horarisManager.carregarHoraris();
+    await Promise.all([
+      this.inscritsManager.carregarInscrits(),
+      this.assistenciesManager.carregarAssistencies(),
+      this.horarisManager.carregarHoraris()
+    ]);
 
-    this.calcularDatesSetmana();
-
-    // Seleccionem la primera sessió si n'hi ha
-    const sessions = this.sessionsProfessor();
+    // Seleccionar la primera sessió del dia per defecte
+    const sessions = this.sessionsAvui();
     if (sessions.length > 0) {
-      this.sessioSeleccionadaId.set(sessions[0].id ?? null);
+      this.sessioSeleccionadaId.set(sessions[0].id || null);
     }
   }
 
-  // Calcula els 5 dies de la setmana laboral actual (Dilluns-Divendres)
-  calcularDatesSetmana() {
-    const avui = new Date();
-    const diaSetmana = avui.getDay() || 7; // Diumenge(0) -> 7
-    const dilluns = new Date(avui);
-    dilluns.setDate(avui.getDate() - diaSetmana + 1);
-
-    for (let i = 0; i < 5; i++) {
-      const dia = new Date(dilluns);
-      dia.setDate(dilluns.getDate() + i);
-
-      // Formatem per a la UI (Exemple: 15/03)
-      const diaFormatat = dia.getDate().toString().padStart(2, '0') + '/' + (dia.getMonth() + 1).toString().padStart(2, '0');
-      this.datesSetmana.push(diaFormatat);
-
-      // Formatem per a la Base de Dades (Exemple: 2024-03-15)
-      const anyBD = dia.getFullYear();
-      const mesBD = (dia.getMonth() + 1).toString().padStart(2, '0');
-      const diaBD = dia.getDate().toString().padStart(2, '0');
-      this.datesRealsLaravel.push(`${anyBD}-${mesBD}-${diaBD}`);
-    }
+  seleccionarSessio(id: number) {
+    this.sessioSeleccionadaId.set(id);
   }
 
-  // Obté els alumnes de la sessió escollida i el seu estat per a cada dia de la setmana
-  alumnesFiltrats = computed(() => {
-    const idSessio = this.sessioSeleccionadaId();
-    if (!idSessio) return [];
+  async marcarAssistencia(alumne: any, estat: string, justificat: boolean = false) {
+    const usuariLoguejat = this.authService.usuarioInfo as any;
+    if (!usuariLoguejat) return;
 
-    const totsElsInscrits = this.inscritsManager.inscrits();
-    const totesAssistencies = this.assistenciesManager.assistencies();
-    const resultat = [];
-
-    // 1. Busquem quins alumnes estan inscrits en aquesta sessió (Horari)
-    for (let i = 0; i < totsElsInscrits.length; i++) {
-      const inscripcio = totsElsInscrits[i];
-
-      if (inscripcio.id_horari == idSessio) {
-        const assistenciaSetmanal: any = {};
-
-        // 2. Per a cada alumne trobat, mirem la seva falta per a cada dia de la setmana (Dilluns a Divendres)
-        for (let j = 0; j < this.datesSetmana.length; j++) {
-          const diaVisible = this.datesSetmana[j];
-          const dataBD = this.datesRealsLaravel[j];
-
-          // 3. Busquem si hi ha un registre de falta per a aquest Alumne + Dia concrete
-          let asis = null;
-          for (let k = 0; k < totesAssistencies.length; k++) {
-            const a = totesAssistencies[k];
-            if (a.id_inscripcio === inscripcio.id && a.data && a.data.substring(0, 10) === dataBD) {
-              asis = a;
-              break; // Aturem la cerca al primer que trobem
-            }
-          }
-
-          // Guardem el símbol (., F, R) o es queda buit si no hi ha dades
-          assistenciaSetmanal[diaVisible] = asis ? getSimbolAssistencia(asis.estat, !!asis.justificat) : '';
-        }
-
-        // 4. Afegim tota la informació de l'alumne procesat a la llista final
-        resultat.push({
-          id: inscripcio.id_alumne,
-          id_inscripcio_db: inscripcio.id,
-          nom: (inscripcio.alumne?.nom || '') + ' ' + (inscripcio.alumne?.cognom || ''),
-          avatar: this.obtenirInicialsAlumne(inscripcio.alumne),
-          assistencia: assistenciaSetmanal
-        });
-      }
-    }
-
-    return resultat;
-  });
-
-  obtenirInicialsAlumne(alumne: any): string {
-    if (!alumne) return '??';
-    const nom = alumne.nom?.charAt(0) || '';
-    const cognom = alumne.cognom?.charAt(0) || '';
-    return (nom + cognom).toUpperCase();
-  }
-
-  canviarSessio(event: any) {
-    this.sessioSeleccionadaId.set(Number(event.target.value));
-  }
-
-  // Guarda o actualitza l'estat d'assistència a la Base de Dades
-  async guardarAssistencia(alumne: any, dataVisible: string, nouEstat: string) {
-    const indexDia = this.datesSetmana.indexOf(dataVisible);
-    const dataBD = this.datesRealsLaravel[indexDia];
-
-    if (!nouEstat) return;
-
-    // Preparem les dades per a l'api de Laravel
-    const dades = {
-      id_inscripcio: alumne.id_inscripcio_db,
-      data: dataBD,
-      estat: this.mapejarSimbolAEstat(nouEstat),
-      id_profe: JSON.parse(localStorage.getItem('usuari') || '{}').id
+    const dades: Partial<Assistencia> = {
+      id_inscripcio: alumne.inscripcioId,
+      data: this.dataAvuiStr,
+      estat: estat,
+      justificat: justificat,
+      id_profe: usuariLoguejat.id
     };
 
-    const llistaAssistencies = this.assistenciesManager.assistencies();
-    let existent = null;
-
-    // Bucle per trobar si l'assistència d'aquest dia ja es va crear abans
-    for (let i = 0; i < llistaAssistencies.length; i++) {
-      const a = llistaAssistencies[i];
-      if (a.id_inscripcio === alumne.id_inscripcio_db && a.data && a.data.substring(0, 10) === dataBD) {
-        existent = a;
-        break;
-      }
-    }
-
-    // Si ja existia, la modifiquem. Si no, en creem una de nova.
-    if (existent) {
-      await this.assistenciesManager.actualitzarAssistencia(existent.id, dades as any);
+    if (alumne.assistenciaId) {
+      await this.assistenciesManager.actualitzarAssistencia(alumne.assistenciaId, dades);
     } else {
-      await this.assistenciesManager.afegirAssistencia(dades as any);
+      await this.assistenciesManager.afegirAssistencia(dades);
     }
+    // Refresquem per seguretat (els signals del servei ja s'actualitzen, però així ens assegurem)
+    await this.assistenciesManager.carregarAssistencies();
   }
 
-  moureFocus(filaIndex: number, colIndex: number) {
-    if (colIndex === this.datesSetmana.length - 1) {
-      const seguentFilaCol0 = document.getElementById(`input-${filaIndex + 1}-0`);
-      if (seguentFilaCol0) seguentFilaCol0.focus();
-    } else {
-      const seguentCol = document.getElementById(`input-${filaIndex}-${colIndex + 1}`);
-      if (seguentCol) seguentCol.focus();
-    }
+  obtenirInicials(nom: string, cognom: string): string {
+    return ((nom?.[0] || '') + (cognom?.[0] || '')).toUpperCase();
   }
 
-  private mapejarSimbolAEstat(simbol: string): string {
-    switch (simbol.toUpperCase()) {
-      case '.': return 'Assistit';
-      case 'F': return 'Falta';
-      case 'R': return 'Retard';
-      default: return 'Assistit';
-    }
+  getNomSessio(h: Horari): string {
+    return h.assignatura?.nom || 'Sessió';
+  }
+
+  getHoraSessio(h: Horari): string {
+    const map: { [key: string]: string } = {
+      '1': '08:00 - 09:00',
+      '2': '09:00 - 10:00',
+      '3': '10:00 - 11:00',
+      '4': '11:30 - 12:30',
+      '5': '12:30 - 13:30',
+      '6': '13:30 - 14:30'
+    };
+    const num = h.codi_hora.substring(1);
+    return map[num] || h.codi_hora;
   }
 }
