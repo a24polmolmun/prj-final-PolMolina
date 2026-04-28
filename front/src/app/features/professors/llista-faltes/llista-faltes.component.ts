@@ -1,89 +1,113 @@
 import { Component, signal, computed, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 import { AssistenciesManagerService } from '../../../shared/services/assistencies/assistencies-manager.service';
+import { HorarisManagerService } from '../../../shared/services/horaris/horaris-manager.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-llista-faltes',
-  imports: [CommonModule, SidebarComponent],
+  imports: [CommonModule, SidebarComponent, FormsModule],
   templateUrl: './llista-faltes.component.html',
   styleUrl: './llista-faltes.component.css',
 })
 export class LlistaFaltesComponent implements OnInit {
   private assistenciesManager = inject(AssistenciesManagerService);
+  private horarisManager = inject(HorarisManagerService);
+  private authService = inject(AuthService);
 
-  ngOnInit() {
-    this.assistenciesManager.carregarAssistencies();
+  // Filtre per assignatura (null = totes)
+  assignaturaFiltrada = signal<string>('');
+
+  async ngOnInit() {
+    await Promise.all([
+      this.assistenciesManager.carregarAssistencies(),
+      this.horarisManager.carregarHoraris()
+    ]);
   }
 
-  faltas = '';
+  // Llista de noms d'assignatures úniques del professor loguejat
+  assignaturesDelProfessor = computed(() => {
+    const usuari = this.authService.usuarioInfo as any;
+    if (!usuari) return [];
 
-  assitenciesRanking = computed(() => {
-    const llistaAssis = this.assistenciesManager.assistencies();
+    const horaris = this.horarisManager.horaris();
+    const noms = new Set<string>();
 
-    // Primer de tot, ens quedem només amb els que han faltat
-    const totesLesFaltes = [];
-
-    for (let i = 0; i < llistaAssis.length; i++) {
-      if (llistaAssis[i].estat === 'Falta') {
-        totesLesFaltes.push(llistaAssis[i]);
+    for (const h of horaris) {
+      if (Number(h.id_professor) === Number(usuari.id) && h.assignatura?.nom) {
+        noms.add(h.assignatura.nom);
       }
     }
-
-    // Els agruparem per alumne i assignatura: comptem quantes faltes té cada nen per cada assignatura.
-    // Format de la llista:
-    // [ { nomAlumne: 'Joan', nomAssignatura: 'Matemàtiques', totalFaltes: 3 } ]
-
-    const diccionariAlumnesAssignatures: any = {};
-
-    for (let i = 0; i < totesLesFaltes.length; i++) {
-      const assis = totesLesFaltes[i];
-
-      // 1. Obtenim el nom de l'alumne (Nom + Cognom)
-      // Si la informació d'inscripció o alumne no existeix, posem un valor per defecte.
-      let nomAlumne = 'Alumne Desconegut';
-      if (assis.inscripcio && assis.inscripcio.alumne) {
-        const nom = assis.inscripcio.alumne.nom || '';
-        const cognom = assis.inscripcio.alumne.cognom || '';
-        nomAlumne = (nom + ' ' + cognom).trim();
-      }
-
-      // 2. Obtenim el nom de l'assignatura
-      let nomAssignatura = 'Assignatura Desconeguda';
-      if (assis.inscripcio && assis.inscripcio.assignatura) {
-        nomAssignatura = assis.inscripcio.assignatura.nom;
-      }
-
-      // 3. Creem una clau única que identifiqui la combinació Alumne-Assignatura
-      // Això ens permetrà agrupar totes les faltes d'un mateix alumne en una mateixa assignatura.
-      const clauUnica = nomAlumne + '|||' + nomAssignatura;
-
-      // 4. Si és la primera vegada que trobem aquesta combinació, inicialitzem l'objecte al diccionari.
-      if (!diccionariAlumnesAssignatures[clauUnica]) {
-        diccionariAlumnesAssignatures[clauUnica] = {
-          alumne: nomAlumne,
-          assignatura: nomAssignatura,
-          faltes: 0 // Comencem el comptador a zero
-        };
-      }
-
-      // 5. Incrementem el comptador de faltes per a aquest Alumne i Assignatura concrets.
-      diccionariAlumnesAssignatures[clauUnica].faltes++;
-    }
-
-    // Passem el diccionari a una llista (array) ordenadeta per l'HTML
-    const rankingArray = [];
-    for (const clau in diccionariAlumnesAssignatures) {
-      rankingArray.push({
-        nomAlumne: diccionariAlumnesAssignatures[clau].alumne,
-        nomAssignatura: diccionariAlumnesAssignatures[clau].assignatura,
-        totalFaltes: diccionariAlumnesAssignatures[clau].faltes
-      });
-    }
-
-    // Finalment, ho endrecem amb els alumnes amb més faltes primer
-    rankingArray.sort((a, b) => b.totalFaltes - a.totalFaltes);
-
-    return rankingArray;
+    return Array.from(noms).sort();
   });
+
+  // Ranking de faltes agrupat per alumne + assignatura, filtrat si cal
+  rankingFaltes = computed(() => {
+    const assistencies = this.assistenciesManager.assistencies();
+    const usuari = this.authService.usuarioInfo as any;
+    const filtre = this.assignaturaFiltrada();
+
+    // Obtenim les IDs dels horaris del professor loguejat
+    const horaris = this.horarisManager.horaris();
+    const horarisDelProfe = new Set<number>();
+    for (const h of horaris) {
+      if (Number(h.id_professor) === Number(usuari?.id)) {
+        if (h.id != null) horarisDelProfe.add(h.id);
+      }
+    }
+
+    const diccionari: Record<string, { alumne: string; assignatura: string; faltes: number; retards: number; justificades: number }> = {};
+
+    for (const a of assistencies) {
+      // Comptem faltes, retards i justificades (no les presents)
+      if (a.estat !== 'Falta' && a.estat !== 'Retard' && !a.justificat) continue;
+
+      // ─── Filtre clau: només els alumnes de les NOSTRES sessions ───
+      const idHorari = (a as any).inscripcio?.id_horari;
+      if (!horarisDelProfe.has(idHorari)) continue;
+      // ─────────────────────────────────────────────────────────────
+
+      // Nom de l'alumne
+      const nom = ((a as any).inscripcio?.alumne?.nom || '') + ' ' + ((a as any).inscripcio?.alumne?.cognom || '');
+      const alumne = nom.trim() || 'Alumne desconegut';
+
+      // Nom de l'assignatura
+      const assignatura = (a as any).inscripcio?.assignatura?.nom || 'Assignatura desconeguda';
+
+      // Filtre per assignatura (desplegable)
+      if (filtre && assignatura !== filtre) continue;
+
+      const clau = alumne + '|||' + assignatura;
+
+      if (!diccionari[clau]) {
+        diccionari[clau] = { alumne, assignatura, faltes: 0, retards: 0, justificades: 0 };
+      }
+
+      if (a.estat === 'Falta' && !a.justificat) diccionari[clau].faltes++;
+      else if (a.estat === 'Retard') diccionari[clau].retards++;
+      else if (a.justificat) diccionari[clau].justificades++;
+    }
+
+    return Object.values(diccionari).sort((a, b) => (b.faltes + b.retards) - (a.faltes + a.retards));
+  });
+
+  // Totals generals
+  totalFaltes = computed(() => this.rankingFaltes().reduce((s, r) => s + r.faltes, 0));
+  totalRetards = computed(() => this.rankingFaltes().reduce((s, r) => s + r.retards, 0));
+  totalJustificades = computed(() => this.rankingFaltes().reduce((s, r) => s + r.justificades, 0));
+
+  // Inicials per avatar
+  obtenirInicials(nom: string): string {
+    const parts = nom.split(' ').filter(p => p.length > 0);
+    return ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase();
+  }
+
+  // Badge de severitat per nombre de faltes
+  severitat(faltes: number): string {
+    if (faltes >= 5) return 'greu';
+    if (faltes >= 3) return 'mig';
+    return 'baix';
+  }
 }

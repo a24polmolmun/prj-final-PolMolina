@@ -1,52 +1,119 @@
-<!-- 
-    Aquí fem servir el Control Flow modern d'Angular:
-     - @for: Es per fer la llista (el bucle), més net que l'antic ngFor.
-     - @empty: Això es ho que es mostra si la llista no té res (està buida).
--->
-<div class="disseny-principal">
+<div class="gestio-wrapper">
   <app-sidebar></app-sidebar>
 
+  <div class="contingut-principal">
 
-  <div class="contingut">
-    <div class="targeta-llista">
-      <div class="capçalera-llista">
-        <h1>Rànquing de Faltes</h1>
-        <p class="setmana-info">Alumnes amb més absències acumulades</p>
+    <!-- CAPÇALERA -->
+    <div class="header-base">
+      <h2>Gestió de Faltes</h2>
+      <p>Resum d'absències, retards i faltes justificades dels teus alumnes</p>
+    </div>
+
+    <!-- TARGETES DE RESUM -->
+    <div class="stats-row">
+      <div class="stat-card stat-faltes">
+        <span class="stat-icon material-icons">cancel</span>
+        <div>
+          <div class="stat-num">{{ totalFaltes() }}</div>
+          <div class="stat-label">Faltes</div>
+        </div>
+      </div>
+      <div class="stat-card stat-retards">
+        <span class="stat-icon material-icons">schedule</span>
+        <div>
+          <div class="stat-num">{{ totalRetards() }}</div>
+          <div class="stat-label">Retards</div>
+        </div>
+      </div>
+      <div class="stat-card stat-justificades">
+        <span class="stat-icon material-icons">verified</span>
+        <div>
+          <div class="stat-num">{{ totalJustificades() }}</div>
+          <div class="stat-label">Justificades</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TARGETA PRINCIPAL -->
+    <div class="taula-card">
+
+      <!-- BARRA SUPERIOR: títol + filtre -->
+      <div class="barra-superior">
+        <h3>Rànquing d'absències</h3>
+        <div class="filtre-assignatura">
+          <span class="material-icons filtre-icon">filter_list</span>
+          <select [(ngModel)]="assignaturaFiltrada" (change)="assignaturaFiltrada.set($any($event.target).value)">
+            <option value="">Totes les assignatures</option>
+            @for (nom of assignaturesDelProfessor(); track nom) {
+            <option [value]="nom">{{ nom }}</option>
+            }
+          </select>
+        </div>
       </div>
 
-      <!-- La taula on es veu qui ha faltat més a cada classe -->
-      <div class="contenedor-taula">
-        <table class="taula-assistencia">
+      <!-- TAULA -->
+      <div class="taula-wrapper">
+        <table>
           <thead>
             <tr>
-              <th class="col-nom">Nom de l'alumne</th>
-              <th class="col-assignatura">Assignatura</th>
-              <th class="col-faltes">Total de Faltes</th>
+              <th>Alumne</th>
+              <th>Assignatura</th>
+              <th class="centrat">Faltes</th>
+              <th class="centrat">Retards</th>
+              <th class="centrat">Justificades</th>
+              <th class="centrat">Gravetat</th>
             </tr>
           </thead>
           <tbody>
-            @for (alumne of assitenciesRanking(); track alumne.nomAlumne + alumne.nomAssignatura) {
+            @for (fila of rankingFaltes(); track fila.alumne + fila.assignatura) {
             <tr>
-              <td class="nom-alumne">{{ alumne.nomAlumne }}</td>
-              <td class="nom-assignatura">{{ alumne.nomAssignatura }}</td>
-              <td class="celda-assistencia">
-                <div class="badge-faltes">
-                  {{ alumne.totalFaltes }}
+              <td>
+                <div class="alumne-info">
+                  <div class="avatar">{{ obtenirInicials(fila.alumne) }}</div>
+                  <span class="nom-alumne">{{ fila.alumne }}</span>
                 </div>
+              </td>
+              <td>
+                <span class="badge-assignatura">{{ fila.assignatura }}</span>
+              </td>
+              <td class="centrat">
+                <span class="badge-num falta" [class.zero]="fila.faltes === 0">
+                  {{ fila.faltes }}
+                </span>
+              </td>
+              <td class="centrat">
+                <span class="badge-num retard" [class.zero]="fila.retards === 0">
+                  {{ fila.retards }}
+                </span>
+              </td>
+              <td class="centrat">
+                <span class="badge-num justificada" [class.zero]="fila.justificades === 0">
+                  {{ fila.justificades }}
+                </span>
+              </td>
+              <td class="centrat">
+                <span class="badge-severitat {{ severitat(fila.faltes) }}">
+                  @if (severitat(fila.faltes) === 'greu') { Greu }
+                  @else if (severitat(fila.faltes) === 'mig') { Moderat }
+                  @else { Baix }
+                </span>
               </td>
             </tr>
             }
-            <!-- Si no hi ha cap falta registrada, ensenyem aquest avís -->
             @empty {
             <tr>
-              <td colspan="3" style="text-align: center; padding: 20px; color: #64748b;">
-                No hi ha cap falta registrada al sistema encara.
+              <td colspan="6">
+                <div class="buit">
+                  <span class="material-icons">check_circle</span>
+                  <p>No hi ha cap absència registrada amb els filtres actuals.</p>
+                </div>
               </td>
             </tr>
             }
           </tbody>
         </table>
       </div>
+
     </div>
   </div>
 </div>
