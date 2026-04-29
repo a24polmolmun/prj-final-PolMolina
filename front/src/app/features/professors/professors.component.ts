@@ -1,5 +1,6 @@
 import { Component, signal, computed, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule, Router } from '@angular/router';
 import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
 import { AssignaturesManagerService } from '../../shared/services/assignatures/assignatures-manager.service';
 import { HorarisManagerService } from '../../shared/services/horaris/horaris-manager.service';
@@ -9,7 +10,7 @@ import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-professors',
-  imports: [CommonModule, SidebarComponent],
+  imports: [CommonModule, SidebarComponent, RouterModule],
   templateUrl: './professors.component.html',
   styleUrl: './professors.component.css',
 })
@@ -96,6 +97,7 @@ export class ProfessorsComponent implements OnInit {
     if (!horari) return this.noHiHaClasse('Lliure ara mateix');
 
     return {
+      id_horari: horari.id,
       nom: horari.assignatura?.nom || 'Sense nom',
       estat: 'EN CURS ARA',
       horaInici: actual.s,
@@ -180,6 +182,17 @@ export class ProfessorsComponent implements OnInit {
 
   commutarFranja() {
     this.franjaHoraria.update((valor) => (valor === 'AM' ? 'PM' : 'AM'));
+  }
+
+  private router = inject(Router);
+
+  anarAPassarLlista() {
+    const id = this.classeActual().id_horari;
+    if (id) {
+      this.router.navigate(['/llista-classe'], { queryParams: { sessio: id } });
+    } else {
+      this.router.navigate(['/llista-classe']);
+    }
   }
 
   ngOnInit() {

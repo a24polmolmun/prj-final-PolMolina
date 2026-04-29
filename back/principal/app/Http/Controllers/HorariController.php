@@ -32,6 +32,21 @@ class HorariController extends Controller
             'id_professor' => 'nullable|exists:usuaris,id',
         ]);
 
+        /*
+        if (!empty($dadesValidades['id_professor'])) {
+            $professorOcupat = Horari::where('id_professor', $dadesValidades['id_professor'])
+                ->where('codi_hora', $dadesValidades['codi_hora'])
+                ->first();
+
+            if ($professorOcupat) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El professor seleccionat ja té una altra classe assignada en aquesta mateixa hora.'
+                ], Response::HTTP_CONFLICT);
+            }
+        }
+        */
+
         $horari = Horari::create($dadesValidades);
 
         return response()->json([
@@ -78,6 +93,26 @@ class HorariController extends Controller
             'id_professor' => 'nullable|exists:usuaris,id',
         ]);
 
+        $idProfessorToCheck = $dadesValidades['id_professor'] ?? $horari->id_professor;
+        $codiHoraToCheck = $dadesValidades['codi_hora'] ?? $horari->codi_hora;
+        $idClasseToCheck = $dadesValidades['id_classe'] ?? $horari->id_classe;
+
+        /*
+        if (!empty($idProfessorToCheck)) {
+            $professorOcupat = Horari::where('id_professor', $idProfessorToCheck)
+                ->where('codi_hora', $codiHoraToCheck)
+                ->where('id_classe', '!=', $idClasseToCheck)
+                ->first();
+
+            if ($professorOcupat) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'El professor seleccionat ja té una altra classe assignada en aquesta mateixa hora.'
+                ], Response::HTTP_CONFLICT);
+            }
+        }
+        */
+
         $horari->update($dadesValidades);
 
         return response()->json([
@@ -101,6 +136,21 @@ class HorariController extends Controller
             'id_profe' => 'required|exists:usuaris,id',
             'alumnes_ids' => 'present|array', // IDs dels alumnes seleccionats per aquesta hora (pot ser buit)
         ]);
+
+        // Comprovem si el professor ja té una altra classe en aquesta mateixa hora (Desactivat a petició de l'usuari)
+        /*
+        $professorOcupat = Horari::where('id_professor', $dadesValidades['id_profe'])
+            ->where('codi_hora', $dadesValidades['codi_hora'])
+            ->where('id_classe', '!=', $dadesValidades['id_classe'])
+            ->first();
+
+        if ($professorOcupat) {
+            return response()->json([
+                'success' => false,
+                'message' => 'El professor seleccionat ja té una altra classe assignada en aquesta mateixa hora.'
+            ], Response::HTTP_CONFLICT);
+        }
+        */
 
         // 1. Busquem si ja existeix l'horari per aquesta classe i hora, o el creem
         $horari = Horari::where('id_classe', $dadesValidades['id_classe'])

@@ -96,10 +96,11 @@ export class HorariAlumnesComponent implements OnInit {
     const totsHoraris = this.serveiHoraris.horaris() as Horari[];
     const result: Horari[] = [];
     if (totsHoraris && Array.isArray(totsHoraris)) {
+      const classeTutor = this.laMevaClasse();
       for (let i = 0; i < totsHoraris.length; i++) {
         const h = totsHoraris[i];
-        // Mostrem totes les sessions on som el professor assignat, sense importar la classe
-        if (Number(h.id_professor) === Number(usuariLoguejat.id)) {
+        // Mostrem el calendari de la CLASSE de la qual som tutors
+        if (classeTutor && Number(h.id_classe) === Number(classeTutor.id)) {
           result.push(h);
         }
       }
@@ -162,6 +163,11 @@ export class HorariAlumnesComponent implements OnInit {
   obtenirNomAssig(cell: any): string {
     if (!cell || cell === 'ESBARJO') return '';
     return cell.assignatura?.nom || 'Matèria';
+  }
+
+  obtenirNomClasse(cell: any): string {
+    if (!cell || cell === 'ESBARJO') return '';
+    return cell.classe?.nom || 'Sense classe';
   }
 
   obtenirNomAula(cell: any): string {

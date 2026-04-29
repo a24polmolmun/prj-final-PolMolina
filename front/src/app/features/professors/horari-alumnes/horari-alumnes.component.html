@@ -50,7 +50,7 @@
               <ng-container *ngIf="cell">
                 <div class="info-sessio">
                   <span class="assignatura">{{ obtenirNomAssig(cell) }}</span>
-                  <span class="aula">{{ obtenirNomAula(cell) }}</span>
+                  <span class="aula">{{ obtenirNomAula(cell) }} • {{ obtenirNomClasse(cell) }}</span>
                 </div>
 
                 <div class="profe-footer">
@@ -73,7 +73,7 @@
       <button class="btn-close" (click)="mostrarModal.set(false)">×</button>
       <div class="modal-header">
         <h2>Configurar Sessió</h2>
-        <p class="modal-sub">Edita els detalls de la franja {{ codiHoraSeleccionada() }}</p>
+        <p class="modal-sub">Edita els detalls de la franja {{ codiHoraSeleccionada() }} per a la classe <strong style="color: var(--primary);">{{ laMevaClasse()?.nom || '?' }}</strong></p>
       </div>
 
       <div class="modal-body">

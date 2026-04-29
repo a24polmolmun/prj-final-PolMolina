@@ -166,10 +166,8 @@ class ClasseController extends Controller
             ->toArray();
 
         if (empty($idsAssignatures)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'La classe no té assignatures associades al seu horari'
-            ], Response::HTTP_BAD_REQUEST);
+            // Canviat: No retornem error, només informem que no s'han creat inscripcions.
+            // Això permet assignar l'alumne a la classe tot i que la classe no tingui horari encara.
         }
 
         // Cercar alumnes pels correus electrònics proporcionats

@@ -40,7 +40,7 @@
                     <h1>{{ classeActual().nom }}</h1>
                     @if (classeActual().hiHaClasse) {
                     <div class="accions">
-                        <button class="boto-accio" routerLink="/llista-classe">
+                        <button class="boto-accio" (click)="anarAPassarLlista()">
                             Passar llista ara
                             <span class="material-icons icona-fletxa">chevron_right</span>
                         </button>

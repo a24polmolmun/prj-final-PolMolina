@@ -8,6 +8,7 @@ import { HorarisManagerService } from '../../../shared/services/horaris/horaris-
 import { AuthService } from '../../../../app/services/auth.service';
 import { Horari } from '../../../shared/models/horaris.model';
 import { Assistencia } from '../../../shared/models/assistencies.model';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-llista-classe',
@@ -21,6 +22,7 @@ export class LlistaClasseComponent implements OnInit {
   private assistenciesManager = inject(AssistenciesManagerService);
   private horarisManager = inject(HorarisManagerService);
   private authService = inject(AuthService);
+  private route = inject(ActivatedRoute);
 
   // Estat de la UI
   sessioSeleccionadaId = signal<number | null>(null);
@@ -81,10 +83,16 @@ export class LlistaClasseComponent implements OnInit {
       this.horarisManager.carregarHoraris()
     ]);
 
-    // Seleccionar la primera sessió del dia per defecte
-    const sessions = this.sessionsAvui();
-    if (sessions.length > 0) {
-      this.sessioSeleccionadaId.set(sessions[0].id || null);
+    // Llegim el query param si existeix
+    const sessioParam = this.route.snapshot.queryParamMap.get('sessio');
+    if (sessioParam) {
+      this.sessioSeleccionadaId.set(Number(sessioParam));
+    } else {
+      // Seleccionar la primera sessió del dia per defecte si no n'hi ha cap
+      const sessions = this.sessionsAvui();
+      if (sessions.length > 0) {
+        this.sessioSeleccionadaId.set(sessions[0].id || null);
+      }
     }
   }
 
