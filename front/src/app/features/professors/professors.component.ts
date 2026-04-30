@@ -109,6 +109,7 @@ export class ProfessorsComponent implements OnInit {
 
   private noHiHaClasse(motiu: string) {
     return {
+      id_horari: undefined,
       nom: motiu,
       estat: 'REMA LLIURE',
       horaInici: '--:--',
