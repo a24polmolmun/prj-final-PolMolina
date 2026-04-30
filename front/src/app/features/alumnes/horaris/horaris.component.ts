@@ -1,10 +1,10 @@
 import { Component, inject, OnInit, computed } from '@angular/core';
 import { HorarisManagerService } from '../../../shared/services/horaris/horaris-manager.service';
-import { SidebarAlumneComponent } from '../../../shared/components/sidebar/alumnes/sidebarAlumne.component';
+import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 
 @Component({
   selector: 'horaris-alumne',
-  imports: [SidebarAlumneComponent],
+  imports: [SidebarComponent],
   templateUrl: './horaris.component.html',
   styleUrl: './horaris.component.css',
 })

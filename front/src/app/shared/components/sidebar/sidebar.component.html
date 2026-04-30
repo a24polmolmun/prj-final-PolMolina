@@ -44,6 +44,13 @@
       <span class="link-text">Horari Alumnes</span>
     </a>
     }
+
+    @if (rol() === 'alumne') {
+    <a routerLink="/alumnes/horaris" routerLinkActive="activa" class="sidebar-link">
+      <span class="material-icons">calendar_month</span>
+      <span class="link-text">El Meu Horari</span>
+    </a>
+    }
   </nav>
 
   <div class="sidebar-footer">
