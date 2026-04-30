@@ -302,4 +302,18 @@ class AssistenciaController extends Controller
         array_unshift($resultat, $entry_total);
         return $resultat;
     }
+    public function assistenciesDetalladesPerAlumne($alumneId)
+    {
+        $assistencies = Assistencia::with(['inscripcio.assignatura'])
+            ->whereHas('inscripcio', function($query) use ($alumneId) {
+                $query->where('id_alumne', $alumneId);
+            })
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $assistencies,
+            'message' => 'Assistències detallades obtingudes correctament'
+        ], Response::HTTP_OK);
+    }
 }

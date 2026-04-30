@@ -1,68 +1,126 @@
-import { Component, inject, OnInit, computed } from '@angular/core';
-import { HorarisManagerService } from '../../../shared/services/horaris/horaris-manager.service';
+import { Component, inject, OnInit, computed, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { AssistenciesManagerService } from '../../../shared/services/assistencies/assistencies-manager.service';
+import { InscritsManagerService } from '../../../shared/services/inscrits/inscrits-manager.service';
+import { ApiManagerService } from '../../../shared/services/api/api-manager.service';
+import { AuthService } from '../../../services/auth.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
+import { Assistencia } from '../../../shared/models/assistencies.model';
 
 @Component({
   selector: 'horaris-alumne',
-  imports: [SidebarComponent],
+  standalone: true,
+  imports: [CommonModule, FormsModule, SidebarComponent],
   templateUrl: './horaris.component.html',
   styleUrl: './horaris.component.css',
 })
 export class Horaris implements OnInit {
-  horarisManager = inject(HorarisManagerService);
-  calendari = this.horarisManager.horarisAssignaturaNet;
+  private assistenciesManager = inject(AssistenciesManagerService);
+  private inscritsManager = inject(InscritsManagerService);
+  private apiManager = inject(ApiManagerService);
+  private authService = inject(AuthService);
 
-  ngOnInit() {
-    this.horarisManager.getHorari();
-  }
+  assistencies = this.assistenciesManager.assistencies;
+  inscrits = this.inscritsManager.inscrits;
+  isLoading = computed(() => this.assistenciesManager.isLoading() || this.inscritsManager.isLoading());
 
-  // Construïm la graella sempre amb 5 dies × 7 franges (incl. esbarjo),
-  // col·locant cada assignatura al seu slot correcte.
-  calendariGraella = computed(() => {
-    const diasCalendari = this.calendari();
+  filtreAssignatura = signal<string>('');
 
-    // Mapa per accés ràpid: "dilluns" → [null, "Prog", null, null, null, null]
-    const mapa: { [dia: string]: (string | null)[] } = {};
-    for (const diaCalendari of diasCalendari) {
-      mapa[diaCalendari.dia.toLowerCase()] = diaCalendari.assignatures;
+  // Estats per al modal de justificació
+  mostraModal = signal<boolean>(false);
+  faltaSeleccionada = signal<Assistencia | null>(null);
+  comentari = signal<string>('');
+  documentBase64 = signal<string | null>(null);
+  enviant = signal<boolean>(false);
+
+  // Llista de faltes filtrades (només Faltes o Retards NO justificats, i per assignatura si n'hi ha filtre)
+  faltesFiltrades = computed(() => {
+    let llista = this.assistencies().filter(a => (a.estat === 'Falta' || a.estat === 'Retard') && !a.justificat);
+    
+    const filtre = this.filtreAssignatura();
+    if (filtre) {
+      llista = llista.filter(a => a.inscripcio?.assignatura?.nom === filtre);
     }
 
-    const diesSetmana = ['dilluns', 'dimarts', 'dimecres', 'dijous', 'divendres'];
-    const assignatura = (dia: string, idx: number): string | null =>
-      mapa[dia] ? (mapa[dia][idx] ?? null) : null;
-
-    return [
-      {
-        hora: '08:00',
-        esEsbarjo: false,
-        assignatures: diesSetmana.map((dia) => assignatura(dia, 0)),
-      },
-      {
-        hora: '09:00',
-        esEsbarjo: false,
-        assignatures: diesSetmana.map((dia) => assignatura(dia, 1)),
-      },
-      {
-        hora: '10:00',
-        esEsbarjo: false,
-        assignatures: diesSetmana.map((dia) => assignatura(dia, 2)),
-      },
-      { hora: '11:00', esEsbarjo: true, assignatures: [] },
-      {
-        hora: '11:30',
-        esEsbarjo: false,
-        assignatures: diesSetmana.map((dia) => assignatura(dia, 3)),
-      },
-      {
-        hora: '12:30',
-        esEsbarjo: false,
-        assignatures: diesSetmana.map((dia) => assignatura(dia, 4)),
-      },
-      {
-        hora: '13:30',
-        esEsbarjo: false,
-        assignatures: diesSetmana.map((dia) => assignatura(dia, 5)),
-      },
-    ];
+    // Ordenar per data descendent
+    return llista.sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
   });
+
+  // Assignatures úniques per al selector de filtre
+  assignaturesAmbFaltes = computed(() => {
+    const names = this.assistencies()
+      .filter(a => a.estat === 'Falta' || a.estat === 'Retard')
+      .map(a => a.inscripcio?.assignatura?.nom)
+      .filter(nom => !!nom);
+    return [...new Set(names)];
+  });
+
+  async ngOnInit() {
+    const user = this.authService.userData()?.user;
+    if (user) {
+      await this.assistenciesManager.carregarAssistenciaAlumne(user.id);
+    }
+  }
+
+  obrirModal(falta: Assistencia) {
+    this.faltaSeleccionada.set(falta);
+    this.comentari.set('');
+    this.documentBase64.set(null);
+    this.mostraModal.set(true);
+  }
+
+  tancarModal() {
+    this.mostraModal.set(false);
+    this.faltaSeleccionada.set(null);
+  }
+
+  onFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.documentBase64.set(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  async enviarJustificacio() {
+    const falta = this.faltaSeleccionada();
+    const user = this.authService.userData()?.user;
+
+    if (!falta || !user) return;
+
+    this.enviant.set(true);
+    try {
+      // Dades segons el model Justificant
+      const dadesJustificacio = {
+        id_alum: user.id,
+        id_assistencia_ini: falta.id,
+        id_assistencia_fi: falta.id,
+        comentari: this.comentari(),
+        document: this.documentBase64(),
+        acceptada: false // Pendent de revisió per defecte
+      };
+
+      await this.apiManager.post('/justificants', dadesJustificacio);
+
+      // Actualitzem localment l'estat de la falta (opcional, podríem recarregar)
+      await this.assistenciesManager.carregarAssistenciaAlumne(user.id);
+      
+      this.tancarModal();
+      alert('Justificació enviada correctament!');
+    } catch (err) {
+      console.error('Error enviant justificació:', err);
+      alert('Hi ha hagut un error al enviar la justificació.');
+    } finally {
+      this.enviant.set(false);
+    }
+  }
+
+  formatData(dataStr: string) {
+    const d = new Date(dataStr);
+    return d.toLocaleDateString('ca-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+  }
 }

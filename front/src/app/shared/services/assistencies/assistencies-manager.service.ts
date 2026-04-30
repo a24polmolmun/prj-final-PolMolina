@@ -32,29 +32,19 @@ export class AssistenciesManagerService {
     }
   }
 
-  async carregarAssistenciaAlumne(inscrits: Inscrit[]) {
+  async carregarAssistenciaAlumne(idAlumne: number) {
     this.isLoading.set(true);
     this.error.set(null);
 
     try {
-      const assistenciesPeticio: Assistencia[] = [];
-      const llistaInscrits = inscrits;
+      const resp = await this.apiManager.get<any>(`/assistencies/alumne/${idAlumne}/detall`);
+      const data = resp.data || resp;
 
-      if (llistaInscrits && Array.isArray(llistaInscrits)) {
-        for (let i = 0; i < llistaInscrits.length; i++) {
-          const registre = llistaInscrits[i];
-          // Corregim la URL: traiem la coma i l'espai
-          const resp = await this.apiManager.get<any>(`/assistencies/${registre.id}`);
-          const data = resp.data || resp;
-
-          if (data && Array.isArray(data)) {
-            for (let j = 0; j < data.length; j++) {
-              assistenciesPeticio.push(data[j]);
-            }
-          }
-        }
+      if (data && Array.isArray(data)) {
+        this.assistencies.set(data);
+      } else {
+        this.assistencies.set([]);
       }
-      this.assistencies.set(assistenciesPeticio);
     } catch (err) {
       this.error.set("Hi ha hagut un problema al llegir l'assistencia de l'alumne");
       console.error(err);

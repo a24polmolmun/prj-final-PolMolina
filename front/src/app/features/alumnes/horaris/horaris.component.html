@@ -1,45 +1,126 @@
-<app-sidebar></app-sidebar>
-<div id="horari-alumne-page">
+<div class="disseny-principal">
+  <app-sidebar></app-sidebar>
+
   <div class="contingut">
-    <div class="targeta-horari-premium">
-      <div class="capçalera-moderna">
-        <h2 class="titol_pagina">Horari Semanal</h2>
+    <!-- SECCIÓ DE BENVINGUDA -->
+    <div class="seccio-benvinguda">
+      <div class="salutacio">
+        <h1>Gestió de <span class="nom-destacat">Faltes</span></h1>
+        <p>Aquí pots consultar les teves faltes i retards, i justificar-les si cal.</p>
       </div>
+    </div>
 
-      @if (horarisManager.isLoading()) {
-        <p class="estat-missatge">Carregant horari…</p>
-      } @else if (horarisManager.error()) {
-        <p class="estat-missatge estat-error">{{ horarisManager.error() }}</p>
-      } @else {
-        <div class="scroll-wrapper">
-          <div class="grid-horari">
-            <div></div>
-            <div class="dia-header">Dilluns</div>
-            <div class="dia-header">Dimarts</div>
-            <div class="dia-header">Dimecres</div>
-            <div class="dia-header">Dijous</div>
-            <div class="dia-header">Divendres</div>
-
-            @for (dia of calendariGraella(); track dia.hora) {
-              <div class="col-temps">{{ dia.hora }}</div>
-
-              @if (dia.esEsbarjo) {
-                <div class="slot-sessio esbarjo">ESBARJO</div>
-              } @else {
-                @for (assignatura of dia.assignatures; track $index) {
-                  <div class="slot-sessio" [class.buit]="!assignatura">
-                    @if (assignatura) {
-                      <div class="info-sessio">
-                        <span class="assignatura-nom">{{ assignatura }}</span>
-                      </div>
-                    }
-                  </div>
-                }
+    <!-- TAULER PRINCIPAL -->
+    <div class="graella-tauler">
+      <div class="contenidor-horari">
+        <div class="capçalera-horari">
+          <div class="titol-amb-icona">
+            <span class="material-icons icona-seccio">filter_list</span>
+            <h2>Filtre per Assignatures</h2>
+          </div>
+          <div class="controls-horari">
+            <select class="selector-assignatura" [ngModel]="filtreAssignatura()" (ngModelChange)="filtreAssignatura.set($event)">
+              <option value="">Totes les assignatures</option>
+              @for (nom of assignaturesAmbFaltes(); track nom) {
+                <option [value]="nom">{{ nom }}</option>
               }
-            }
+            </select>
           </div>
         </div>
-      }
+
+        @if (isLoading()) {
+          <div class="carregant">
+            <span class="material-icons spin">refresh</span>
+            <p>Carregant dades...</p>
+          </div>
+        } @else {
+          <div class="llista-faltes-pendents">
+            @for (falta of faltesFiltrades(); track falta.id) {
+              <div class="fila-falta" [class.justificada]="falta.justificat">
+                <div class="info-falta">
+                  <div class="tipus-falta" [class.retard]="falta.estat === 'Retard'">
+                    {{ falta.estat }}
+                  </div>
+                  <div class="detalls-falta">
+                    <span class="assignatura-nom">{{ falta.inscripcio?.assignatura?.nom }}</span>
+                    <span class="data-falta">{{ formatData(falta.data) }}</span>
+                  </div>
+                </div>
+                
+                <div class="accions-falta">
+                  @if (falta.justificat) {
+                    <span class="insignia-justificada">
+                      <span class="material-icons">check_circle</span>
+                      Justificada
+                    </span>
+                  } @else {
+                    <button class="boto-justificar" (click)="obrirModal(falta)">
+                      <span class="material-icons">description</span>
+                      Justificar Falta
+                    </button>
+                  }
+                </div>
+              </div>
+            } @empty {
+              <div class="cap-resultat">
+                <span class="material-icons">done_all</span>
+                <p>No tens cap falta o retard pendent.</p>
+              </div>
+            }
+          </div>
+        }
+      </div>
     </div>
   </div>
+
+  <!-- MODAL DE JUSTIFICACIÓ -->
+  @if (mostraModal()) {
+    <div class="overlay-modal" (click)="tancarModal()">
+      <div class="contingut-modal" (click)="$event.stopPropagation()">
+        <div class="capçalera-modal">
+          <div class="titol-modal">
+            <h2>Justificar Falta</h2>
+            <p>Explica el motiu de la teva absència per a l'assignatura <strong>{{ faltaSeleccionada()?.inscripcio?.assignatura?.nom }}</strong></p>
+          </div>
+          <button class="boto-tancar" (click)="tancarModal()">
+            <span class="material-icons">close</span>
+          </button>
+        </div>
+
+        <div class="cos-modal">
+          <div class="camp-formulari">
+            <label>Motiu de la justificació</label>
+            <textarea 
+              [ngModel]="comentari()" 
+              (ngModelChange)="comentari.set($event)"
+              placeholder="Escriu aquí el motiu (p.ex. Visita mèdica, malaltia...)"
+              rows="4"
+            ></textarea>
+          </div>
+
+          <div class="camp-formulari">
+            <label>Adjuntar documentació (PDF)</label>
+            <div class="upload-box" [class.has-file]="documentBase64()">
+              <input type="file" id="fileInput" (change)="onFileSelected($event)" accept=".pdf,image/*">
+              <label for="fileInput">
+                <span class="material-icons">cloud_upload</span>
+                <span>{{ documentBase64() ? 'Document seleccionat' : 'Fes clic per pujar un PDF o imatge' }}</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="accions-modal">
+          <button class="boto-cancelar" (click)="tancarModal()">Cancel·lar</button>
+          <button class="boto-enviar" [disabled]="enviant() || !comentari()" (click)="enviarJustificacio()">
+            @if (enviant()) {
+              <span class="material-icons spin">refresh</span>
+            } @else {
+              Desar Justificació
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

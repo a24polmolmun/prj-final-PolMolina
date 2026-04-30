@@ -13,7 +13,7 @@ class JustificantController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => Justificant::with(['alumne', 'assignaturaInici', 'assignaturaFi'])->get(),
+            'data' => Justificant::with(['alumne', 'assistenciaInici', 'assistenciaFi'])->get(),
             'message' => 'Justificants obtinguts correctament'
         ], Response::HTTP_OK);
     }
@@ -31,16 +31,21 @@ class JustificantController extends Controller
 
         $justificant = Justificant::create($validated);
 
+        // Actualitzar l'assistència per marcar-la com a justificada
+        \App\Models\Assistencia::where('id', $validated['id_assistencia_ini'])
+            ->orWhere('id', $validated['id_assistencia_fi'])
+            ->update(['justificat' => true]);
+
         return response()->json([
             'success' => true,
-            'data' => $justificant->load(['alumne', 'assignaturaInici', 'assignaturaFi']),
+            'data' => $justificant->load(['alumne', 'assistenciaInici', 'assistenciaFi']),
             'message' => 'Justificant creat correctament'
         ], Response::HTTP_CREATED);
     }
 
     public function show($id)
     {
-        $justificant = Justificant::with(['alumne', 'assignaturaInici', 'assignaturaFi'])->find($id);
+        $justificant = Justificant::with(['alumne', 'assistenciaInici', 'assistenciaFi'])->find($id);
 
         if (!$justificant) {
             return response()->json([
@@ -80,7 +85,7 @@ class JustificantController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $justificant->load(['alumne', 'assignaturaInici', 'assignaturaFi']),
+            'data' => $justificant->load(['alumne', 'assistenciaInici', 'assistenciaFi']),
             'message' => 'Justificant actualitzat correctament'
         ], Response::HTTP_OK);
     }

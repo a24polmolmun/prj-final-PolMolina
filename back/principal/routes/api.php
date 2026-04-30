@@ -46,6 +46,7 @@ Route::prefix('v1')->group(function (): void {
             // Assistència
             Route::apiResource('assistencies', AssistenciaController::class);
             Route::get('assistencies/alumne/{alumneId}', [AssistenciaController::class , 'assistenciaPerAlumne']);
+            Route::get('assistencies/alumne/{alumneId}/detall', [AssistenciaController::class , 'assistenciesDetalladesPerAlumne']);
             Route::post('assistencies/generar', [AssistenciaController::class , 'generar']);
             Route::get('assistencia/assignatura/{id}', [AssistenciaController::class , 'perAssignatura']);
 
