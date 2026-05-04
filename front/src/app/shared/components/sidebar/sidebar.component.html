@@ -54,7 +54,7 @@
   </nav>
 
   <div class="sidebar-footer">
-    <a routerLink="/profile" routerLinkActive="activa" class="sidebar-link profile-link">
+    <a [routerLink]="profileLink()" routerLinkActive="activa" class="sidebar-link profile-link">
       <span class="material-icons">account_circle</span>
       <span class="link-text">El Meu Perfil</span>
     </a>

@@ -48,6 +48,13 @@ export class SidebarComponent {
   // Mantinc esTutor per compatibilitat, però ara depèn del rol
   public esTutor = computed(() => this.rol() === 'profe' || this.rol() === 'admin');
 
+  public profileLink = computed(() => {
+    const r = this.rol();
+    if (r === 'alumne') return '/alumnes/perfil';
+    if (r === 'profe' || r === 'admin') return '/professors/perfil';
+    return '/';
+  });
+
   logout() {
     this.authService.logout();
   }
