@@ -147,4 +147,11 @@ export class AuthService {
   get token() {
     return this.userDataSignal()?.token;
   }
+
+  actualitzarUsuariSessio(user: any) {
+    const token = localStorage.getItem('token') ?? undefined;
+    localStorage.setItem('user', JSON.stringify(user));
+    localStorage.setItem('usuari', JSON.stringify(user));
+    this.userDataSignal.set({ user, token });
+  }
 }

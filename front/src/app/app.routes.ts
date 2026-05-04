@@ -10,6 +10,7 @@ import { Horaris } from './features/alumnes/horaris/horaris.component';
 import { LlistaFaltesComponent } from './features/professors/llista-faltes/llista-faltes.component';
 import { GestioInscritsComponent } from './features/professors/gestio-classe/gestio-inscrits.component';
 import { HorariAlumnesComponent } from './features/professors/horari-alumnes/horari-alumnes.component';
+import { PerfilComponent } from './features/alumnes/perfil/perfil.component';
 
 import { GestioUsuarisComponent } from './features/administracio/gestio-usuaris/gestio-usuaris.component';
 import { GestioCursosComponent } from './features/administracio/gestio-cursos/gestio-cursos.component';
@@ -32,6 +33,12 @@ export const routes: Routes = [
   {
     path: 'alumnes/horaris',
     component: Horaris,
+    canActivate: [authGuard, roleGuard],
+    data: { expectedRoles: ['Alumne', 'Admin'] }
+  },
+  {
+    path: 'alumnes/perfil',
+    component: PerfilComponent,
     canActivate: [authGuard, roleGuard],
     data: { expectedRoles: ['Alumne', 'Admin'] }
   },
@@ -86,4 +93,5 @@ export const routes: Routes = [
     data: { expectedRoles: ['Profe', 'Admin'] }
   },
   { path: 'auth/callback', component: AuthCallbackComponent },
+  { path: 'profile', redirectTo: 'alumnes/perfil', pathMatch: 'full' },
 ];
