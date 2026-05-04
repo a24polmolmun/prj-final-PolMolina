@@ -52,6 +52,7 @@ Route::prefix('v1')->group(function (): void {
 
             // Justificants
             Route::apiResource('justificants', JustificantController::class);
+            Route::post('justificants/{id}/acceptar', [JustificantController::class, 'acceptar']);
         }
         );
 

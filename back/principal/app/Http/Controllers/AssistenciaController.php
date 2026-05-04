@@ -269,6 +269,7 @@ class AssistenciaController extends Controller
                     case 'Falta':
                         $findJustificacio = DB::table('justificants')
                             ->where('id_assistencia_ini', $valor->id)
+                            ->where('acceptada', true)
                             ->select('acceptada')
                             ->first();
 

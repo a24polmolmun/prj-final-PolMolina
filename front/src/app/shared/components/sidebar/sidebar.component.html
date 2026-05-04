@@ -36,6 +36,11 @@
       <span class="material-icons">history_toggle_off</span>
       <span class="link-text">Gestió Faltes</span>
     </a>
+
+    <a routerLink="/gestio-justificants" routerLinkActive="activa" class="sidebar-link">
+      <span class="material-icons">fact_check</span>
+      <span class="link-text">Gestió Justificants</span>
+    </a>
     }
 
     @if (esTutor() && rol() !== 'admin') {

@@ -1,0 +1,243 @@
+.disseny-principal {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8faff 0%, #e0e7ff 100%);
+  color: #1e293b;
+  font-family: 'Outfit', 'Inter', sans-serif;
+}
+
+.contingut {
+  flex: 1;
+  margin-left: 260px;
+  padding: 2.5rem;
+  overflow-y: auto;
+}
+
+.seccio-benvinguda {
+  margin-bottom: 2rem;
+}
+
+.salutacio h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  color: #0f172a;
+}
+
+.nom-destacat {
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.salutacio p {
+  color: #64748b;
+  font-size: 1.1rem;
+}
+
+.contenidor-horari {
+  background: #fff;
+  border-radius: 1.5rem;
+  padding: 2rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.capçalera-horari {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.titol-amb-icona {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.titol-amb-icona h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.icona-seccio {
+  color: #6366f1;
+}
+
+.selector-assignatura {
+  padding: 0.7rem 0.9rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.75rem;
+  background: #fff;
+  min-width: 220px;
+}
+
+.llista-justificants {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.fila-justificant {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 1rem;
+  background: #f8fafc;
+}
+
+.info-principal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.alumne {
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.meta {
+  display: flex;
+  gap: 0.5rem;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.comentari {
+  color: #334155;
+}
+
+.boto-acceptar {
+  border: none;
+  border-radius: 0.75rem;
+  padding: 0.65rem 1rem;
+  background: #22c55e;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.accions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.boto-veure {
+  border: 1px solid #6366f1;
+  border-radius: 0.75rem;
+  padding: 0.65rem 1rem;
+  background: #fff;
+  color: #4f46e5;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.boto-veure:hover {
+  background: #eef2ff;
+}
+
+.boto-acceptar:disabled {
+  background: #86efac;
+  cursor: not-allowed;
+}
+
+.missatge.error {
+  margin-bottom: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 0.75rem;
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.carregant,
+.cap-resultat {
+  color: #64748b;
+  padding: 1.25rem 0.25rem;
+}
+
+.overlay-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.contingut-modal {
+  width: min(640px, 92vw);
+  background: #fff;
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
+
+.cap-modal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.cap-modal h3 {
+  margin: 0;
+}
+
+.boto-tancar {
+  border: none;
+  background: #e2e8f0;
+  color: #0f172a;
+  border-radius: 0.6rem;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+}
+
+.cos-modal p {
+  margin: 0.35rem 0;
+}
+
+.capsa-comentari {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  margin: 0.35rem 0 0.8rem;
+}
+
+.enllac-document {
+  display: inline-block;
+  color: #4f46e5;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.enllac-document:hover {
+  text-decoration: underline;
+}
+
+.sense-document {
+  color: #64748b;
+}
+
+@media (max-width: 900px) {
+  .contingut {
+    margin-left: 0;
+    padding: 1.2rem;
+  }
+
+  .capçalera-horari {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .fila-justificant {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+}
