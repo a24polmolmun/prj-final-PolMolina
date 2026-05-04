@@ -27,6 +27,9 @@ export class AlumnesComponent implements OnInit {
 
   inscritsPerUsuari = this.inscritsManager.inscritsPerUsuari;
   calendari = this.horarisManager.horarisAssignaturaNet;
+  assignaturesSelector = computed(() =>
+    (this.inscritsPerUsuari() || []).filter((ins) => ins.nom_assignatura[0]?.nom !== 'Total'),
+  );
 
   searchQuery = signal('');
 

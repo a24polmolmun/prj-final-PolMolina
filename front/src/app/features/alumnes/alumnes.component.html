@@ -69,7 +69,7 @@
           <div class="controls-horari">
             <select class="selector-assignatura" [ngModel]="searchQuery()" (ngModelChange)="searchQuery.set($event)">
               <option value="">Totes les assignatures</option>
-              @for (assignatura of inscritsPerUsuari(); track $index) {
+              @for (assignatura of assignaturesSelector(); track $index) {
                 <option [value]="assignatura.nom_assignatura[0].nom">{{ assignatura.nom_assignatura[0].nom }}</option>
               }
             </select>
