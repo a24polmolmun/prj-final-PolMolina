@@ -90,9 +90,20 @@ export class GestioUsuarisComponent implements OnInit {
         this.preparaNouUsuari();
     }
 
-    obtenirNomClasse(id: number | null): string {
-        if (!id) return '-';
-        const c = this.classes().find(cls => cls.id == id);
-        return c ? c.nom : 'Desconeguda';
+    obtenirNomClasse(u: Usuari): string {
+        if (u.id_classe) {
+            const c = this.classes().find(cls => cls.id == u.id_classe);
+            return c ? c.nom : 'Desconeguda';
+        }
+
+        if (u.rol === 'Profe') {
+            const classesTutor = this.classes()
+                .filter(cls => cls.id_tutor === u.id)
+                .map(cls => cls.nom);
+
+            return classesTutor.length > 0 ? classesTutor.join(', ') : '-';
+        }
+
+        return '-';
     }
 }
