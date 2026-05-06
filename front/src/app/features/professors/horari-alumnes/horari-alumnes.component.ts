@@ -11,6 +11,7 @@ import { Classe } from '../../../shared/models/classe.model';
 import { UsuarisManagerService } from '../../../shared/services/usuaris/usuaris-manager.service';
 import { Usuari } from '../../../shared/models/usuaris.model';
 import { Horari } from '../../../shared/models/horaris.model';
+import { NotificationService } from '../../../shared/services/notifications/notification.service';
 
 @Component({
   selector: 'app-horari-alumnes',
@@ -27,6 +28,7 @@ export class HorariAlumnesComponent implements OnInit {
   serveiAules = inject(AulesManagerService);
   serveiAuth = inject(AuthService);
   serveiUsuaris = inject(UsuarisManagerService);
+  private notifications = inject(NotificationService);
 
   ngOnInit() {
     // Carreguem totes les dades necessàries quan entrem a la pantalla
@@ -325,7 +327,7 @@ export class HorariAlumnesComponent implements OnInit {
     console.log('[desarCanvis] classe:', classe);
     console.log('[desarCanvis] usuariLoguejat:', this.serveiAuth.usuarioInfo);
     if (!classe) {
-      alert(
+      this.notifications.warning(
         "No s'ha trobat cap classe assignada al teu usuari. Comprova que ets tutor d'una classe.",
       );
       return;
@@ -337,7 +339,7 @@ export class HorariAlumnesComponent implements OnInit {
     console.log('[desarCanvis] asigId:', asigId, '| aulaId:', aulaId, '| profeId:', profeId);
 
     if (asigId == null || aulaId == null || profeId == null) {
-      alert('Si us plau, selecciona Assignatura, Aula i Professor.');
+      this.notifications.warning('Si us plau, selecciona Assignatura, Aula i Professor.');
       return;
     }
 
@@ -355,10 +357,10 @@ export class HorariAlumnesComponent implements OnInit {
       await this.serveiHoraris.actualitzarHorariGranular(dadesGranulars);
       console.log('enviao');
       this.mostrarModal.set(false);
-      alert('Horari i alumnes actualitzats correctament.');
+      this.notifications.success('Horari i alumnes actualitzats correctament.');
     } catch (error) {
       console.error("Error desar l'horari granular", error);
-      alert("S'ha produït un error al desar la configuració.");
+      this.notifications.error("S'ha produït un error al desar la configuració.");
     }
   }
 }

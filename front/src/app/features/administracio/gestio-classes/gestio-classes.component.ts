@@ -5,6 +5,7 @@ import { ClassesManagerService, Classe } from '../../../shared/services/classes/
 import { CursosManagerService } from '../../../shared/services/cursos/cursos-manager.service';
 import { UsuarisManagerService } from '../../../shared/services/usuaris/usuaris-manager.service';
 import { AulesManagerService } from '../../../shared/services/aules/aules-manager.service';
+import { NotificationService } from '../../../shared/services/notifications/notification.service';
 
 @Component({
   selector: 'app-gestio-classes',
@@ -18,6 +19,7 @@ export class GestioClassesComponent implements OnInit {
   private cursosService = inject(CursosManagerService);
   private usuarisService = inject(UsuarisManagerService);
   private aulesService = inject(AulesManagerService);
+  private notifications = inject(NotificationService);
 
   // Signals
   classes = this.classesService.classes;
@@ -71,16 +73,21 @@ export class GestioClassesComponent implements OnInit {
       }
       this.preparaNovaClasse();
     } catch (err) {
-      alert('Error guardant la classe.');
+      this.notifications.error('Error guardant la classe.');
     }
   }
 
   async esborrarClasse(id: number) {
-    if (confirm('Vols eliminar aquesta classe?')) {
+    const confirmed = await this.notifications.confirm({
+      title: 'Eliminar classe',
+      message: 'Vols eliminar aquesta classe?',
+    });
+
+    if (confirmed) {
       try {
         await this.classesService.esborrarClasse(id);
       } catch (err) {
-        alert('No s\'ha pogut eliminar la classe.');
+        this.notifications.error('No s\'ha pogut eliminar la classe.');
       }
     }
   }

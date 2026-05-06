@@ -7,6 +7,7 @@ import { ApiManagerService } from '../../../shared/services/api/api-manager.serv
 import { AuthService } from '../../../services/auth.service';
 import { SidebarComponent } from '../../../shared/components/sidebar/sidebar.component';
 import { Assistencia } from '../../../shared/models/assistencies.model';
+import { NotificationService } from '../../../shared/services/notifications/notification.service';
 
 @Component({
   selector: 'horaris-alumne',
@@ -20,6 +21,7 @@ export class Horaris implements OnInit {
   private inscritsManager = inject(InscritsManagerService);
   private apiManager = inject(ApiManagerService);
   private authService = inject(AuthService);
+  private notifications = inject(NotificationService);
 
   assistencies = this.assistenciesManager.assistencies;
   inscrits = this.inscritsManager.inscrits;
@@ -110,10 +112,10 @@ export class Horaris implements OnInit {
       await this.assistenciesManager.carregarAssistenciaAlumne(user.id);
       
       this.tancarModal();
-      alert('Justificació enviada correctament!');
+      this.notifications.success('Justificació enviada correctament!');
     } catch (err) {
       console.error('Error enviant justificació:', err);
-      alert('Hi ha hagut un error al enviar la justificació.');
+      this.notifications.error('Hi ha hagut un error al enviar la justificació.');
     } finally {
       this.enviant.set(false);
     }

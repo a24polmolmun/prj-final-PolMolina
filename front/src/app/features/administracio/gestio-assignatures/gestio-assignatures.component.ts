@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { AssignaturesManagerService, Assignatura } from '../../../shared/services/assignatures/assignatures-manager.service';
 import { ClassesManagerService } from '../../../shared/services/classes/classes-manager.service';
 import { PeriodesManagerService } from '../../../shared/services/periodes/periodes-manager.service';
+import { NotificationService } from '../../../shared/services/notifications/notification.service';
 
 @Component({
     selector: 'app-gestio-assignatures',
@@ -17,6 +18,7 @@ export class GestioAssignaturesComponent implements OnInit {
     private assignaturesService = inject(AssignaturesManagerService);
     private classesService = inject(ClassesManagerService);
     private periodesService = inject(PeriodesManagerService);
+    private notifications = inject(NotificationService);
 
     // Signals
     assignatures = this.assignaturesService.assignatures;
@@ -93,12 +95,17 @@ export class GestioAssignaturesComponent implements OnInit {
             }
             this.preparaNou();
         } catch (err) {
-            alert('Error guardant l’assignatura');
+            this.notifications.error('Error guardant l’assignatura');
         }
     }
 
     async esborrarAssignatura(id: number) {
-        if (confirm('Estàs segur que vols eliminar aquesta assignatura?')) {
+        const confirmed = await this.notifications.confirm({
+            title: 'Eliminar assignatura',
+            message: 'Estàs segur que vols eliminar aquesta assignatura?',
+        });
+
+        if (confirmed) {
             await this.assignaturesService.esborrarAssignatura(id);
         }
     }

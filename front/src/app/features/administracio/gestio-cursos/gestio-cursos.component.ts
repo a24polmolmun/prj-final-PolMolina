@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { CursosManagerService, Curs } from '../../../shared/services/cursos/cursos-manager.service';
 import { UsuarisManagerService } from '../../../shared/services/usuaris/usuaris-manager.service';
 import { ApiManagerService } from '../../../shared/services/api/api-manager.service';
+import { NotificationService } from '../../../shared/services/notifications/notification.service';
 
 @Component({
   selector: 'app-gestio-cursos',
@@ -17,6 +18,7 @@ export class GestioCursosComponent implements OnInit {
   private cursosService = inject(CursosManagerService);
   private usuarisService = inject(UsuarisManagerService);
   private apiManager = inject(ApiManagerService);
+  private notifications = inject(NotificationService);
 
   // Signals
   cursos = this.cursosService.cursos;
@@ -74,12 +76,17 @@ export class GestioCursosComponent implements OnInit {
       }
       this.preparaNouCurs();
     } catch (err) {
-      alert('Error guardant el curs');
+      this.notifications.error('Error guardant el curs');
     }
   }
 
   async esborrarCurs(id: number) {
-    if (confirm('Estàs segur que vols eliminar aquest curs?')) {
+    const confirmed = await this.notifications.confirm({
+      title: 'Eliminar curs',
+      message: 'Estàs segur que vols eliminar aquest curs?',
+    });
+
+    if (confirmed) {
       await this.cursosService.esborrarCurs(id);
     }
   }
