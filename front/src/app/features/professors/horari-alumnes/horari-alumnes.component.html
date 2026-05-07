@@ -160,6 +160,13 @@
 
       <!-- Accions del modal: cancelar o guardar -->
       <div class="modal-actions">
+        <button
+          class="btn btn-danger"
+          *ngIf="horariSeleccionatId() !== null"
+          (click)="eliminarClasse()"
+        >
+          Eliminar sessió
+        </button>
         <button class="btn btn-secondary" (click)="mostrarModal.set(false)">Cancel·lar</button>
         <button class="btn btn-primary" (click)="desarCanvis()">Desar Configuració</button>
       </div>

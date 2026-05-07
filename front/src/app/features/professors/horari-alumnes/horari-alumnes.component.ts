@@ -220,6 +220,7 @@ export class HorariAlumnesComponent implements OnInit {
   // Estats per al modal
   mostrarModal = signal(false);
   codiHoraSeleccionada = signal('');
+  horariSeleccionatId = signal<number | null>(null);
   idAssignaturaSeleccionada = signal<number | null>(null);
   idAulaSeleccionada = signal<number | null>(null);
   idProfeSeleccionat = signal<number | null>(null);
@@ -253,6 +254,7 @@ export class HorariAlumnesComponent implements OnInit {
     }
 
     if (existent) {
+      this.horariSeleccionatId.set(existent.id ?? null);
       this.idAssignaturaSeleccionada.set(existent.id_assig);
       this.idAulaSeleccionada.set(existent.id_aula);
       this.idProfeSeleccionat.set(existent.id_professor || null);
@@ -266,6 +268,7 @@ export class HorariAlumnesComponent implements OnInit {
       }
       this.alumnesSeleccionatsIds.set(idsJaInscrits);
     } else {
+      this.horariSeleccionatId.set(null);
       this.idAssignaturaSeleccionada.set(null);
       this.idAulaSeleccionada.set(null);
       this.idProfeSeleccionat.set(this.serveiAuth.usuarioInfo?.id || null);
@@ -281,6 +284,34 @@ export class HorariAlumnesComponent implements OnInit {
     }
 
     this.mostrarModal.set(true);
+  }
+
+  async eliminarClasse() {
+    const horariId = this.horariSeleccionatId();
+    if (horariId == null) {
+      this.notifications.warning('No hi ha cap sessió per eliminar en aquesta franja.');
+      return;
+    }
+
+    const confirmar = await this.notifications.confirm({
+      title: 'Eliminar sessió',
+      message: "Vols eliminar aquesta sessió de l'horari?",
+      confirmText: 'Eliminar',
+      cancelText: 'Cancel·lar',
+      type: 'warning',
+    });
+
+    if (!confirmar) return;
+
+    try {
+      await this.serveiHoraris.esborrarHorari(horariId);
+      this.horariSeleccionatId.set(null);
+      this.mostrarModal.set(false);
+      this.notifications.success("La sessió s'ha eliminat de l'horari.");
+    } catch (error) {
+      console.error("Error eliminant la sessió de l'horari", error);
+      this.notifications.error("S'ha produït un error en eliminar la sessió.");
+    }
   }
 
   // Selecciona o deselecciona un alumne de la llista
