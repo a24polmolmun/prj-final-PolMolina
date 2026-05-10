@@ -1,81 +1,86 @@
 # Sistema de Gestió d'Assistència Escolar
 
-> **⚠️ MVP — Projecte en desenvolupament, no finalitzat.**
+> **Projecte Final de Grau — En desenvolupament**
 
-## Integrants
+Aquest repositori conté el sistema integral de gestió d'assistència escolar desenvolupat per Pol Molina Muñoz. L'aplicació ofereix una plataforma de gestió per a professors, alumnes i administradors per al control d'assistència i horaris en centres educatius.
 
-- _[Alba Sánchez Romero]_
-- _[Pol Molina Muñoz]_
-- _[Climent Fernández Andújar]_
-- _[Tony Martin Marin]_
+## Arquitectura del Projecte
 
-## Descripció
+El projecte segueix una arquitectura desacoblada (Client-Servidor) amb possibilitat d'expansió futura:
 
-Aplicació web per a la gestió d'assistència d'un centre educatiu de formació professional. Permet als professors registrar i consultar les faltes d'assistència dels alumnes per assignatura, als alumnes consultar els seus horaris i faltes, i als administradors gestionar usuaris, classes, assignatures i aules. Integra un sensor NFC per al registre automàtic de l'assistència.
+- **Frontend (Angular)**: Aplicació d'una sola pàgina (SPA) que ofereix una experiència d'usuari fluida i moderna.
+- **Backend Principal (Laravel)**: API RESTful encarregada de la lògica de negoci, seguretat (Sanctum/OAuth) i gestió acadèmica.
+- **Estat de dades**:
+    - **PostgreSQL**: Base de dades relacional per a la gestió acadèmica.
+- **Projectat (Futura expansió)**:
+    - **Ingestió de dades (Node.js)**: Microserveis preparats per a la recepció de dades de sensors NFC.
+    - **Cua de Missatgeria (RabbitMQ)**: Dissenyat per gestionar la comunicació asíncrona entre sensors.
+    - **MongoDB**: Base de dades NoSQL per al registre històric de lectures de sensors.
 
-**Stack tecnològic:**
+## Tecnologies Utilitzades
 
-- **Backend:** Laravel (PHP) + PostgreSQL, autenticació via Laravel Sanctum i Google OAuth2.0
-- **Frontend:** Angular
-- **Infraestructura:** Docker Compose, Nginx, serveis Node.js per a la ingestió de dades del sensor NFC
+- **Frontend**: Angular, Tailwind CSS, TypeScript.
+- **Backend**: Laravel (PHP).
+- **Bases de dades**: PostgreSQL.
+- **Infraestructura**: Docker, Docker Compose, Nginx.
 
-## Gestor de tasques
+## Instal·lació i Configuració
 
-- _[[URL Taiga / Jira / Trello](https://tree.taiga.io/project/patitoderubber-projectefinaldaw2/timeline)]_
+Segueix aquests passos per aixecar el projecte en el teu entorn local:
 
-## Prototip gràfic
+### 1. Clonar el repositori
 
-- [_\[URL Penpot / Figma / Moqups\]_](https://www.figma.com/design/1tDHPOZ8fH2iV4O4OHdJwS/WireFrame-PF?node-id=0-1&t=n5dUg4WtrQTBLlnI-1)
+```bash
+git clone https://github.com/a24polmolmun/prj-final-PolMolina.git
+cd prj-final-PolMolina
+```
 
-## URL de producció
+### 2. Aixecar l'entorn amb Docker
 
-- [_\[URL Producció\]_](https://renfe.daw.inspedralbes.cat)
+El projecte utilitza Docker per gestionar tots els serveis. Pots aixecar l'entorn de desenvolupament amb la següent comanda:
+
+```bash
+docker compose -f compose.DEV.yml up -d --build
+```
+
+Aquest procés automàticament:
+- Instal·larà les dependències de PHP (Composer) i Node (NPM).
+- Generarà les claus de l'aplicació.
+- Executarà les migracions de la base de dades.
+
+### 3. Poblament de dades
+
+Per poder entrar amb els usuaris de prova, és necessari executar els seeders:
+
+```bash
+docker compose exec pfg1-back php artisan db:seed
+```
+
+## 🔑 Usuaris de Prova
+
+Pots utilitzar les següents credencials per provar les diferents funcionalitats del sistema (la contrasenya és la mateixa per a tots):
+
+- **Contrasenya comuna:** `12345678`
+
+| Rol | Email |
+| :--- | :--- |
+| **Administrador** | `admin@inspedralbes.cat` |
+| **Professor** | `professor@inspedralbes.cat` |
+| **Alumne** | `a24polmolmun@inspedralbes.cat` |
+
+## Accés als Serveis
+
+Una vegada el Docker estigui funcionant, podràs accedir a:
+
+| Servei | URL |
+| :--- | :--- |
+| **Frontend (Angular)** | [http://localhost:4200](http://localhost:4200) |
+| **Backend API (Laravel)** | [http://localhost:8000](http://localhost:8000) |
+| **pgAdmin (PostgreSQL)** | [http://localhost:8080](http://localhost:8080) |
+
+## Autors
+
+- **Pol Molina Muñoz** - Desenvolupador Principal
 
 ---
-
-## Funcionalitats implementades (MVP)
-
-### Autenticació
-
-- Login amb Google OAuth (Socialite)
-- Login temporal per email (tokens Sanctum)
-- Guards de ruta per rol (Admin, Professor, Alumne)
-
-### Gestió d'usuaris
-
-- Assignació de classe als alumnes
-
-### Gestió acadèmica
-
-- Inscripció d'alumnes a assignatures (`inscrits`)
-- Assignació de professors a assignatures (`imparteix`), amb rol de titular
-- Gestió de **períodes** (trimestres: dates d'inici i fi)
-
-### Horaris
-
-- Creació i consulta d'horaris per usuari (professors i alumnes)
-- Actualització granular de franges horàries
-
-### Control d'assistència
-
-- Registre d'assistència per alumne i assignatura amb estats: **Assistit**, **Falta**, **Retard**
-- Generació massiva d'assistències per a una classe/assignatura
-- Consulta d'assistència per alumne i per assignatura
-
-### Justificants
-
-- CRUD de justificants d'assistència
-
-### Vistes del frontend (Angular)
-
-| Rol               | Vistes disponibles                                                                      |
-| ----------------- | --------------------------------------------------------------------------------------- |
-| **Login**         | Pantalla d'inici de sessió (Google i temporal)                                          |
-| **Professor**     | Llista de classe, gestió de classe, llista d'assignatures, gestió d'assistència, horari |
-| **Alumne**        | Horari personal, consulta de faltes                                                     |
-
----
-
-## Estat del projecte
-
-El projecte es troba en fase **MVP (Minimum Viable Product)**. Les funcionalitats principals del backend estan implementades (API REST completa), però el projecte **no està finalitzat**.
+© 2025-2026 - Projecte Final DAW - INS Pedralbes
