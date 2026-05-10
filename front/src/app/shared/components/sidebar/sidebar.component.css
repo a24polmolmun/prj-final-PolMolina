@@ -20,22 +20,26 @@
 }
 
 .sidebar-header {
-    padding: 2rem;
+    padding: 2.5rem 1rem;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: center;
 }
 
 .sidebar-logo {
-    height: 35px;
+    height: 60px;
+    width: auto;
 }
 
 .sidebar-titol {
-    font-weight: 800;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    color: #a2a3b7;
+    text-transform: uppercase;
 }
 
 .sidebar-menu {
@@ -52,7 +56,7 @@
     padding: 1rem 2rem;
     color: #a2a3b7;
     text-decoration: none;
-    transition: all 0.3s ease;
+    transition: background 0.2s ease, color 0.2s ease;
     cursor: pointer;
     background: transparent;
     border: none;

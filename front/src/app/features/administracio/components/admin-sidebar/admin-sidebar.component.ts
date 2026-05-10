@@ -9,34 +9,41 @@ import { AuthService } from '../../../../services/auth.service';
   template: `
     <nav class="admin-sidebar">
       <div class="logo">
-        <img src="/img/logo.png" alt="Logo" />
-        <span>Admin Panel</span>
+        <img src="/assets/EduPass.png" alt="Logo" class="sidebar-logo" />
+        <span class="sidebar-titol">PANEL ADMINISTRACIÓ</span>
       </div>
       
       <div class="menu-links">
         <a routerLink="/administracio" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
-          Inici
+          <span class="material-icons icon">dashboard</span>
+          <span class="link-text">Inici</span>
         </a>
         <a routerLink="/administracio/usuaris" routerLinkActive="active" class="nav-link">
-          Gestió d'Usuaris
+          <span class="material-icons icon">person</span>
+          <span class="link-text">Gestió d'Usuaris</span>
         </a>
         <a routerLink="/administracio/cursos" routerLinkActive="active" class="nav-link">
-          Gestió de Cursos
+          <span class="material-icons icon">history_edu</span>
+          <span class="link-text">Gestió de Cursos</span>
         </a>
         <a routerLink="/administracio/periodes" routerLinkActive="active" class="nav-link">
-          Gestió de Periodes
+          <span class="material-icons icon">schedule</span>
+          <span class="link-text">Gestió de Periodes</span>
         </a>
         <a routerLink="/administracio/classes" routerLinkActive="active" class="nav-link">
-          Gestió de Classes / Grups
+          <span class="material-icons icon">groups</span>
+          <span class="link-text">Gestió de Classes / Grups</span>
         </a>
         <a routerLink="/administracio/assignatures" routerLinkActive="active" class="nav-link">
-          Gestió d'Assignatures
+          <span class="material-icons icon">menu_book</span>
+          <span class="link-text">Gestió d'Assignatures</span>
         </a>
       </div>
 
       <div class="footer-sidebar">
         <a (click)="logout()" class="nav-link logout">
-          <i class="icon">🚪</i> Sortir
+          <span class="material-icons icon">logout</span>
+          <span class="link-text">Sortir</span>
         </a>
       </div>
     </nav>
@@ -53,19 +60,33 @@ import { AuthService } from '../../../../services/auth.service';
       top: 0;
       left: 0;
       box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+      font-family: 'Inter', sans-serif;
+      z-index: 1000;
     }
     .logo {
-      padding: 2rem;
+      padding: 2.5rem 1rem;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 15px;
       border-bottom: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
     }
-    .logo img { height: 40px; }
-    .logo span { font-weight: bold; font-size: 1.2rem; }
+    .sidebar-logo { 
+      height: 60px; 
+      width: auto;
+    }
+    .sidebar-titol { 
+      font-weight: 700; 
+      font-size: 0.75rem; 
+      letter-spacing: 1.5px;
+      color: #a2a3b7;
+      text-transform: uppercase;
+    }
     .menu-links {
       flex: 1;
       padding: 1.5rem 0;
+      overflow-y: auto;
     }
     .nav-link {
       display: flex;
@@ -73,23 +94,30 @@ import { AuthService } from '../../../../services/auth.service';
       padding: 1rem 2rem;
       color: #a2a3b7;
       text-decoration: none;
-      transition: all 0.3s;
+      transition: background 0.2s ease, color 0.2s ease;
       cursor: pointer;
+      gap: 15px;
     }
     .nav-link:hover, .nav-link.active {
       color: white;
       background: rgba(255,255,255,0.05);
-      border-left: 4px solid #6f42c1;
     }
-    .nav-link .icon { margin-right: 15px; font-style: normal; }
-    .nav-link.disabled { opacity: 0.5; cursor: not-allowed; }
+    .nav-link.active {
+      border-left: 4px solid #6f42c1;
+      background: linear-gradient(90deg, rgba(111, 66, 193, 0.1) 0%, transparent 100%);
+    }
+    .nav-link .icon { 
+      font-size: 20px;
+    }
     .footer-sidebar {
       padding: 1.5rem 0;
       border-top: 1px solid rgba(255,255,255,0.1);
     }
+    .logout {
+      color: #f64e60 !important;
+    }
     .logout:hover { 
-      color: white !important; 
-      background: rgba(246, 78, 96, 0.2) !important;
+      background: rgba(246, 78, 96, 0.1) !important;
     }
   `]
 })

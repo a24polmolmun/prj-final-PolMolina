@@ -7,40 +7,58 @@
             <p>Consulta les matèries i períodes lectius que tens assignats.</p>
         </header>
 
+        <!-- Resum i Filtres -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="material-icons">menu_book</span>
+                <div class="stat-info">
+                    <span class="value">{{ totalAssignatures() }}</span>
+                    <span class="label">Assignatures</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <span class="material-icons">calendar_today</span>
+                <div class="stat-info">
+                    <span class="value">2025-26</span>
+                    <span class="label">Curs Acadèmic</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-bar">
+            <span class="material-icons">search</span>
+            <input type="text" placeholder="Cerca assignatures..." [ngModel]="filtreCerca()" (ngModelChange)="filtreCerca.set($event)">
+        </div>
+
         <div class="crud-container">
-            <!-- Llista d'Assignatures -->
-            <section class="list-card full-width">
-                @if (isLoading) {
+            @if (isLoading) {
                 <div class="loading">Carregant dades...</div>
-                } @else {
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Nom de l'Assignatura</th>
-                            <th>Període Lectiu</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (assignatura of assignaturesLlista(); track assignatura.id) {
-                        <tr>
-                            <td><strong>{{ assignatura.nom }}</strong></td>
-                            <td>
-                                <span class="badge">
-                                    {{ formatarInterval(assignatura.interval) }}
-                                </span>
-                            </td>
-                        </tr>
-                        } @empty {
-                        <tr>
-                            <td colspan="2" class="no-data">
-                                No s'han trobat assignatures configurades per a aquest professor.
-                            </td>
-                        </tr>
-                        }
-                    </tbody>
-                </table>
-                }
-            </section>
+            } @else {
+                <div class="grid-assignatures">
+                    @for (assignatura of assignaturesFiltrades(); track assignatura.id) {
+                    <div class="assignatura-card">
+                        <div class="card-header">
+                            <div class="icon-box">
+                                <span class="material-icons">school</span>
+                            </div>
+                            <span class="badge">Activa</span>
+                        </div>
+                        <div class="card-body">
+                            <h3>{{ assignatura.nom }}</h3>
+                            <div class="info-row">
+                                <span class="material-icons">date_range</span>
+                                <span>{{ formatarInterval(assignatura.interval) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    } @empty {
+                    <div class="no-data-full">
+                        <span class="material-icons">search_off</span>
+                        <p>No s'han trobat assignatures que coincideixin amb la cerca.</p>
+                    </div>
+                    }
+                </div>
+            }
         </div>
     </div>
 </div>

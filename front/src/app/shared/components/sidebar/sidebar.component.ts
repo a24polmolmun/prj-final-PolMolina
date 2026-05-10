@@ -19,41 +19,17 @@ export class SidebarComponent {
   // Obtenim el rol de l'usuari loguejat de forma reactiva
   public rol = computed(() => this.authService.userData()?.user.rol?.toLowerCase() || '');
 
-  // Determinar la ruta d'inici basada en el rol, però també en el context actual
-  public homeLink = computed(() => {
-    const urlActual = this.router.url;
-
-    // Si estem en una ruta de professor, l'inici ha de ser /professors
-    if (urlActual.startsWith('/professors') ||
-      urlActual.startsWith('/llista-classe') ||
-      urlActual.startsWith('/llista-assignatures') ||
-      urlActual.startsWith('/gestio-inscrits') ||
-      urlActual.startsWith('/llista-faltes')) {
-      return '/professors';
-    }
-
-    // Si estem en administració, l'inici és /administracio
-    if (urlActual.startsWith('/administracio')) {
-      return '/administracio';
-    }
-
-    // Per defecte segons rol
+  // Títol dinàmic del panell segons el rol
+  public titolPanell = computed(() => {
     const r = this.rol();
-    if (r === 'admin') return '/administracio';
-    if (r === 'profe') return '/professors';
-    if (r === 'alumne') return '/alumnes';
-    return '/';
+    if (r === 'admin') return 'PANEL ADMINISTRACIÓ';
+    if (r === 'profe') return 'PANEL PROFESSOR';
+    if (r === 'alumne') return 'PANEL ALUMNE';
+    return 'CENTRE D\'ESTUDIS';
   });
 
   // Mantinc esTutor per compatibilitat, però ara depèn del rol
   public esTutor = computed(() => this.rol() === 'profe' || this.rol() === 'admin');
-
-  public profileLink = computed(() => {
-    const r = this.rol();
-    if (r === 'alumne') return '/alumnes/perfil';
-    if (r === 'profe' || r === 'admin') return '/professors/perfil';
-    return '/';
-  });
 
   logout() {
     this.authService.logout();

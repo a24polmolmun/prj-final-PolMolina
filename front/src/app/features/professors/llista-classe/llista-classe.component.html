@@ -30,7 +30,7 @@
           </div>
           } @empty {
           <div class="no-sessions">
-            <p>No tens sessions programades per avui.</p>
+            <p>{{ diaLletra() ? 'No tens sessions programades per avui.' : 'Avui és cap de setmana.' }}</p>
           </div>
           }
         </div>
@@ -88,8 +88,8 @@
 
         <ng-template #noSessio>
           <div class="empty-state">
-            <span class="material-icons">touch_app</span>
-            <p>Selecciona una sessió de la llista per passar llista.</p>
+            <span class="material-icons">{{ diaLletra() ? 'touch_app' : 'weekend' }}</span>
+            <p>{{ diaLletra() ? 'Selecciona una sessió de la llista per passar llista.' : 'Gaudeix del cap de setmana! Avui no hi ha classes programades.' }}</p>
           </div>
         </ng-template>
       </main>

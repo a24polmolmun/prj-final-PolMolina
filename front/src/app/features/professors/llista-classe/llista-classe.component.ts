@@ -33,12 +33,14 @@ export class LlistaClasseComponent implements OnInit {
   diaLletra = computed(() => {
     const day = this.dataAvui.getDay();
     const map: { [key: number]: string } = { 1: 'L', 2: 'M', 3: 'X', 4: 'J', 5: 'V' };
-    return map[day] || 'L'; // Per defecte Dilluns si és cap de setmana (per fer proves)
+    return map[day] || null; // Retorna null si és dissabte (6) o diumenge (0)
   });
 
   // Sessions que té el professor AVUI
   sessionsAvui = computed(() => {
     const lletra = this.diaLletra();
+    if (!lletra) return []; // Si no hi ha lletra (cap de setmana), no hi ha sessions
+
     const usuariId = (this.authService.usuarioInfo as any)?.id;
     if (!usuariId) return [];
 

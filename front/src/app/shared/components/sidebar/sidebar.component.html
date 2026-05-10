@@ -1,16 +1,27 @@
 <div class="sidebar-v2">
   <div class="sidebar-header">
     <img src="/assets/EduPass.png" alt="Logo" class="sidebar-logo" />
-    <span class="sidebar-titol">CENTRE D'ESTUDIS</span>
+    <span class="sidebar-titol">{{ titolPanell() }}</span>
   </div>
 
   <nav class="sidebar-menu">
-    <!-- Inici depenent del rol -->
-    <a [routerLink]="homeLink()" routerLinkActive="activa" [routerLinkActiveOptions]="{ exact: false }"
-      class="sidebar-link">
-      <span class="material-icons">dashboard</span>
-      <span class="link-text">Inici</span>
-    </a>
+    <!-- Inici depenent del rol (Link estàtic per evitar parpelleig) -->
+    @if (rol() === 'admin') {
+      <a routerLink="/administracio" routerLinkActive="activa" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
+        <span class="material-icons">dashboard</span>
+        <span class="link-text">Inici</span>
+      </a>
+    } @else if (rol() === 'profe') {
+      <a routerLink="/professors" routerLinkActive="activa" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
+        <span class="material-icons">dashboard</span>
+        <span class="link-text">Inici</span>
+      </a>
+    } @else if (rol() === 'alumne') {
+      <a routerLink="/alumnes" routerLinkActive="activa" [routerLinkActiveOptions]="{ exact: true }" class="sidebar-link">
+        <span class="material-icons">dashboard</span>
+        <span class="link-text">Inici</span>
+      </a>
+    }
 
     @if (rol() === 'profe' || rol() === 'admin') {
     <a routerLink="/llista-assignatures" routerLinkActive="activa" class="sidebar-link">
@@ -59,10 +70,17 @@
   </nav>
 
   <div class="sidebar-footer">
-    <a [routerLink]="profileLink()" routerLinkActive="activa" class="sidebar-link profile-link">
-      <span class="material-icons">account_circle</span>
-      <span class="link-text">El Meu Perfil</span>
-    </a>
+    @if (rol() === 'alumne') {
+      <a routerLink="/alumnes/perfil" routerLinkActive="activa" class="sidebar-link profile-link">
+        <span class="material-icons">account_circle</span>
+        <span class="link-text">El Meu Perfil</span>
+      </a>
+    } @else if (rol() === 'profe' || rol() === 'admin') {
+      <a routerLink="/professors/perfil" routerLinkActive="activa" class="sidebar-link profile-link">
+        <span class="material-icons">account_circle</span>
+        <span class="link-text">El Meu Perfil</span>
+      </a>
+    }
     <button (click)="logout()" class="sidebar-link logout-btn">
       <span class="material-icons">logout</span>
       <span class="link-text">Sortir</span>
