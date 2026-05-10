@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PeriodesManagerService } from '../../../shared/services/periodes/periodes-manager.service';
 import { Periode } from '../../../shared/services/cursos/cursos-manager.service';
+import { NotificationService } from '../../../shared/services/notifications/notification.service';
 
 @Component({
   selector: 'app-gestio-periodes',
@@ -13,6 +14,7 @@ import { Periode } from '../../../shared/services/cursos/cursos-manager.service'
 })
 export class GestioPeriodes implements OnInit {
   private periodesService = inject(PeriodesManagerService);
+  private notifications = inject(NotificationService);
 
   // Signals
   periodes = this.periodesService.periodes;
@@ -73,16 +75,21 @@ export class GestioPeriodes implements OnInit {
       }
       this.preparaNouPeriode();
     } catch (err) {
-      alert('Error guardant el periode. Revisa que les dates siguin seqüencials.');
+      this.notifications.error('Error guardant el periode. Revisa que les dates siguin seqüencials.');
     }
   }
 
   async esborrarPeriode(id: number) {
-    if (confirm('Estàs segur que vols eliminar aquest periode? No es pot eliminar si té cursos assignats.')) {
+    const confirmed = await this.notifications.confirm({
+      title: 'Eliminar període',
+      message: 'Estàs segur que vols eliminar aquest periode? No es pot eliminar si té cursos assignats.',
+    });
+
+    if (confirmed) {
       try {
         await this.periodesService.esborrarPeriode(id);
       } catch (err) {
-        alert('No s\'ha pogut eliminar. Possiblement hi ha cursos que depenen d\'aquest periode.');
+        this.notifications.error('No s\'ha pogut eliminar. Possiblement hi ha cursos que depenen d\'aquest periode.');
       }
     }
   }

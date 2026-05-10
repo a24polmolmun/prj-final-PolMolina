@@ -12,97 +12,141 @@ class AssignaturesSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('assignatures')->insert([
+        $intervalCurs = json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-06-14']]);
+        $classeSmix1 = 1;
+        $classeDaw1 = 5;
+
+        $assignatures = [
             [
-                'nom' => 'Programacio',
-                'id_classe_projecte' => null,
-                'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
+                'id' => 1,
+                'nom' => "Muntatge i manteniment d'equips.",
+                'id_classe_projecte' => $classeSmix1,
+                'interval' => $intervalCurs,
                 'exempcio' => false,
             ],
             [
-                'nom' => 'Aplicacions Web',
-                'id_classe_projecte' => null,
-                'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
+                'id' => 2,
+                'nom' => 'Sistemes operatius monolloc.',
+                'id_classe_projecte' => $classeSmix1,
+                'interval' => $intervalCurs,
                 'exempcio' => false,
             ],
             [
-                'nom' => 'Muntatge i manteniment',
-                'id_classe_projecte' => null,
-                'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
+                'id' => 3,
+                'nom' => 'Aplicacions ofimàtiques.',
+                'id_classe_projecte' => $classeSmix1,
+                'interval' => $intervalCurs,
                 'exempcio' => false,
             ],
             [
-                'nom' => 'Xarxes Locals',
-                'id_classe_projecte' => null,
-                'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
+                'id' => 4,
+                'nom' => 'Sistemes operatius en xarxa.',
+                'id_classe_projecte' => $classeSmix1,
+                'interval' => $intervalCurs,
                 'exempcio' => false,
             ],
             [
-                'nom' => 'Tutoria',
-                'id_classe_projecte' => null,
-                'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
+                'id' => 5,
+                'nom' => 'Xarxes locals.',
+                'id_classe_projecte' => $classeSmix1,
+                'interval' => $intervalCurs,
                 'exempcio' => false,
             ],
             [
-                'nom' => 'DIG + SOS',
-                'id_classe_projecte' => null,
-                'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
+                'id' => 6,
+                'nom' => 'Seguretat informàtica.',
+                'id_classe_projecte' => $classeSmix1,
+                'interval' => $intervalCurs,
                 'exempcio' => false,
             ],
             [
-                'nom' => 'SOM',
-                'id_classe_projecte' => null,
-                'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
+                'id' => 7,
+                'nom' => 'Serveis en xarxa.',
+                'id_classe_projecte' => $classeSmix1,
+                'interval' => $intervalCurs,
                 'exempcio' => false,
             ],
             [
-                'nom' => 'IPO1',
-                'id_classe_projecte' => null,
-                'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
+                'id' => 8,
+                'nom' => 'Aplicacions web.',
+                'id_classe_projecte' => $classeSmix1,
+                'interval' => $intervalCurs,
                 'exempcio' => false,
             ],
             [
-                'nom' => 'Ofimàtica',
-                'id_classe_projecte' => null,
-                'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
+                'id' => 9,
+                'nom' => 'Sistemes informàtics.',
+                'id_classe_projecte' => $classeDaw1,
+                'interval' => $intervalCurs,
                 'exempcio' => false,
             ],
             [
-                'nom' => 'Anglès',
-                'id_classe_projecte' => null,
-                'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
+                'id' => 10,
+                'nom' => 'Bases de dades.',
+                'id_classe_projecte' => $classeDaw1,
+                'interval' => $intervalCurs,
                 'exempcio' => false,
             ],
             [
-                'nom' => 'SOX',
-                'id_classe_projecte' => null,
-                'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-06-14']]),
+                'id' => 11,
+                'nom' => 'Programació.',
+                'id_classe_projecte' => $classeDaw1,
+                'interval' => $intervalCurs,
                 'exempcio' => false,
             ],
             [
-                'nom' => 'IPO2',
-                'id_classe_projecte' => null,
-                'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-03-13']]),
-                'exempcio' => true,
-            ],
-            [
-                'nom' => 'Serveis de Xarxes',
-                'id_classe_projecte' => null,
-                'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-06-14']]),
+                'id' => 12,
+                'nom' => "Llenguatges de marques i sistemes de gestió d'informació.",
+                'id_classe_projecte' => $classeDaw1,
+                'interval' => $intervalCurs,
                 'exempcio' => false,
             ],
             [
-                'nom' => 'Seguretat',
-                'id_classe_projecte' => null,
-                'interval' => json_encode([['data_ini' => '2025-09-12', 'data_fi' => '2026-06-14']]),
+                'id' => 13,
+                'nom' => 'Entorns de desenvolupament.',
+                'id_classe_projecte' => $classeDaw1,
+                'interval' => $intervalCurs,
                 'exempcio' => false,
             ],
             [
-                'nom' => 'Projecte 1SMIXA1',
-                'id_classe_projecte' => null,
-                'interval' => json_encode([['data_ini' => '2026-03-14', 'data_fi' => '2026-06-14']]),
+                'id' => 14,
+                'nom' => 'Desenvolupament web en entorn client.',
+                'id_classe_projecte' => $classeDaw1,
+                'interval' => $intervalCurs,
                 'exempcio' => false,
             ],
-        ]);
+            [
+                'id' => 15,
+                'nom' => 'Desenvolupament web en entorn servidor.',
+                'id_classe_projecte' => $classeDaw1,
+                'interval' => $intervalCurs,
+                'exempcio' => false,
+            ],
+            [
+                'id' => 16,
+                'nom' => "Desplegament d'aplicacions web.",
+                'id_classe_projecte' => $classeDaw1,
+                'interval' => $intervalCurs,
+                'exempcio' => false,
+            ],
+            [
+                'id' => 17,
+                'nom' => "Disseny d'interfícies WEB.",
+                'id_classe_projecte' => $classeDaw1,
+                'interval' => $intervalCurs,
+                'exempcio' => false,
+            ],
+        ];
+
+        foreach ($assignatures as $assignatura) {
+            DB::table('assignatures')->updateOrInsert(
+                ['id' => $assignatura['id']],
+                $assignatura
+            );
+        }
+
+        if (DB::connection()->getDriverName() === 'pgsql') {
+            DB::statement("SELECT setval(pg_get_serial_sequence('assignatures', 'id'), coalesce(max(id),0) + 1, false) FROM assignatures;");
+        }
     }
 }

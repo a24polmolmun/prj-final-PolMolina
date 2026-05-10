@@ -1,0 +1,54 @@
+<div class="notification-stack" aria-live="polite" aria-atomic="true">
+  <article
+    *ngFor="let item of notifications.items()"
+    class="notification"
+    [class.success]="item.type === 'success'"
+    [class.error]="item.type === 'error'"
+    [class.warning]="item.type === 'warning'"
+    [class.info]="item.type === 'info'"
+  >
+    <span class="notification-icon" aria-hidden="true">{{ iconFor(item.type) }}</span>
+
+    <div class="notification-content">
+      <strong>{{ item.title }}</strong>
+      <p>{{ item.message }}</p>
+    </div>
+
+    <button
+      type="button"
+      class="notification-close"
+      aria-label="Tancar notificació"
+      (click)="notifications.remove(item.id)"
+    >
+      x
+    </button>
+
+    <span class="notification-progress" [style.animation-duration.ms]="item.duration"></span>
+  </article>
+</div>
+
+<div
+  *ngIf="notifications.confirmDialog() as dialog"
+  class="confirm-backdrop"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="confirm-title"
+>
+  <section class="confirm-dialog" [class.error]="dialog.type === 'error'">
+    <span class="confirm-icon" aria-hidden="true">{{ iconFor(dialog.type) }}</span>
+
+    <div class="confirm-copy">
+      <h2 id="confirm-title">{{ dialog.title }}</h2>
+      <p>{{ dialog.message }}</p>
+    </div>
+
+    <div class="confirm-actions">
+      <button type="button" class="btn-secondary" (click)="notifications.resolveConfirm(false)">
+        {{ dialog.cancelText }}
+      </button>
+      <button type="button" class="btn-danger" (click)="notifications.resolveConfirm(true)">
+        {{ dialog.confirmText }}
+      </button>
+    </div>
+  </section>
+</div>

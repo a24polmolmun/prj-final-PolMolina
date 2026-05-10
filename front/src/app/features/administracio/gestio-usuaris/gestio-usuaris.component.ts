@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { UsuarisManagerService } from '../../../shared/services/usuaris/usuaris-manager.service';
 import { ClassesManagerService } from '../../../shared/services/classes/classes-manager.service';
 import { Usuari } from '../../../shared/models/usuaris.model';
+import { NotificationService } from '../../../shared/services/notifications/notification.service';
 
 @Component({
     selector: 'app-gestio-usuaris',
@@ -16,6 +17,7 @@ import { Usuari } from '../../../shared/models/usuaris.model';
 export class GestioUsuarisComponent implements OnInit {
     private usuarisService = inject(UsuarisManagerService);
     private classesService = inject(ClassesManagerService);
+    private notifications = inject(NotificationService);
 
     // Signals del servei per a reactivitat directa
     usuaris = this.usuarisService.usuaris;
@@ -73,7 +75,7 @@ export class GestioUsuarisComponent implements OnInit {
             }
             this.preparaNouUsuari();
         } catch (err) {
-            alert('Error guardant usuari: Verifiqueu les dades (Email únic, contrasenya min 8 caràcters)');
+            this.notifications.error('Error guardant usuari: Verifiqueu les dades (Email únic, contrasenya min 8 caràcters)');
         }
     }
 
@@ -82,7 +84,7 @@ export class GestioUsuarisComponent implements OnInit {
         try {
             await this.usuarisService.esborrarUsuari(id);
         } catch (err) {
-            alert('No es pot esborrar l\'usuari. Verifiqueu si té dependències (és tutor, té faltes, etc.)');
+            this.notifications.error('No es pot esborrar l\'usuari. Verifiqueu si té dependències (és tutor, té faltes, etc.)');
         }
     }
 
@@ -90,9 +92,20 @@ export class GestioUsuarisComponent implements OnInit {
         this.preparaNouUsuari();
     }
 
-    obtenirNomClasse(id: number | null): string {
-        if (!id) return '-';
-        const c = this.classes().find(cls => cls.id == id);
-        return c ? c.nom : 'Desconeguda';
+    obtenirNomClasse(u: Usuari): string {
+        if (u.id_classe) {
+            const c = this.classes().find(cls => cls.id == u.id_classe);
+            return c ? c.nom : 'Desconeguda';
+        }
+
+        if (u.rol === 'Profe') {
+            const classesTutor = this.classes()
+                .filter(cls => cls.id_tutor === u.id)
+                .map(cls => cls.nom);
+
+            return classesTutor.length > 0 ? classesTutor.join(', ') : '-';
+        }
+
+        return '-';
     }
 }

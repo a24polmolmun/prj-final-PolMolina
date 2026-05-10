@@ -11,6 +11,7 @@ import { Classe } from '../../../shared/models/classe.model';
 import { UsuarisManagerService } from '../../../shared/services/usuaris/usuaris-manager.service';
 import { Usuari } from '../../../shared/models/usuaris.model';
 import { Horari } from '../../../shared/models/horaris.model';
+import { NotificationService } from '../../../shared/services/notifications/notification.service';
 
 @Component({
   selector: 'app-horari-alumnes',
@@ -27,6 +28,7 @@ export class HorariAlumnesComponent implements OnInit {
   serveiAules = inject(AulesManagerService);
   serveiAuth = inject(AuthService);
   serveiUsuaris = inject(UsuarisManagerService);
+  private notifications = inject(NotificationService);
 
   ngOnInit() {
     // Carreguem totes les dades necessàries quan entrem a la pantalla
@@ -218,6 +220,7 @@ export class HorariAlumnesComponent implements OnInit {
   // Estats per al modal
   mostrarModal = signal(false);
   codiHoraSeleccionada = signal('');
+  horariSeleccionatId = signal<number | null>(null);
   idAssignaturaSeleccionada = signal<number | null>(null);
   idAulaSeleccionada = signal<number | null>(null);
   idProfeSeleccionat = signal<number | null>(null);
@@ -251,6 +254,7 @@ export class HorariAlumnesComponent implements OnInit {
     }
 
     if (existent) {
+      this.horariSeleccionatId.set(existent.id ?? null);
       this.idAssignaturaSeleccionada.set(existent.id_assig);
       this.idAulaSeleccionada.set(existent.id_aula);
       this.idProfeSeleccionat.set(existent.id_professor || null);
@@ -264,6 +268,7 @@ export class HorariAlumnesComponent implements OnInit {
       }
       this.alumnesSeleccionatsIds.set(idsJaInscrits);
     } else {
+      this.horariSeleccionatId.set(null);
       this.idAssignaturaSeleccionada.set(null);
       this.idAulaSeleccionada.set(null);
       this.idProfeSeleccionat.set(this.serveiAuth.usuarioInfo?.id || null);
@@ -279,6 +284,34 @@ export class HorariAlumnesComponent implements OnInit {
     }
 
     this.mostrarModal.set(true);
+  }
+
+  async eliminarClasse() {
+    const horariId = this.horariSeleccionatId();
+    if (horariId == null) {
+      this.notifications.warning('No hi ha cap sessió per eliminar en aquesta franja.');
+      return;
+    }
+
+    const confirmar = await this.notifications.confirm({
+      title: 'Eliminar sessió',
+      message: "Vols eliminar aquesta sessió de l'horari?",
+      confirmText: 'Eliminar',
+      cancelText: 'Cancel·lar',
+      type: 'warning',
+    });
+
+    if (!confirmar) return;
+
+    try {
+      await this.serveiHoraris.esborrarHorari(horariId);
+      this.horariSeleccionatId.set(null);
+      this.mostrarModal.set(false);
+      this.notifications.success("La sessió s'ha eliminat de l'horari.");
+    } catch (error) {
+      console.error("Error eliminant la sessió de l'horari", error);
+      this.notifications.error("S'ha produït un error en eliminar la sessió.");
+    }
   }
 
   // Selecciona o deselecciona un alumne de la llista
@@ -325,7 +358,7 @@ export class HorariAlumnesComponent implements OnInit {
     console.log('[desarCanvis] classe:', classe);
     console.log('[desarCanvis] usuariLoguejat:', this.serveiAuth.usuarioInfo);
     if (!classe) {
-      alert(
+      this.notifications.warning(
         "No s'ha trobat cap classe assignada al teu usuari. Comprova que ets tutor d'una classe.",
       );
       return;
@@ -337,7 +370,7 @@ export class HorariAlumnesComponent implements OnInit {
     console.log('[desarCanvis] asigId:', asigId, '| aulaId:', aulaId, '| profeId:', profeId);
 
     if (asigId == null || aulaId == null || profeId == null) {
-      alert('Si us plau, selecciona Assignatura, Aula i Professor.');
+      this.notifications.warning('Si us plau, selecciona Assignatura, Aula i Professor.');
       return;
     }
 
@@ -355,10 +388,10 @@ export class HorariAlumnesComponent implements OnInit {
       await this.serveiHoraris.actualitzarHorariGranular(dadesGranulars);
       console.log('enviao');
       this.mostrarModal.set(false);
-      alert('Horari i alumnes actualitzats correctament.');
+      this.notifications.success('Horari i alumnes actualitzats correctament.');
     } catch (error) {
       console.error("Error desar l'horari granular", error);
-      alert("S'ha produït un error al desar la configuració.");
+      this.notifications.error("S'ha produït un error al desar la configuració.");
     }
   }
 }

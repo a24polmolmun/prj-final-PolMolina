@@ -1,0 +1,107 @@
+<div class="disseny-principal">
+  <app-sidebar></app-sidebar>
+
+  <div class="contingut">
+    <div class="seccio-benvinguda">
+      <div class="salutacio">
+        <h1>Gestió de <span class="nom-destacat">Justificants</span></h1>
+        <p>Revisa i accepta les justificacions enviades pels alumnes.</p>
+      </div>
+    </div>
+
+    <div class="graella-tauler">
+      <div class="contenidor-horari">
+        <div class="capçalera-horari">
+          <div class="titol-amb-icona">
+            <span class="material-icons icona-seccio">fact_check</span>
+            <h2>Sol·licituds pendents</h2>
+          </div>
+
+          <div class="controls-horari">
+            <select class="selector-assignatura" [ngModel]="alumneFiltrat()" (ngModelChange)="alumneFiltrat.set($event)">
+              <option value="">Tots els alumnes</option>
+              @for (alumne of alumnesDisponibles(); track alumne) {
+                <option [value]="alumne">{{ alumne }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        @if (error()) {
+          <div class="missatge error">{{ error() }}</div>
+        }
+
+        @if (isLoading()) {
+          <div class="carregant">Carregant justificants...</div>
+        } @else {
+          <div class="llista-justificants">
+            @for (justificant of justificantsFiltrats(); track justificant.id) {
+              <div class="fila-justificant">
+                <div class="info-principal">
+                  <div class="alumne">{{ nomAlumne(justificant) }}</div>
+                  <div class="meta">
+                    <span>{{ assignatura(justificant) }}</span>
+                    <span>·</span>
+                    <span>{{ dataText(justificant.assistenciaInici?.data) }}</span>
+                  </div>
+                  <div class="comentari">
+                    {{ justificant.comentari || 'Sense comentari' }}
+                  </div>
+                </div>
+
+                <div class="accions">
+                  <button
+                    class="boto-veure"
+                    (click)="obrirDetall(justificant)">
+                    Veure justificació
+                  </button>
+                  <button
+                    class="boto-acceptar"
+                    [disabled]="esProcessant(justificant.id)"
+                    (click)="acceptar(justificant)">
+                    @if (esProcessant(justificant.id)) {
+                      Processant...
+                    } @else {
+                      Acceptar
+                    }
+                  </button>
+                </div>
+              </div>
+            } @empty {
+              <div class="cap-resultat">
+                No hi ha justificants pendents.
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (justificantObert(); as detall) {
+  <div class="overlay-modal" (click)="tancarDetall()">
+    <div class="contingut-modal" (click)="$event.stopPropagation()">
+      <div class="cap-modal">
+        <h3>Detall del justificant</h3>
+        <button class="boto-tancar" (click)="tancarDetall()">Tancar</button>
+      </div>
+
+      <div class="cos-modal">
+        <p><strong>Alumne:</strong> {{ nomAlumne(detall) }}</p>
+        <p><strong>Assignatura:</strong> {{ assignatura(detall) }}</p>
+        <p><strong>Data falta:</strong> {{ dataText(detall.assistenciaInici?.data) }}</p>
+        <p><strong>Comentari:</strong></p>
+        <div class="capsa-comentari">{{ detall.comentari || 'Sense comentari' }}</div>
+
+        @if (teDocument(detall)) {
+          <a class="enllac-document" [href]="detall.document || '#'" target="_blank" rel="noopener noreferrer">
+            Obrir document adjunt
+          </a>
+        } @else {
+          <p class="sense-document">No hi ha document adjunt.</p>
+        }
+      </div>
+    </div>
+  </div>
+}

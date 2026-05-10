@@ -20,7 +20,8 @@ export class JustificantsManagerService {
     this.error.set(null);
 
     try {
-      const data = await this.apiManager.get<Justificant[]>('/justificants');
+      const resp = await this.apiManager.get<any>('/justificants');
+      const data = resp?.data || resp || [];
       this.justificants.set(data);
     } catch (err) {
       this.error.set("S'ha produït un error al recuperar els justificants");
@@ -79,6 +80,17 @@ export class JustificantsManagerService {
       return actualitzacio;
     } catch (err) {
       console.error(`Error actualitzant justificant ${id}:`, err);
+      throw err;
+    }
+  }
+
+  async acceptarJustificant(id: number) {
+    try {
+      await this.apiManager.post(`/justificants/${id}/acceptar`, {});
+      await this.carregarJustificants();
+      return true;
+    } catch (err) {
+      console.error(`Error acceptant justificant ${id}:`, err);
       throw err;
     }
   }

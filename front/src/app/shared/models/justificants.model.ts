@@ -8,4 +8,28 @@ export interface Justificant {
   acceptada: boolean;
   created_at: string;
   updated_at: string;
+  alumne?: {
+    id: number;
+    nom: string;
+    cognom?: string;
+    email?: string;
+  };
+  assistenciaInici?: {
+    id: number;
+    data: string;
+    estat: string;
+    id_inscripcio: number;
+    inscripcio?: {
+      id: number;
+      alumne?: {
+        id: number;
+        nom: string;
+        cognom?: string;
+      };
+      assignatura?: {
+        id: number;
+        nom: string;
+      };
+    };
+  };
 }

@@ -12,7 +12,7 @@ class UsuarisSeeder extends Seeder
     {
         $password = Hash::make('12345678');
 
-        DB::table('usuaris')->insert([
+        $usuaris = [
             [
                 'id' => 1,
                 'nom' => 'Admin',
@@ -28,10 +28,10 @@ class UsuarisSeeder extends Seeder
             ],
             [
                 'id' => 2,
-                'nom' => 'Professor',
-                'cognom' => 'Proves',
+                'nom' => 'Laia',
+                'cognom' => 'Vidal',
                 'rol' => 'Profe',
-                'email' => 'professor@inspedralbes.cat',
+                'email' => 'laia.vidal@inspedralbes.cat',
                 'email_pares' => null,
                 'password' => $password,
                 'token' => null,
@@ -49,23 +49,43 @@ class UsuarisSeeder extends Seeder
                 'password' => $password,
                 'token' => null,
                 'nfc_id' => null,
-                'id_classe' => 1,
+                'id_classe' => 5,
                 'horari_guardies' => null
             ],
             [
                 'id' => 4,
-                'nom' => 'Segon',
-                'cognom' => 'Professor',
+                'nom' => 'Marc',
+                'cognom' => 'Serra',
                 'rol' => 'Profe',
-                'email' => 'professor2@inspedralbes.cat',
+                'email' => 'marc.serra@inspedralbes.cat',
                 'email_pares' => null,
                 'password' => $password,
                 'token' => null,
                 'nfc_id' => null,
                 'id_classe' => null,
                 'horari_guardies' => null
+            ],
+            [
+                'id' => 5,
+                'nom' => 'Nil',
+                'cognom' => 'Soler',
+                'rol' => 'Alumne',
+                'email' => 'nil.soler@inspedralbes.cat',
+                'email_pares' => null,
+                'password' => $password,
+                'token' => null,
+                'nfc_id' => null,
+                'id_classe' => 1,
+                'horari_guardies' => null
             ]
-        ]);
+        ];
+
+        foreach ($usuaris as $usuari) {
+            DB::table('usuaris')->updateOrInsert(
+                ['id' => $usuari['id']],
+                $usuari
+            );
+        }
 
         // Sincronizar secuencia en PostgreSQL automáticamente después del Seed
         if (DB::connection()->getDriverName() === 'pgsql') {

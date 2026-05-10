@@ -481,3 +481,14 @@
   background: #e2e8f0;
   color: var(--text-dark);
 }
+
+.btn-danger {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.btn-danger:hover {
+  background: #fecaca;
+  color: #991b1b;
+  transform: translateY(-3px);
+}

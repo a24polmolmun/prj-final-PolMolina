@@ -175,7 +175,7 @@ class AssistenciaController extends Controller
                         $assignatura = $horari->assignatura;
 
                         // Si hi ha projecte i l'assignatura no és excepció, usar projecte
-                        if ($projecte && $assignatura->esSubstituible()) {
+                        if ($projecte && method_exists($assignatura, 'esSubstituible') && $assignatura->esSubstituible()) {
                             $assignatura = $projecte;
                         }
 
@@ -269,6 +269,7 @@ class AssistenciaController extends Controller
                     case 'Falta':
                         $findJustificacio = DB::table('justificants')
                             ->where('id_assistencia_ini', $valor->id)
+                            ->where('acceptada', true)
                             ->select('acceptada')
                             ->first();
 

@@ -13,7 +13,12 @@ class JustificantController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data' => Justificant::with(['alumne', 'assistenciaInici', 'assistenciaFi'])->get(),
+            'data' => Justificant::with([
+                'alumne',
+                'assistenciaInici.inscripcio.assignatura',
+                'assistenciaInici.inscripcio.alumne',
+                'assistenciaFi',
+            ])->orderByDesc('created_at')->get(),
             'message' => 'Justificants obtinguts correctament'
         ], Response::HTTP_OK);
     }
@@ -30,11 +35,6 @@ class JustificantController extends Controller
         ]);
 
         $justificant = Justificant::create($validated);
-
-        // Actualitzar l'assistència per marcar-la com a justificada
-        \App\Models\Assistencia::where('id', $validated['id_assistencia_ini'])
-            ->orWhere('id', $validated['id_assistencia_fi'])
-            ->update(['justificat' => true]);
 
         return response()->json([
             'success' => true,
@@ -106,6 +106,31 @@ class JustificantController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Justificant eliminat correctament'
+        ], Response::HTTP_OK);
+    }
+
+    public function acceptar($id)
+    {
+        $justificant = Justificant::find($id);
+
+        if (!$justificant) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Justificant no trobat'
+            ], Response::HTTP_NOT_FOUND);
+        }
+
+        $justificant->acceptada = true;
+        $justificant->save();
+
+        \App\Models\Assistencia::where('id', $justificant->id_assistencia_ini)
+            ->orWhere('id', $justificant->id_assistencia_fi)
+            ->update(['justificat' => true]);
+
+        return response()->json([
+            'success' => true,
+            'data' => $justificant->load(['alumne', 'assistenciaInici', 'assistenciaFi']),
+            'message' => 'Justificant acceptat correctament'
         ], Response::HTTP_OK);
     }
 }

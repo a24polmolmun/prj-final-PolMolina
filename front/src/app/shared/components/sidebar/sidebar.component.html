@@ -36,6 +36,11 @@
       <span class="material-icons">history_toggle_off</span>
       <span class="link-text">Gestió Faltes</span>
     </a>
+
+    <a routerLink="/gestio-justificants" routerLinkActive="activa" class="sidebar-link">
+      <span class="material-icons">fact_check</span>
+      <span class="link-text">Gestió Justificants</span>
+    </a>
     }
 
     @if (esTutor() && rol() !== 'admin') {
@@ -54,7 +59,7 @@
   </nav>
 
   <div class="sidebar-footer">
-    <a routerLink="/profile" routerLinkActive="activa" class="sidebar-link profile-link">
+    <a [routerLink]="profileLink()" routerLinkActive="activa" class="sidebar-link profile-link">
       <span class="material-icons">account_circle</span>
       <span class="link-text">El Meu Perfil</span>
     </a>

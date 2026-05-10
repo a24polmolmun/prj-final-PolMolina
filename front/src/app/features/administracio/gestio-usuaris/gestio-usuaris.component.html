@@ -84,7 +84,7 @@
                             <span class="badge" [ngClass]="u.rol.toLowerCase()">{{ u.rol }}</span>
                         </td>
                         <td>
-                            {{ obtenirNomClasse(u.id_classe) }}
+                            {{ obtenirNomClasse(u) }}
                         </td>
                         <td class="actions">
                             <button class="btn-edit" (click)="preparaEdicio(u)">Editar</button>

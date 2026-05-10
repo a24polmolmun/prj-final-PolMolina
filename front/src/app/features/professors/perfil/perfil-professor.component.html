@@ -1,0 +1,74 @@
+<div class="disseny-principal">
+  <app-sidebar></app-sidebar>
+
+  <div class="contingut">
+    <div class="seccio-benvinguda">
+      <div class="salutacio">
+        <h1>El Meu <span class="nom-destacat">Perfil</span></h1>
+        <p>Actualitza les teves dades personals sempre que ho necessitis.</p>
+      </div>
+    </div>
+
+    <div class="graella-tauler">
+      <div class="contenidor-horari">
+        <div class="capçalera-horari">
+          <div class="titol-amb-icona">
+            <span class="material-icons icona-seccio">person</span>
+            <h2>Dades del compte</h2>
+          </div>
+        </div>
+
+        @if (error()) {
+          <div class="missatge error">{{ error() }}</div>
+        }
+
+        @if (exit()) {
+          <div class="missatge exit">{{ exit() }}</div>
+        }
+
+        <form class="formulari-perfil" (ngSubmit)="desarCanvis()">
+          <div class="fila-camps">
+            <div class="camp-formulari">
+              <label for="nom">Nom</label>
+              <input id="nom" type="text" [ngModel]="nom()" (ngModelChange)="nom.set($event)" name="nom" required />
+            </div>
+
+            <div class="camp-formulari">
+              <label for="cognom">Cognom</label>
+              <input id="cognom" type="text" [ngModel]="cognom()" (ngModelChange)="cognom.set($event)" name="cognom" />
+            </div>
+          </div>
+
+          <div class="camp-formulari">
+            <label for="email">Correu electrònic</label>
+            <input id="email" type="email" [ngModel]="email()" (ngModelChange)="email.set($event)" name="email" required />
+          </div>
+
+          <div class="fila-camps">
+            <div class="camp-formulari">
+              <label for="password">Nova contrasenya</label>
+              <input id="password" type="password" [ngModel]="contrasenya()" (ngModelChange)="contrasenya.set($event)"
+                name="password" placeholder="Mínim 8 caràcters" />
+            </div>
+
+            <div class="camp-formulari">
+              <label for="password2">Repeteix la contrasenya</label>
+              <input id="password2" type="password" [ngModel]="repetirContrasenya()"
+                (ngModelChange)="repetirContrasenya.set($event)" name="password2" />
+            </div>
+          </div>
+
+          <div class="accions-formulari">
+            <button type="submit" class="boto-desar" [disabled]="guardant() || carregant()">
+              @if (guardant()) {
+                Desant...
+              } @else {
+                Desar canvis
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
