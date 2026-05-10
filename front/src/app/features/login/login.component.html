@@ -2,40 +2,41 @@
     <div class="targeta-login">
         <div class="encapçalament-login">
             <img src="/assets/EduPass.png" alt="EduPass Logo" class="login-logo" />
-            <h1>Benvingut</h1>
-            <p>Accedeix al teu compte</p>
+            <h1>Iniciar Sessió</h1>
+            <p>Accedeix al teu espai educatiu</p>
         </div>
 
         <div class="cos-formulari">
             <div class="grup-input">
-                <label for="usuari">Usuari</label>
+                <label for="usuari">Email</label>
                 <div class="input-wrapper">
-                    <input type="text" id="usuari" placeholder="Posa el teu email" [(ngModel)]="usuari"
-                        (keyup.enter)="iniciarSessio()">
+                    <span class="material-icons">person</span>
+                    <input type="text" id="usuari" placeholder="usuari@exemple.com" [(ngModel)]="usuari" (keyup.enter)="iniciarSessio()">
                 </div>
             </div>
 
             <div class="grup-input">
                 <label for="password">Contrasenya</label>
                 <div class="input-wrapper">
-                    <input type="password" id="password" placeholder="Posa la teva contrasenya" [(ngModel)]="password"
-                        (keyup.enter)="iniciarSessio()">
+                    <span class="material-icons">lock</span>
+                    <input type="password" id="password" placeholder="••••••••" [(ngModel)]="password" (keyup.enter)="iniciarSessio()">
                 </div>
             </div>
 
             <button (click)="iniciarSessio()" class="boto-entrar">
-                Iniciar Sessió
+                Entrar al sistema
             </button>
 
             @if (error()) {
             <div class="missatge-error">
-                <span class="icona-error"></span> {{ error() }}
+                <span class="material-icons">error_outline</span>
+                {{ error() }}
             </div>
             }
         </div>
 
         <div class="peu-login">
-            <p>© 2026 R.E.N.F.E</p>
+            <p>© 2026 EduPass • Sistema de Gestió Acadèmica</p>
         </div>
     </div>
 </div>

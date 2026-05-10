@@ -52,4 +52,8 @@ export class LoginComponent {
       }
     });
   }
+
+  iniciarSessioGoogle() {
+    this.authService.loginWithGoogle();
+  }
 }
