@@ -30,7 +30,7 @@ L'aplicació està dividida en tres rols:
 
 Cada usuari veu les opcions corresponents al seu rol. Després d'iniciar sessió, EduPass redirigeix automàticament cada persona al seu panell.
 
-![Captura de pantalla: Vista general d'EduPass](imatges/manual/edupass-vista-general.png)
+![Captura de pantalla: Vista general d'EduPass](img/edupass-vista-general.png)
 
 ---
 
@@ -49,7 +49,7 @@ Passos:
 
 També es pot iniciar sessió prement la tecla **Enter** després d'escriure les credencials.
 
-![Captura de pantalla: Pantalla d'inici de sessió](imatges/manual/login.png)
+![Captura de pantalla: Pantalla d'inici de sessió](img/login.png)
 
 ### 2.2. Recuperació de contrasenya
 
@@ -61,7 +61,7 @@ Si un usuari oblida la contrasenya, ha de contactar amb un administrador del cen
 
 Per sortir d'EduPass, cal prémer l'opció **Sortir** del menú lateral. El sistema tanca la sessió i torna a la pantalla d'inici de sessió.
 
-![Captura de pantalla: Botó Sortir del menú lateral](imatges/manual/sortir-sessio.png)
+![Captura de pantalla: Botó Sortir del menú lateral](img/sortir-sessio.png)
 
 ---
 
@@ -82,7 +82,7 @@ Per canviar la contrasenya, cal escriure la nova contrasenya i repetir-la. Ha de
 
 Després de fer els canvis, prem **Desar canvis**.
 
-![Captura de pantalla: Pantalla El Meu Perfil](imatges/manual/perfil-usuari.png)
+![Captura de pantalla: Pantalla El Meu Perfil](img/perfil-usuari.png)
 
 ### 3.2. Menú lateral
 
@@ -108,7 +108,7 @@ El menú d'administració inclou:
 - **Gestió d'Assignatures**
 - **Sortir**
 
-![Captura de pantalla: Menú lateral d'administració](imatges/manual/admin-menu.png)
+![Captura de pantalla: Menú lateral d'administració](img/admin-menu.png)
 
 ### 4.1. Panell inicial d'administració
 
@@ -121,7 +121,7 @@ La pantalla inicial de l'administrador mostra un resum general del centre:
 - Calendari mensual.
 - Accessos ràpids a gestió d'usuaris, classes i assignatures.
 
-![Captura de pantalla: Panell inicial de l'administrador](imatges/manual/admin-inici.png)
+![Captura de pantalla: Panell inicial de l'administrador](img/admin-inici.png)
 
 ### 4.2. Gestió d'usuaris
 
@@ -133,7 +133,7 @@ Els rols disponibles són:
 - **Profe**
 - **Admin**
 
-![Captura de pantalla: Gestió d'usuaris](imatges/manual/admin-gestio-usuaris.png)
+![Captura de pantalla: Gestió d'usuaris](img/admin-gestio-usuaris.png)
 
 #### Crear un usuari
 
@@ -149,7 +149,7 @@ Els rols disponibles són:
    - Classe assignada.
 4. Prem **Crear Usuari**.
 
-![Captura de pantalla: Formulari per crear un usuari](imatges/manual/admin-crear-usuari.png)
+![Captura de pantalla: Formulari per crear un usuari](img/admin-crear-usuari.png)
 
 #### Editar un usuari
 
@@ -159,7 +159,7 @@ Els rols disponibles són:
 4. Si no vols canviar la contrasenya, deixa aquest camp en blanc.
 5. Prem **Actualitzar Usuari**.
 
-![Captura de pantalla: Edició d'un usuari](imatges/manual/admin-editar-usuari.png)
+![Captura de pantalla: Edició d'un usuari](img/admin-editar-usuari.png)
 
 #### Eliminar un usuari
 
@@ -178,7 +178,7 @@ Cada curs té:
 - Tipus de grau.
 - Període escolar associat.
 
-![Captura de pantalla: Gestió de cursos](imatges/manual/admin-gestio-cursos.png)
+![Captura de pantalla: Gestió de cursos](img/admin-gestio-cursos.png)
 
 #### Crear un curs
 
@@ -190,7 +190,7 @@ Cada curs té:
 4. Selecciona el **Periode Escolar**, si correspon.
 5. Prem **Crear Curs**.
 
-![Captura de pantalla: Formulari per crear un curs](imatges/manual/admin-crear-curs.png)
+![Captura de pantalla: Formulari per crear un curs](img/admin-crear-curs.png)
 
 #### Editar o eliminar un curs
 
@@ -198,7 +198,7 @@ Per modificar un curs, prem **Editar**, fes els canvis i desa'ls amb **Actualitz
 
 Per eliminar un curs, prem **Esborrar** i confirma l'acció. Si el curs té dependències, el sistema pot bloquejar l'eliminació.
 
-### 5.4. Gestió de períodes acadèmics
+### 4.4. Gestió de períodes acadèmics
 
 La pantalla **Gestió de Periodes Acadèmics** serveix per definir els trimestres del curs escolar.
 
@@ -208,7 +208,7 @@ Cada període inclou:
 - Data d'inici i final del 2n trimestre.
 - Data d'inici i final del 3r trimestre.
 
-![Captura de pantalla: Gestió de períodes acadèmics](imatges/manual/admin-gestio-periodes.png)
+![Captura de pantalla: Gestió de períodes acadèmics](img/admin-gestio-periodes.png)
 
 #### Crear un període
 
@@ -216,7 +216,7 @@ Cada període inclou:
 2. Omple les dates dels tres trimestres.
 3. Prem **Crear Periode**.
 
-![Captura de pantalla: Formulari per crear un període](imatges/manual/admin-crear-periode.png)
+![Captura de pantalla: Formulari per crear un període](img/admin-crear-periode.png)
 
 #### Editar o eliminar un període
 
@@ -224,7 +224,7 @@ Per editar un període, prem **Editar**, modifica les dates i prem **Actualitzar
 
 Per eliminar-lo, prem **Esborrar** i confirma l'acció. No es pot eliminar si hi ha cursos que depenen d'aquest període.
 
-### 5.5. Gestió de classes i grups
+### 4.5. Gestió de classes i grups
 
 La pantalla **Gestió de Classes / Grups** permet crear i organitzar els grups d'alumnes.
 
@@ -235,7 +235,7 @@ Cada classe pot tenir:
 - Tutor.
 - Aula assignada.
 
-![Captura de pantalla: Gestió de classes i grups](imatges/manual/admin-gestio-classes.png)
+![Captura de pantalla: Gestió de classes i grups](img/admin-gestio-classes.png)
 
 #### Crear una classe
 
@@ -246,7 +246,7 @@ Cada classe pot tenir:
 5. Selecciona l'aula, si n'hi ha.
 6. Prem **Crear Classe**.
 
-![Captura de pantalla: Formulari per crear una classe](imatges/manual/admin-crear-classe.png)
+![Captura de pantalla: Formulari per crear una classe](img/admin-crear-classe.png)
 
 #### Editar o eliminar una classe
 
@@ -254,18 +254,15 @@ Per editar una classe, prem **Editar**, modifica les dades i prem **Actualitzar*
 
 Per eliminar-la, prem **Esborrar** i confirma l'acció. Si la classe té alumnes, horaris o altres dades relacionades, el sistema pot mostrar un error.
 
-### 5.6. Gestió d'aules
+### 4.6. Gestió d'aules
 
-Les aules existeixen al sistema i es carreguen des del backend. A la interfície actual no hi ha una pantalla pròpia per fer el CRUD complet d'aules, però l'administrador les utilitza en altres pantalles.
+Les aules existeixen al sistema i es carreguen des del backend. A la interfície actual no hi ha una pantalla pròpia per fer el CRUD complet d'aules per a l'administrador, però s'utilitzen en altres configuracions.
 
 Les aules apareixen a:
 
 - **Gestió de Classes / Grups**, per assignar una aula a una classe.
-- **Horari Alumnes**, per assignar una aula a una sessió concreta.
 
-![Captura de pantalla: Selector d'aula en una classe](imatges/manual/admin-selector-aula.png)
-
-### 5.7. Gestió d'assignatures
+### 4.7. Gestió d'assignatures
 
 La pantalla **Gestió d'Assignatures** permet crear i mantenir les matèries del centre.
 
@@ -276,7 +273,7 @@ Cada assignatura pot tenir:
 - Data de finalització.
 - Vinculació opcional a una classe concreta com a projecte.
 
-![Captura de pantalla: Gestió d'assignatures](imatges/manual/admin-gestio-assignatures.png)
+![Captura de pantalla: Gestió d'assignatures](img/admin-gestio-assignatures.png)
 
 #### Crear una assignatura
 
@@ -287,87 +284,13 @@ Cada assignatura pot tenir:
 5. Si és una assignatura específica d'una classe, selecciona-la a **Vincular a Classe (Projecte)**.
 6. Prem **Crear Assignatura**.
 
-![Captura de pantalla: Formulari per crear una assignatura](imatges/manual/admin-crear-assignatura.png)
+![Captura de pantalla: Formulari per crear una assignatura](img/admin-crear-assignatura.png)
 
 #### Editar o eliminar una assignatura
 
 Per modificar una assignatura, prem **Editar**, fes els canvis i prem **Actualitzar**.
 
 Per eliminar-la, prem **Esborrar** i confirma l'acció.
-
-### 5.8. Gestió d'horaris
-
-La configuració d'horaris es fa des de la pantalla **Horari Alumnes**. Aquesta pantalla està disponible per a professors tutors i també pot ser accessible per administració segons el rol permès a l'aplicació.
-
-La graella mostra:
-
-- Dilluns a divendres.
-- Franges horàries.
-- Assignatura.
-- Aula.
-- Classe.
-- Professor assignat.
-
-![Captura de pantalla: Graella d'horari setmanal](imatges/manual/horari-alumnes-graella.png)
-
-#### Crear o editar una sessió
-
-1. Fes clic en una cel·la buida o en una sessió existent.
-2. Al modal **Configurar Sessió**, selecciona:
-   - Assignatura.
-   - Aula.
-   - Professor encarregat.
-3. Marca els alumnes convocats.
-4. Prem **Desar Configuració**.
-
-![Captura de pantalla: Modal Configurar Sessió](imatges/manual/horari-alumnes-modal-configurar.png)
-
-#### Eliminar una sessió
-
-1. Fes clic sobre una sessió existent.
-2. Prem **Eliminar sessió**.
-3. Confirma l'acció.
-
-![Captura de pantalla: Eliminació d'una sessió d'horari](imatges/manual/horari-alumnes-eliminar-sessio.png)
-
-### 5.9. Gestió d'inscrits
-
-La pantalla **Gestió Inscrits** permet afegir o treure alumnes d'una classe.
-
-Els administradors poden seleccionar la classe que volen gestionar.
-
-![Captura de pantalla: Gestió d'inscrits com a administrador](imatges/manual/admin-gestio-inscrits.png)
-
-#### Afegir alumnes a una classe
-
-1. Selecciona la classe a gestionar.
-2. Cerca un alumne per nom o correu electrònic.
-3. Prem el botó amb la icona **+** per afegir-lo.
-
-Quan s'afegeix un alumne a una classe, EduPass també intenta inscriure'l a les assignatures associades als horaris d'aquella classe.
-
-#### Treure alumnes d'una classe
-
-1. Localitza l'alumne a la llista d'alumnes actuals.
-2. Prem la icona de treure alumne.
-
-### 5.10. Gestió de justificants
-
-L'administrador també pot accedir a la gestió de justificants si entra a la pantalla corresponent.
-
-En aquesta pantalla pot:
-
-- Veure justificants pendents.
-- Filtrar per alumne.
-- Obrir el detall del justificant.
-- Obrir el document adjunt, si existeix.
-- Acceptar el justificant.
-
-![Captura de pantalla: Gestió de justificants com a administrador](imatges/manual/admin-gestio-justificants.png)
-
-Quan s'accepta un justificant, l'assistència associada queda marcada com a justificada.
-
-Actualment no hi ha cap botó de **rebutjar** justificants a la interfície.
 
 ---
 
@@ -387,7 +310,7 @@ El menú del professor pot incloure:
 - **El Meu Perfil**
 - **Sortir**
 
-![Captura de pantalla: Menú lateral del professor](imatges/manual/professor-menu.png)
+![Captura de pantalla: Menú lateral del professor](img/professor-menu.png)
 
 ### 5.1. Panell inicial del professor
 
@@ -400,13 +323,13 @@ La pantalla inicial del professor mostra:
 - Classe en curs, si n'hi ha.
 - Horari personal.
 
-![Captura de pantalla: Panell inicial del professor](imatges/manual/professor-inici.png)
+![Captura de pantalla: Panell inicial del professor](img/professor-inici.png)
 
 Si hi ha una classe en curs, el professor pot prémer **Passar llista ara** per anar directament a la sessió corresponent.
 
-![Captura de pantalla: Botó Passar llista ara](imatges/manual/professor-passar-llista-ara.png)
+![Captura de pantalla: Botó Passar llista ara](img/professor-passar-llista-ara.png)
 
-### 6.2. Consulta de l'horari personal
+### 5.2. Consulta de l'horari personal
 
 El professor pot consultar **El Teu Horari Personal** des del panell inicial.
 
@@ -420,7 +343,7 @@ L'horari mostra:
 
 El botó **Franja: AM/PM** permet alternar entre horari de matí i horari de tarda.
 
-![Captura de pantalla: Horari personal del professor](imatges/manual/professor-horari-personal.png)
+![Captura de pantalla: Horari personal del professor](img/professor-horari-personal.png)
 
 ### 5.3. Les meves assignatures
 
@@ -433,13 +356,13 @@ Inclou:
 - Cercador d'assignatures.
 - Targetes amb el nom de cada assignatura i el període lectiu.
 
-![Captura de pantalla: Les meves assignatures](imatges/manual/professor-assignatures.png)
+![Captura de pantalla: Les meves assignatures](img/professor-assignatures.png)
 
 ### 5.4. Passar llista
 
 La pantalla **Llista de Classe** permet registrar l'assistència de les sessions del dia.
 
-![Captura de pantalla: Llista de classe](imatges/manual/professor-llista-classe.png)
+![Captura de pantalla: Llista de classe](img/professor-llista-classe.png)
 
 #### Seleccionar una sessió
 
@@ -449,7 +372,7 @@ La pantalla **Llista de Classe** permet registrar l'assistència de les sessions
 
 Si no hi ha sessions, EduPass mostra un avís.
 
-![Captura de pantalla: Selector de sessions del dia](imatges/manual/professor-sessions-avui.png)
+![Captura de pantalla: Selector de sessions del dia](img/professor-sessions-avui.png)
 
 #### Marcar l'assistència
 
@@ -462,9 +385,9 @@ Per cada alumne es pot marcar:
 
 Quan el professor prem una opció, EduPass desa l'assistència. Si ja hi havia un registre d'aquell alumne per aquell dia, s'actualitza.
 
-![Captura de pantalla: Botons d'assistència](imatges/manual/professor-botons-assistencia.png)
+![Captura de pantalla: Botons d'assistència](img/professor-botons-assistencia.png)
 
-### 6.5. Gestió d'incidències, faltes i retards
+### 5.5. Gestió d'incidències, faltes i retards
 
 La pantalla **Gestió Faltes** mostra un resum de les absències dels alumnes vinculats al professor.
 
@@ -477,7 +400,7 @@ Inclou:
 - Filtre per assignatura.
 - Indicador de gravetat.
 
-![Captura de pantalla: Gestió de faltes del professor](imatges/manual/professor-gestio-faltes.png)
+![Captura de pantalla: Gestió de faltes del professor](img/professor-gestio-faltes.png)
 
 La gravetat es mostra així:
 
@@ -496,11 +419,11 @@ Des d'aquesta pantalla pot:
 - Afegir alumnes.
 - Treure alumnes.
 
-![Captura de pantalla: Gestió d'inscrits del professor tutor](imatges/manual/professor-gestio-inscrits.png)
+![Captura de pantalla: Gestió d'inscrits del professor tutor](img/professor-gestio-inscrits.png)
 
 Si el professor no és tutor de cap classe, EduPass mostra un missatge indicant que no té classe assignada.
 
-![Captura de pantalla: Professor sense classe de tutor](imatges/manual/professor-sense-classe-tutor.png)
+![Captura de pantalla: Professor sense classe de tutor](img/professor-sense-classe-tutor.png)
 
 ### 5.7. Horari dels alumnes
 
@@ -516,9 +439,9 @@ El professor pot:
 - Marcar alumnes convocats.
 - Eliminar sessions.
 
-![Captura de pantalla: Horari alumnes del professor tutor](imatges/manual/professor-horari-alumnes.png)
+![Captura de pantalla: Horari alumnes del professor tutor](img/professor-horari-alumnes.png)
 
-![Captura de pantalla: Configuració d'una sessió del professor](imatges/manual/professor-configurar-sessio.png)
+![Captura de pantalla: Configuració d'una sessió del professor](img/professor-configurar-sessio.png)
 
 ### 5.8. Gestió de justificants
 
@@ -533,9 +456,9 @@ El professor pot:
 - Obrir el document adjunt.
 - Acceptar el justificant.
 
-![Captura de pantalla: Gestió de justificants del professor](imatges/manual/professor-gestio-justificants.png)
+![Captura de pantalla: Gestió de justificants del professor](img/professor-gestio-justificants.png)
 
-![Captura de pantalla: Detall d'un justificant](imatges/manual/professor-detall-justificant.png)
+![Captura de pantalla: Detall d'un justificant](img/professor-detall-justificant.png)
 
 Quan s'accepta un justificant, la falta queda marcada com a justificada.
 
@@ -552,7 +475,7 @@ El menú de l'alumne inclou:
 - **El Meu Perfil**
 - **Sortir**
 
-![Captura de pantalla: Menú de l'alumne](imatges/manual/alumne-menu.png)
+![Captura de pantalla: Menú de l'alumne](img/alumne-menu.png)
 
 ### 6.1. Panell inicial de l'alumne
 
@@ -565,7 +488,7 @@ La pantalla inicial de l'alumne mostra:
 - Horari personal.
 - Resum de faltes, retards i justificades.
 
-![Captura de pantalla: Panell inicial de l'alumne](imatges/manual/alumne-inici.png)
+![Captura de pantalla: Panell inicial de l'alumne](img/alumne-inici.png)
 
 ### 6.2. Consulta de l'horari personal
 
@@ -578,7 +501,7 @@ L'horari mostra:
 - Assignatures.
 - Franja d'esbarjo.
 
-![Captura de pantalla: Horari personal de l'alumne](imatges/manual/alumne-horari-personal.png)
+![Captura de pantalla: Horari personal de l'alumne](img/alumne-horari-personal.png)
 
 ### 6.3. Consulta de faltes i retards
 
@@ -590,13 +513,13 @@ Al panell inicial, l'alumne pot veure un resum de:
 
 També pot filtrar el resum per assignatura.
 
-![Captura de pantalla: Resum de faltes i retards de l'alumne](imatges/manual/alumne-resum-faltes-retards.png)
+![Captura de pantalla: Resum de faltes i retards de l'alumne](img/alumne-resum-faltes-retards.png)
 
 ### 6.4. Justificar faltes i retards
 
 La pantalla **Justificar Faltes** mostra les faltes i retards pendents de justificar.
 
-![Captura de pantalla: Pantalla Justificar Faltes](imatges/manual/alumne-justificar-faltes.png)
+![Captura de pantalla: Pantalla Justificar Faltes](img/alumne-justificar-faltes.png)
 
 #### Filtrar per assignatura
 
@@ -604,7 +527,7 @@ La pantalla **Justificar Faltes** mostra les faltes i retards pendents de justif
 2. Utilitza el desplegable **Filtre per Assignatures**.
 3. Selecciona una assignatura o deixa **Totes les assignatures**.
 
-![Captura de pantalla: Filtre d'assignatures en justificació](imatges/manual/alumne-filtre-justificants.png)
+![Captura de pantalla: Filtre d'assignatures en justificació](img/alumne-filtre-justificants.png)
 
 #### Enviar un justificant
 
@@ -616,15 +539,15 @@ La pantalla **Justificar Faltes** mostra les faltes i retards pendents de justif
    - Imatge.
 5. Prem **Desar Justificació**.
 
-![Captura de pantalla: Modal per justificar una falta](imatges/manual/alumne-modal-justificar-falta.png)
+![Captura de pantalla: Modal per justificar una falta](img/alumne-modal-justificar-falta.png)
 
 El justificant queda pendent de revisió. Quan un professor o administrador l'accepta, la falta passa a constar com a justificada.
 
 ### 6.5. Faltes justificades
 
-Quan una falta ja està justificada, EduPass mostra l'etiqueta **Justificada** i ja no cal enviar cap altre document.
+Quan una falta ja està justificada per el Professor, EduPass mostra l'etiqueta **Justificada** i ja no cal enviar cap altre document.
 
-![Captura de pantalla: Falta marcada com a justificada](imatges/manual/alumne-falta-justificada.png)
+![Captura de pantalla: Falta marcada com a justificada](img/alumne-falta-justificada.png)
 
 ---
 
