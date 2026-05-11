@@ -30,8 +30,6 @@ L'aplicació està dividida en tres rols:
 
 Cada usuari veu les opcions corresponents al seu rol. Després d'iniciar sessió, EduPass redirigeix automàticament cada persona al seu panell.
 
-![Captura de pantalla: Vista general d'EduPass](img/edupass-vista-general.png)
-
 ---
 
 ## 2. Accés al sistema
@@ -132,8 +130,6 @@ Els rols disponibles són:
 - **Alumne**
 - **Profe**
 - **Admin**
-
-![Captura de pantalla: Gestió d'usuaris](img/admin-gestio-usuaris.png)
 
 #### Crear un usuari
 
