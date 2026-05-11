@@ -1,49 +1,53 @@
 :host {
     display: block;
-    height: 100vh;
-    width: 100vw;
+    min-height: 100vh;
+    min-height: 100svh;
+    width: 100%;
 }
 
 .fons-login {
-    height: 100vh;
-    width: 100vw;
+    min-height: 100vh;
+    min-height: 100svh;
+    width: 100%;
     background: radial-gradient(circle at top right, #2d1e3e 0%, #1e1e2d 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: 'Inter', sans-serif;
-    padding: 20px;
+    padding: clamp(1rem, 3vw, 2rem);
     position: relative;
+    overflow-y: auto;
 }
 
 .targeta-login {
     background: white;
-    border-radius: 32px;
-    padding: 3.5rem 3rem;
+    border-radius: clamp(20px, 4vw, 32px);
+    padding: clamp(1.5rem, 4vw, 3.5rem) clamp(1.25rem, 4vw, 3rem);
     width: 100%;
-    max-width: 450px;
+    max-width: min(450px, 100%);
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     text-align: center;
     z-index: 10;
 }
 
 .encapçalament-login {
-    margin-bottom: 2.5rem;
+    margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
 }
 
 .login-logo {
-    height: 80px;
+    height: clamp(56px, 10vh, 80px);
     width: auto;
-    margin-bottom: 1.5rem;
+    max-width: 82%;
+    margin-bottom: clamp(0.9rem, 2.5vh, 1.5rem);
 }
 
 .encapçalament-login h1 {
     font-family: 'Outfit', sans-serif;
     color: #1e1e2d;
-    font-size: 2.2rem;
+    font-size: clamp(1.75rem, 5vw, 2.2rem);
     font-weight: 800;
     margin: 0;
-    letter-spacing: -0.5px;
+    letter-spacing: 0;
 }
 
 .encapçalament-login p {
@@ -55,7 +59,7 @@
 .cos-formulari {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: clamp(1rem, 3vh, 1.5rem);
 }
 
 .grup-input {
@@ -81,7 +85,7 @@
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
-    padding: 0 1.25rem;
+    padding: 0 clamp(0.9rem, 3vw, 1.25rem);
 }
 
 .input-wrapper:focus-within {
@@ -102,7 +106,7 @@
 
 .input-wrapper input {
     width: 100%;
-    padding: 1.1rem 1rem;
+    padding: clamp(0.9rem, 2.6vh, 1.1rem) clamp(0.75rem, 3vw, 1rem);
     background: transparent;
     border: none;
     color: #1e1e2d;
@@ -128,7 +132,7 @@ input:-webkit-autofill:active {
     background: linear-gradient(135deg, #6200EA 0%, #7C4DFF 100%);
     color: white;
     border: none;
-    padding: 1.2rem;
+    padding: clamp(0.95rem, 2.8vh, 1.2rem);
     border-radius: 16px;
     font-size: 1rem;
     font-weight: 700;
@@ -159,8 +163,50 @@ input:-webkit-autofill:active {
 }
 
 .peu-login {
-    margin-top: 2.5rem;
+    margin-top: clamp(1.4rem, 4vh, 2.5rem);
     color: #94a3b8;
     font-size: 0.8rem;
     font-weight: 500;
+}
+
+@media (max-width: 520px) {
+    .fons-login {
+        align-items: stretch;
+        padding: 0;
+    }
+
+    .targeta-login {
+        min-height: 100vh;
+        min-height: 100svh;
+        max-width: none;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+}
+
+@media (max-height: 720px) and (min-width: 521px) {
+    .fons-login {
+        align-items: flex-start;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+    }
+
+    .targeta-login {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .login-logo {
+        height: 56px;
+    }
+
+    .encapçalament-login {
+        margin-bottom: 1.25rem;
+    }
+
+    .peu-login {
+        margin-top: 1.25rem;
+    }
 }
