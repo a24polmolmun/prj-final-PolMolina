@@ -17,6 +17,7 @@ class JustificantController extends Controller
                 'alumne',
                 'assistenciaInici.inscripcio.assignatura',
                 'assistenciaInici.inscripcio.alumne',
+                'assistenciaInici.inscripcio.horari', // Afegim l'horari per veure hores
                 'assistenciaFi',
             ])->orderByDesc('created_at')->get(),
             'message' => 'Justificants obtinguts correctament'
@@ -35,6 +36,10 @@ class JustificantController extends Controller
         ]);
 
         $justificant = Justificant::create($validated);
+        
+        // Marquem l'assistència com a justificada perquè desaparegui el botó per a l'alumne
+        \App\Models\Assistencia::where('id', $justificant->id_assistencia_ini)
+            ->update(['justificat' => true]);
 
         return response()->json([
             'success' => true,
@@ -100,6 +105,11 @@ class JustificantController extends Controller
                 'message' => 'Justificant no trobat'
             ], Response::HTTP_NOT_FOUND);
         }
+
+        // Si l'eliminem, hem de tornar a posar la falta com a NO justificada
+        \App\Models\Assistencia::where('id', $justificant->id_assistencia_ini)
+            ->orWhere('id', $justificant->id_assistencia_fi)
+            ->update(['justificat' => false]);
 
         $justificant->delete();
 

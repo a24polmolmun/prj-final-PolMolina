@@ -42,7 +42,7 @@
                   <div class="meta">
                     <span>{{ assignatura(justificant) }}</span>
                     <span>·</span>
-                    <span>{{ dataText(justificant.assistenciaInici?.data) }}</span>
+                    <span>{{ dataText(justificant.assistencia_inici?.data) }}</span>
                   </div>
                   <div class="comentari">
                     {{ justificant.comentari || 'Sense comentari' }}
@@ -54,16 +54,6 @@
                     class="boto-veure"
                     (click)="obrirDetall(justificant)">
                     Veure justificació
-                  </button>
-                  <button
-                    class="boto-acceptar"
-                    [disabled]="esProcessant(justificant.id)"
-                    (click)="acceptar(justificant)">
-                    @if (esProcessant(justificant.id)) {
-                      Processant...
-                    } @else {
-                      Acceptar
-                    }
                   </button>
                 </div>
               </div>
@@ -90,7 +80,8 @@
       <div class="cos-modal">
         <p><strong>Alumne:</strong> {{ nomAlumne(detall) }}</p>
         <p><strong>Assignatura:</strong> {{ assignatura(detall) }}</p>
-        <p><strong>Data falta:</strong> {{ dataText(detall.assistenciaInici?.data) }}</p>
+        <p><strong>Data falta:</strong> {{ dataText(detall.assistencia_inici?.data) }}</p>
+        <p><strong>Hora sessió:</strong> {{ getHoraSessio(detall) }}</p>
         <p><strong>Comentari:</strong></p>
         <div class="capsa-comentari">{{ detall.comentari || 'Sense comentari' }}</div>
 
@@ -101,6 +92,21 @@
         } @else {
           <p class="sense-document">No hi ha document adjunt.</p>
         }
+
+        <div class="accions-modal-peu">
+          <button 
+            class="boto-rebutjar" 
+            [disabled]="esProcessant(detall.id)"
+            (click)="rebutjar(detall)">
+            Rebutjar Justificant
+          </button>
+          <button 
+            class="boto-acceptar-modal" 
+            [disabled]="esProcessant(detall.id)"
+            (click)="acceptar(detall); tancarDetall()">
+            Acceptar Justificant
+          </button>
+        </div>
       </div>
     </div>
   </div>

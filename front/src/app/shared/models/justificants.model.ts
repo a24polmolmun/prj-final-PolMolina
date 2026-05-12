@@ -14,7 +14,7 @@ export interface Justificant {
     cognom?: string;
     email?: string;
   };
-  assistenciaInici?: {
+  assistencia_inici?: {
     id: number;
     data: string;
     estat: string;
@@ -30,6 +30,16 @@ export interface Justificant {
         id: number;
         nom: string;
       };
+      horari?: {
+        id: number;
+        codi_hora: string;
+      };
     };
+  };
+  assistencia_fi?: {
+    id: number;
+    data: string;
+    estat: string;
+    id_inscripcio: number;
   };
 }

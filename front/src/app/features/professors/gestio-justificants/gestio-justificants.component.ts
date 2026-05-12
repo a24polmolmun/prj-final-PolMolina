@@ -92,19 +92,37 @@ export class GestioJustificantsComponent implements OnInit {
   }
 
   nomAlumne(j: Justificant): string {
-    const nom = j.alumne?.nom || j.assistenciaInici?.inscripcio?.alumne?.nom || 'Alumne';
-    const cognom = j.alumne?.cognom || j.assistenciaInici?.inscripcio?.alumne?.cognom || '';
+    const nom = j.alumne?.nom || j.assistencia_inici?.inscripcio?.alumne?.nom || 'Alumne';
+    const cognom = j.alumne?.cognom || j.assistencia_inici?.inscripcio?.alumne?.cognom || '';
     return `${nom} ${cognom}`.trim();
   }
 
   assignatura(j: Justificant): string {
-    return j.assistenciaInici?.inscripcio?.assignatura?.nom || 'Assignatura';
+    return j.assistencia_inici?.inscripcio?.assignatura?.nom || 'Assignatura';
   }
 
-  dataText(data: string | undefined): string {
+  dataText(data: any): string {
     if (!data) return '-';
+    // Si la data ve com a objecte de Laravel o string ISO
     const d = new Date(data);
+    if (isNaN(d.getTime())) return data; // Si no es pot parsejar, retornem el text original
     return d.toLocaleDateString('ca-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  getHoraSessio(j: Justificant): string {
+    const h = j.assistencia_inici?.inscripcio?.horari;
+    if (!h) return 'Hora no disponible';
+    
+    const map: { [key: string]: string } = {
+      '1': '08:00 - 09:00',
+      '2': '09:00 - 10:00',
+      '3': '10:00 - 11:00',
+      '4': '11:30 - 12:30',
+      '5': '12:30 - 13:30',
+      '6': '13:30 - 14:30'
+    };
+    const num = h.codi_hora.substring(1);
+    return map[num] || h.codi_hora;
   }
 
   esProcessant(id: number): boolean {
@@ -117,6 +135,18 @@ export class GestioJustificantsComponent implements OnInit {
     this.processantIds.update((ids) => [...ids, justificant.id]);
     try {
       await this.justificantsManager.acceptarJustificant(justificant.id);
+    } finally {
+      this.processantIds.update((ids) => ids.filter((id) => id !== justificant.id));
+    }
+  }
+
+  async rebutjar(justificant: Justificant) {
+    if (!justificant?.id || this.esProcessant(justificant.id)) return;
+    
+    this.processantIds.update((ids) => [...ids, justificant.id]);
+    try {
+      await this.justificantsManager.esborrarJustificant(justificant.id);
+      this.tancarDetall();
     } finally {
       this.processantIds.update((ids) => ids.filter((id) => id !== justificant.id));
     }

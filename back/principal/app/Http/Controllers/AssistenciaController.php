@@ -262,7 +262,7 @@ class AssistenciaController extends Controller
 
             foreach ($assistenciesValue as $valor) {
                 switch ($valor->estat) {
-                    case 'Retart':
+                    case 'Retard':
                         $retard++;
                         $retard_total++;
                         break;

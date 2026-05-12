@@ -39,8 +39,9 @@ export class AlumnesComponent implements OnInit {
 
   // Estadístiques per al dashboard
   stats = computed(() => {
-    const inscrits = this.inscritsPerUsuari();
-    if (!inscrits || inscrits.length === 0) {
+    const inscrits = (this.inscritsPerUsuari() || []).filter(ins => ins.nom_assignatura[0]?.nom !== 'Total');
+    
+    if (inscrits.length === 0) {
       return [
         { titol: 'Assignatures', valor: 0, icona: 'library_books', color: 'blau' },
         { titol: 'Faltes Totals', valor: 0, icona: 'warning', color: 'taronja' },
@@ -66,7 +67,7 @@ export class AlumnesComponent implements OnInit {
 
   filteredAbsences = computed(() => {
     const query = this.searchQuery();
-    const inscrits = this.inscritsPerUsuari() || [];
+    const inscrits = (this.inscritsPerUsuari() || []).filter(ins => ins.nom_assignatura[0]?.nom !== 'Total');
     
     let totalFaltes = 0;
     let totalRetards = 0;

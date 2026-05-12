@@ -197,7 +197,13 @@
 }
 
 .cos-modal p {
-  margin: 0.35rem 0;
+  margin: 0.6rem 0;
+  color: #334155;
+  font-size: 1rem;
+}
+
+.cos-modal p strong {
+  color: #0f172a;
 }
 
 .capsa-comentari {
@@ -217,6 +223,53 @@
 
 .enllac-document:hover {
   text-decoration: underline;
+}
+
+.accions-modal-peu {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.boto-rebutjar {
+  flex: 1;
+  padding: 0.7rem;
+  border-radius: 0.75rem;
+  border: 1px solid #fecdd3;
+  background: #fff1f2;
+  color: #e11d48;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.boto-rebutjar:hover:not(:disabled) {
+  background: #ffe4e6;
+  border-color: #fb7185;
+}
+
+.boto-acceptar-modal {
+  flex: 1;
+  padding: 0.7rem;
+  border-radius: 0.75rem;
+  border: none;
+  background: #6200EA;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.boto-acceptar-modal:hover:not(:disabled) {
+  background: #7C4DFF;
+  transform: translateY(-2px);
+}
+
+.boto-rebutjar:disabled, .boto-acceptar-modal:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .sense-document {
@@ -239,5 +292,9 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 0.8rem;
+  }
+
+  .accions-modal-peu {
+    flex-direction: column;
   }
 }
