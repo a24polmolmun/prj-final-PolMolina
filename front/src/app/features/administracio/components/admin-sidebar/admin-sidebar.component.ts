@@ -52,6 +52,7 @@ import { AuthService } from '../../../../services/auth.service';
     .admin-sidebar {
       width: 260px;
       height: 100vh;
+      height: 100dvh;
       background: #1e1e2d;
       color: white;
       display: flex;
@@ -118,6 +119,76 @@ import { AuthService } from '../../../../services/auth.service';
     }
     .logout:hover { 
       background: rgba(246, 78, 96, 0.1) !important;
+    }
+    @media (max-width: 768px) {
+      .admin-sidebar {
+        width: 70px;
+      }
+      .sidebar-titol,
+      .link-text {
+        display: none;
+      }
+      .logo,
+      .nav-link {
+        padding: 1rem;
+        justify-content: center;
+      }
+      .sidebar-logo {
+        height: 30px;
+        max-width: 44px;
+        object-fit: contain;
+      }
+    }
+    @media (max-width: 640px) {
+      .admin-sidebar {
+        width: 100%;
+        height: 76px;
+        top: auto;
+        bottom: 0;
+        right: 0;
+        flex-direction: row;
+        align-items: center;
+        box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.22);
+      }
+      .logo {
+        display: none;
+      }
+      .menu-links {
+        flex: 1;
+        min-width: 0;
+        height: 100%;
+        padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
+      }
+      .menu-links::-webkit-scrollbar {
+        display: none;
+      }
+      .footer-sidebar {
+        height: 100%;
+        padding: 0.5rem;
+        border-top: none;
+        border-left: 1px solid rgba(255,255,255,0.1);
+        display: flex;
+        align-items: center;
+      }
+      .nav-link {
+        width: 52px;
+        min-width: 52px;
+        height: 52px;
+        padding: 0;
+        border-radius: 14px;
+        justify-content: center;
+      }
+      .nav-link.active {
+        border-left: none;
+        border-bottom: 3px solid #6f42c1;
+        background: rgba(111, 66, 193, 0.22);
+      }
     }
   `]
 })

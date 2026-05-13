@@ -18,6 +18,7 @@
     padding: 0;
     position: relative;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .targeta-login {
@@ -178,9 +179,9 @@ input:-webkit-autofill:active {
     }
 
     .targeta-login {
-        width: 100%;
-        max-width: calc(100vw - 1.5rem);
-        margin: 0.75rem;
+        width: calc(100% - 3rem);
+        max-width: 450px;
+        margin: 0.75rem auto;
         border-radius: 22px;
         display: flex;
         flex-direction: column;
@@ -291,6 +292,11 @@ input:-webkit-autofill:active {
 }
 
 @media (max-width: 800px) {
+    .targeta-login {
+        width: min(450px, calc(100% - 3rem));
+        max-width: calc(100% - 3rem);
+    }
+
     .banner-contingut {
         gap: 0.8rem;
     }

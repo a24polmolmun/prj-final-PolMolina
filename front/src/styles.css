@@ -86,3 +86,242 @@ body::after {
 ::-webkit-scrollbar-thumb:hover {
     background: var(--primary-color);
 }
+
+/* Responsive transversal */
+html,
+body {
+    width: 100%;
+}
+
+img,
+svg,
+video,
+canvas {
+    max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+    max-width: 100%;
+}
+
+table {
+    min-width: 640px;
+}
+
+.taula-wrapper,
+.table-wrapper,
+.list-card,
+.alumnes-card,
+.contenidor-horari,
+.targeta-horari-premium,
+.crud-container,
+.main-dashboard-grid {
+    min-width: 0;
+}
+
+.taula-wrapper,
+.table-wrapper,
+.list-card,
+.alumnes-card {
+    overflow-x: auto;
+}
+
+.contingut,
+.contingut-principal,
+.admin-main {
+    min-width: 0;
+}
+
+.graella-horari,
+.grid-horari {
+    min-width: 760px;
+}
+
+.contenidor-horari,
+.targeta-horari-premium {
+    overflow-x: auto;
+}
+
+@media (max-width: 1100px) {
+    .crud-container,
+    .layout-assistencia,
+    .main-dashboard-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .stats-row,
+    .targetes-stats,
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .contingut,
+    .contingut-principal,
+    .admin-main {
+        margin-left: 70px !important;
+        padding: 1.5rem !important;
+    }
+
+    .dashboard-container {
+        padding: 0 !important;
+    }
+
+    .salutacio h1,
+    .capçalera-moderna h1 {
+        font-size: clamp(1.7rem, 8vw, 2.25rem) !important;
+    }
+
+    .targeta-classe-actual,
+    .contenidor-horari,
+    .targeta-horari-premium,
+    .form-card,
+    .list-card,
+    .sessions-card,
+    .alumnes-card,
+    .taula-card {
+        border-radius: 1rem !important;
+        padding: 1.25rem !important;
+    }
+
+    .capçalera-horari,
+    .barra-superior,
+    .header-base,
+    .atencio-avui,
+    .fila-falta,
+    .fila-justificant,
+    .result-item,
+    .card-header {
+        align-items: stretch !important;
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+
+    .selector-assignatura,
+    .select-compact,
+    .filtre-assignatura,
+    .admin-selector-top {
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    .grid-assignatures {
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)) !important;
+    }
+}
+
+@media (max-width: 640px) {
+    body {
+        overflow-x: hidden;
+    }
+
+    .disseny-principal,
+    .gestio-wrapper,
+    .admin-layout {
+        display: block !important;
+        min-height: 100dvh !important;
+    }
+
+    .contingut,
+    .contingut-principal,
+    .admin-main {
+        margin-left: 0 !important;
+        padding: 1rem !important;
+        padding-bottom: 6.25rem !important;
+        width: 100% !important;
+    }
+
+    .targetes-stats,
+    .stats-grid,
+    .stats-row,
+    .grid-assignatures,
+    .main-dashboard-grid,
+    .crud-container,
+    .layout-assistencia,
+    .fila-camps {
+        grid-template-columns: 1fr !important;
+    }
+
+    .salutacio p,
+    .header-base p {
+        font-size: 1rem !important;
+    }
+
+    .targeta-stat,
+    .stat-card,
+    .info-falta,
+    .meta,
+    .accions,
+    .controls {
+        align-items: stretch !important;
+        flex-wrap: wrap !important;
+    }
+
+    .targeta-stat,
+    .stat-card,
+    .info-falta,
+    .accions,
+    .controls {
+        justify-content: flex-start !important;
+    }
+
+    .boto-accio,
+    .boto-franja,
+    .boto-justificar,
+    .boto-acceptar,
+    .boto-veure,
+    .boto-desar,
+    .btn-primary {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+
+    .modal-card,
+    .contingut-modal {
+        width: calc(100vw - 1.5rem) !important;
+        max-height: calc(100dvh - 1.5rem) !important;
+        padding: 1.25rem !important;
+        border-radius: 1rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    table {
+        min-width: 560px;
+    }
+
+    .graella-horari,
+    .grid-horari {
+        min-width: 680px;
+    }
+
+    .targeta-classe-actual h1 {
+        font-size: 1.75rem !important;
+        letter-spacing: 0 !important;
+    }
+
+    .targeta-stat,
+    .stat-card {
+        padding: 1rem !important;
+    }
+}
+
+@media (max-height: 720px) and (min-width: 641px) {
+    .contingut,
+    .contingut-principal,
+    .admin-main {
+        padding-top: 1.25rem !important;
+        padding-bottom: 1.25rem !important;
+    }
+
+    .seccio-benvinguda,
+    .header-base,
+    .capçalera-moderna {
+        margin-bottom: 1.25rem !important;
+    }
+}
