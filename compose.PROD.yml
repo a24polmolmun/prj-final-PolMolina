@@ -1,5 +1,5 @@
 # Generar certificats
-# docker compose -f compose.PROD.yml run --rm --entrypoint prj-final-r-e-n-f-e-certbot-1 certbot certonly --webroot --webroot-path /var/www/certbot -d renfe.daw.inspedralbes.cat --email a23cliferadn@inspedralbes.cat --agree-tos --no-eff-email
+# docker compose -f compose.PROD.yml run --rm --entrypoint certbot certbot certonly --webroot --webroot-path /var/www/certbot -d edupass.cat -d www.edupass.cat --email a24polmolmun@inspedralbes.cat --agree-tos --no-eff-email
 services:
   nginx:
     build:
@@ -26,7 +26,7 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     # Loop para comprobar renovación de certificados cada 12h
-    entrypoint: "/bin/sh -c 'trap exit TERM; certbot certonly --webroot --webroot-path /var/www/certbot -d renfe.daw.inspedralbes.cat --email a23cliferadn@inspedralbes.cat --agree-tos --no-eff-email --expand 2>/dev/null || true; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    entrypoint: "/bin/sh -c 'trap exit TERM; certbot certonly --webroot --webroot-path /var/www/certbot -d edupass.cat -d www.edupass.cat --email a24polmolmun@inspedralbes.cat --agree-tos --no-eff-email --expand 2>/dev/null || true; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   # Backend Laravel
   pfg1-back:
